@@ -524,7 +524,7 @@ async function generatePins(){
     :`You are a Pinterest marketing expert. Create ${count} different high-converting Pinterest Pins in ENGLISH.\nTopic: ${topic}\nAudience: ${audience||'General'}\nGoal: ${goalMap[goal]}\nNotes: ${notes||'none'}\n\nEach pin should have a different angle. Description should be detailed (3-5 sentences, multiple lines).\n\nReply ONLY with a JSON array (no markdown, no backticks):\n[{"title":"title max 60 chars","description":"Detailed description 3-5 sentences with keywords, emotional, multiple lines","imageTitle":"max 5 words","imageSubtitle":"max 8 words","imagePoints":["point1","point2","point3"],"cta":"max 4 words","tags":["tag1","tag2","tag3","tag4","tag5"],"emoji":"emoji","seoKeywords":"3-5 keywords","imageQuery":"search term for matching stock photo"}]`;
 
   try{
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
     if(d.error)throw new Error(d.error.message||d.error);
     const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
