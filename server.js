@@ -15,11 +15,14 @@ app.post('/api/verify-license', async (req, res) => {
     const PRODUCT_ID = process.env.GUMROAD_PRODUCT_ID;
     if (!PRODUCT_ID) return res.status(500).json({ valid: false, error: 'GUMROAD_PRODUCT_ID fehlt in den Secrets' });
 
-    const r = await fetch('https://api.gumroad.com/v2/licenses/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ product_id: PRODUCT_ID, license_key: licenseKey })
-    });
+    const params = new URLSearchParams();
+params.append('product_permalink', 'oktubc');
+params.append('license_key', licenseKey);
+
+const r = await fetch('https://api.gumroad.com/v2/licenses/verify', {
+  method: 'POST',
+  body: params
+});
     const data = await r.json();
 
     if (!data.success) return res.json({ valid: false, error: 'Ungültiger Key' });
