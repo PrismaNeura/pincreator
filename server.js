@@ -94,15 +94,28 @@ app.post('/webhook/gumroad', async (req, res) => {
 });
 
 async function sendEmail(to, subject, text) {
-  const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) { console.log('Kein RESEND_API_KEY:', to, subject); return; }
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${resendKey}` },
-    body: JSON.stringify({ from: 'PinCreator <noreply@pincreator.onrender.com>', to, subject, text })
+  const nodemailer = require('nodemailer');
+  const transporter = nodemailer.createTransport({
+    host: 'mail.gmx.net',
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.GMX_EMAIL,
+      pass: process.env.GMX_PASSWORD
+    }
   });
+  try {
+    await transporter.sendMail({
+      from: `PinCreator <${process.env.GMX_EMAIL}>`,
+      to,
+      subject,
+      text
+    });
+    console.log('E-Mail gesendet an:', to);
+  } catch(e) {
+    console.error('E-Mail Fehler:', e.message);
+  }
 }
-
 // ANTHROPIC PROXY
 app.post('/api/generate', async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
