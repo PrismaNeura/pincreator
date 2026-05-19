@@ -21,13 +21,13 @@ async function supabaseFetch(path, method, body, useServiceRole = false) {
       'Content-Type': 'application/json',
       'apikey': key,
       'Authorization': `Bearer ${key}`,
-      'Prefer': method === 'POST' ? 'return=representation' : ''
+      'Prefer': 'return=representation'
     },
     body: body ? JSON.stringify(body) : undefined
   });
-  return r.json();
+  const text = await r.text();
+  return text ? JSON.parse(text) : [];
 }
-
 // LOGIN
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
