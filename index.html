@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PinCreator – KI Pinterest Generator</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F4F0;--surface:#FFFFFF;--s2:#F2EEE9;
+  --border:rgba(44,44,42,0.12);--border2:rgba(44,44,42,0.22);
+  --text:#1A1917;--text2:#6B6862;--text3:#A09A93;
+  --red:#E7232D;--red-bg:#FEF0F0;
+  --purple:#534AB7;--purple-bg:#EEEDFE;
+  --green:#2D7A3A;--green-bg:#EAF3DE;
+  --r:12px;--rs:8px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.login-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:2.5rem;max-width:420px;width:100%;text-align:center}
+.login-logo{font-size:48px;color:var(--red);margin-bottom:1rem}
+.login-card h1{font-family:'DM Serif Display',serif;font-size:28px;margin-bottom:.5rem}
+.login-card p{font-size:14px;color:var(--text2);margin-bottom:2rem;line-height:1.6}
+.login-input{width:100%;padding:12px 14px;font-size:14px;font-family:'DM Sans',sans-serif;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text);margin-bottom:10px;text-align:center;letter-spacing:.05em}
+.login-btn{width:100%;padding:13px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;background:var(--red);border:none;border-radius:var(--rs);color:#fff;cursor:pointer;transition:all .15s}
+.login-btn:hover{background:#C41E27}
+.login-btn:disabled{background:#E0AEB0;cursor:not-allowed}
+.login-err{font-size:13px;color:#A32D2D;padding:10px;background:#FCEBEB;border-radius:var(--rs);border:0.5px solid #F09595;margin-top:10px;display:none}
+.login-hint{font-size:12px;color:var(--text3);margin-top:1.5rem}
+.login-hint a{color:var(--purple);text-decoration:none}
+
+/* ── APP ── */
+#appScreen{display:none}
+.site-header{background:var(--surface);border-bottom:0.5px solid var(--border);padding:.875rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:9px;font-weight:600;font-size:17px}
+.logo i{color:var(--red);font-size:20px}
+.header-right{display:flex;align-items:center;gap:10px}
+.badge{font-size:11px;padding:3px 10px;background:var(--red-bg);color:var(--red);border-radius:20px;font-weight:500}
+.logout-btn{font-size:12px;padding:5px 12px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2)}
+
+.hero{text-align:center;padding:2.5rem 2rem 1.5rem;max-width:600px;margin:0 auto}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,4vw,38px);line-height:1.2;margin-bottom:.75rem}
+.hero h1 span{color:var(--red)}
+.hero p{font-size:15px;color:var(--text2);line-height:1.7}
+
+.container{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+
+/* ── FORM ── */
+.form-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.fs{margin-bottom:0}
+.lbl{display:block;font-size:11px;font-weight:500;letter-spacing:.05em;color:var(--text3);text-transform:uppercase;margin-bottom:5px}
+input[type=text],textarea,select{width:100%;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text);padding:9px 12px;outline:none;transition:border-color .15s}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--border2)}
+textarea{height:80px;resize:vertical}
+
+.options-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:1rem}
+
+.tog-group{display:flex;gap:5px;flex-wrap:wrap}
+.tog{flex:1;min-width:55px;padding:7px 5px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text2);cursor:pointer;text-align:center;transition:all .15s}
+.tog.active{background:var(--purple-bg);color:var(--purple);border-color:#AFA9EC}
+
+.color-swatches{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px}
+.swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0}
+.swatch.active{border-color:var(--text);transform:scale(1.15)}
+.custom-colors{display:flex;align-items:center;gap:6px;margin-top:6px}
+.custom-colors input[type=color]{width:26px;height:26px;border:0.5px solid var(--border);border-radius:50%;padding:2px;cursor:pointer;background:none}
+
+.upload-zone{border:0.5px dashed var(--border2);border-radius:var(--rs);padding:10px;text-align:center;cursor:pointer;font-size:12px;color:var(--text3);transition:all .15s;position:relative;margin-top:4px}
+.upload-zone:hover{background:var(--s2)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.img-thumb{width:100%;height:56px;object-fit:cover;border-radius:var(--rs);margin-top:5px}
+.remove-img{width:100%;margin-top:4px;font-size:11px;padding:4px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2)}
+
+.gen-section{display:flex;align-items:center;gap:1rem;margin-top:1.25rem;flex-wrap:wrap}
+.count-select{font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text)}
+.gen-btn{flex:1;min-width:200px;padding:13px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;background:var(--red);border:none;border-radius:var(--rs);color:#fff;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.gen-btn:hover{background:#C41E27}
+.gen-btn:disabled{background:#E0AEB0;cursor:not-allowed}
+
+/* ── PINS GRID ── */
+.pins-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.pins-header h2{font-size:16px;font-weight:500}
+.copy-all-btn{font-size:13px;padding:7px 14px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:5px;transition:all .15s}
+.copy-all-btn:hover{background:var(--green-bg);color:var(--green);border-color:#97C459}
+
+.pins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem}
+
+.pin-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+.pin-image-area{width:100%;aspect-ratio:2/3;position:relative;overflow:hidden;background:var(--s2)}
+.pin-image-area canvas{position:absolute;top:0;left:0;width:100%;height:100%}
+
+.pin-body{padding:1rem}
+.pin-num{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);margin-bottom:6px}
+.pin-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.4}
+.pin-desc{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:10px;white-space:pre-line}
+.pin-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.tag{font-size:11px;padding:2px 8px;background:var(--purple-bg);color:var(--purple);border-radius:20px}
+.seo-row{font-size:11px;color:var(--text3);margin-bottom:10px}
+.pin-actions{display:flex;gap:6px}
+.act-btn{flex:1;padding:7px;font-size:12px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s}
+.act-btn:hover,.act-btn.ok{background:var(--green-bg);color:var(--green);border-color:#97C459}
+
+.placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;background:var(--surface);border:0.5px dashed var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;gap:12px;text-align:center}
+.loading-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem}
+.loading-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden}
+.loading-img{width:100%;aspect-ratio:2/3;background:linear-gradient(90deg,var(--s2) 25%,var(--bg) 50%,var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+.loading-lines{padding:1rem;display:flex;flex-direction:column;gap:8px}
+.loading-line{height:12px;border-radius:4px;background:linear-gradient(90deg,var(--s2) 25%,var(--bg) 50%,var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+.err{font-size:13px;color:#A32D2D;padding:12px 14px;background:#FCEBEB;border-radius:var(--rs);border:0.5px solid #F09595;margin-bottom:1rem}
+
+.site-footer{text-align:center;padding:1.5rem;font-size:12px;color:var(--text3);border-top:0.5px solid var(--border);background:var(--surface)}
+
+@media(max-width:600px){.site-header{padding:.875rem 1rem}.container{padding:1rem 1rem 3rem}.form-grid,.options-row{grid-template-columns:1fr}.gen-section{flex-direction:column}.gen-btn,.count-select{width:100%}}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo"><i class="ti ti-brand-pinterest"></i></div>
+    <h1>PinCreator</h1>
+    <p>KI-gestützte Pinterest Pins in Sekunden – mit Bild, Text, Hashtags und SEO-Keywords.</p>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1.5rem">Bitte gib deinen Gumroad-Lizenzschlüssel ein:</p>
+    <input type="text" class="login-input" id="licenseInput" placeholder="XXXX-XXXX-XXXX-XXXX" spellcheck="false">
+    <button class="login-btn" id="loginBtn" onclick="verifyLicense()">
+      <i class="ti ti-key" style="margin-right:6px"></i> Zugang freischalten
+    </button>
+    <div class="login-err" id="loginErr"></div>
+    <p class="login-hint">Noch kein Zugang? <a href="https://gumroad.com" target="_blank">Hier kaufen →</a></p>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="appScreen">
+  <header class="site-header">
+    <div class="logo"><i class="ti ti-brand-pinterest"></i> PinCreator</div>
+    <div class="header-right">
+      <span class="badge">KI-powered</span>
+      <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:13px;margin-right:4px"></i>Abmelden</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Pinterest Pins, die <span>verkaufen</span></h1>
+    <p>Bis zu 5 Pins gleichzeitig – mit KI-Text, automatischem Bild und sofort kopierbereit.</p>
+  </section>
+
+  <main class="container">
+    <div class="form-card">
+
+      <!-- Hauptfelder -->
+      <div class="form-grid">
+        <div class="fs" style="grid-column:1/-1">
+          <label class="lbl" for="topic">Thema / Produkt / Nische *</label>
+          <input type="text" id="topic" placeholder="z.B. Yoga für Anfänger, Keto-Rezepte, Dropshipping…">
+        </div>
+        <div class="fs">
+          <label class="lbl" for="audience">Zielgruppe</label>
+          <input type="text" id="audience" placeholder="z.B. Frauen 25–40, Unternehmer…">
+        </div>
+        <div class="fs">
+          <label class="lbl" for="goal">Ziel des Pins</label>
+          <select id="goal">
+            <option value="traffic">Mehr Traffic / Klicks</option>
+            <option value="sales">Produkt / Kurs verkaufen</option>
+            <option value="leads">E-Mail-Liste aufbauen</option>
+            <option value="brand">Markenbekanntheit</option>
+            <option value="save">Viral / viele Saves</option>
+          </select>
+        </div>
+        <div class="fs">
+          <label class="lbl" for="notes">Hinweise (optional)</label>
+          <input type="text" id="notes" placeholder="z.B. Freebie, Preis, Keywords…">
+        </div>
+      </div>
+
+      <!-- Design-Optionen -->
+      <div class="options-row">
+        <div class="fs">
+          <div class="lbl">Sprache</div>
+          <div class="tog-group">
+            <button class="tog active" onclick="setLang('de')">🇩🇪 DE</button>
+            <button class="tog" onclick="setLang('en')">🇬🇧 EN</button>
+          </div>
+        </div>
+        <div class="fs">
+          <div class="lbl">Schrift</div>
+          <div class="tog-group">
+            <button class="tog active" data-font="sans">Modern</button>
+            <button class="tog" data-font="serif">Klassisch</button>
+            <button class="tog" data-font="bold">Heavy</button>
+            <button class="tog" data-font="script">Kursiv</button>
+          </div>
+        </div>
+        <div class="fs">
+          <div class="lbl">Layout</div>
+          <div class="tog-group">
+            <button class="tog active" data-layout="centered">Mittig</button>
+            <button class="tog" data-layout="left">Links</button>
+            <button class="tog" data-layout="split">Geteilt</button>
+            <button class="tog" data-layout="overlay">Overlay</button>
+          </div>
+        </div>
+        <div class="fs">
+          <div class="lbl">Hintergrund</div>
+          <div class="color-swatches" id="swatchRow">
+            <div class="swatch active" data-b1="#FAFAF8" data-b2="#F0EDE8" style="background:linear-gradient(135deg,#FAFAF8,#F0EDE8)" title="Creme"></div>
+            <div class="swatch" data-b1="#E7232D" data-b2="#B01920" style="background:linear-gradient(135deg,#E7232D,#B01920)" title="Rot"></div>
+            <div class="swatch" data-b1="#18150F" data-b2="#2A221A" style="background:linear-gradient(135deg,#18150F,#2A221A)" title="Dunkel"></div>
+            <div class="swatch" data-b1="#EBF4FF" data-b2="#D5E8F7" style="background:linear-gradient(135deg,#EBF4FF,#D5E8F7)" title="Blau"></div>
+            <div class="swatch" data-b1="#EAF3DE" data-b2="#C0DD97" style="background:linear-gradient(135deg,#EAF3DE,#C0DD97)" title="Grün"></div>
+            <div class="swatch" data-b1="#FBEAF0" data-b2="#F4C0D1" style="background:linear-gradient(135deg,#FBEAF0,#F4C0D1)" title="Rosa"></div>
+            <div class="swatch" data-b1="#FAEEDA" data-b2="#FAC775" style="background:linear-gradient(135deg,#FAEEDA,#FAC775)" title="Gold"></div>
+            <div class="swatch" data-b1="#E1F5EE" data-b2="#5DCAA5" style="background:linear-gradient(135deg,#E1F5EE,#5DCAA5)" title="Mint"></div>
+          </div>
+          <div class="custom-colors">
+            <input type="color" id="c1" value="#9B59B6">
+            <input type="color" id="c2" value="#6C3483">
+            <button class="tog" onclick="applyCustom()" style="flex:none;padding:4px 10px;font-size:11px">Eigene</button>
+          </div>
+        </div>
+        <div class="fs">
+          <div class="lbl">Eigenes Bild</div>
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" accept="image/*" id="imgUpload" onchange="handleUpload(event)">
+            <i class="ti ti-upload" style="font-size:16px;display:block;margin-bottom:3px"></i>
+            Bild hochladen
+          </div>
+          <img id="imgThumb" class="img-thumb" style="display:none">
+          <button id="removeBtn" class="remove-img" style="display:none" onclick="removeImg()">✕ Entfernen</button>
+        </div>
+      </div>
+
+      <!-- Generieren -->
+      <div class="gen-section">
+        <select class="count-select" id="pinCount">
+          <option value="1">1 Pin</option>
+          <option value="2">2 Pins</option>
+          <option value="3">3 Pins</option>
+          <option value="4">4 Pins</option>
+          <option value="5" selected>5 Pins</option>
+        </select>
+        <button class="gen-btn" id="genBtn" onclick="generatePins()">
+          <i class="ti ti-wand"></i> Pins generieren
+        </button>
+      </div>
+    </div>
+
+    <!-- Ergebnis -->
+    <div id="resultArea">
+      <div class="placeholder">
+        <i class="ti ti-brand-pinterest" style="font-size:40px;color:var(--red);opacity:.35"></i>
+        <span>Füll das Formular aus und klick auf „Pins generieren"<br>– bis zu 5 fertige Pins auf einmal!</span>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">PinCreator · KI-gestütztes Pinterest Marketing · Pins sind urheberrechtsfrei nutzbar</footer>
+</div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────
+let lang='de', pinFont='sans', pinLayout='centered';
+let bg1='#FAFAF8', bg2='#F0EDE8';
+let uploadedImage=null;
+let generatedPins=[];
+
+const FONTS={
+  sans:{t:'bold 24px Arial,sans-serif',s:'14px Arial,sans-serif',p:'12px Arial,sans-serif',c:'bold 13px Arial,sans-serif'},
+  serif:{t:'bold 24px Georgia,serif',s:'14px Georgia,serif',p:'12px Georgia,serif',c:'bold 13px Georgia,serif'},
+  bold:{t:'900 28px "Arial Black",sans-serif',s:'bold 13px Arial,sans-serif',p:'bold 11px Arial,sans-serif',c:'900 12px "Arial Black",sans-serif'},
+  script:{t:'bold 24px "Palatino Linotype",Georgia,serif',s:'italic 14px Georgia,serif',p:'italic 12px Georgia,serif',c:'bold italic 13px Georgia,serif'}
+};
+
+// ── LICENSE ───────────────────────────────────────────────────────────────
+async function verifyLicense(){
+  const key=document.getElementById('licenseInput').value.trim();
+  if(!key)return showLoginErr('Bitte einen Lizenzschlüssel eingeben.');
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=true;btn.textContent='Wird geprüft…';
+  hideLoginErr();
+  try{
+    const r=await fetch('/api/verify-license',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({licenseKey:key})});
+    const d=await r.json();
+    if(d.valid){
+      sessionStorage.setItem('pc_license',key);
+      sessionStorage.setItem('pc_email',d.email||'');
+      showApp();
+    } else {
+      showLoginErr(d.error||'Ungültiger Lizenzschlüssel. Bitte auf Gumroad kaufen.');
+    }
+  }catch(e){showLoginErr('Verbindungsfehler. Bitte erneut versuchen.');}
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-key" style="margin-right:6px"></i> Zugang freischalten';
+}
+
+function showLoginErr(msg){const e=document.getElementById('loginErr');e.textContent=msg;e.style.display='block';}
+function hideLoginErr(){document.getElementById('loginErr').style.display='none';}
+
+function showApp(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appScreen').style.display='block';
+}
+function logout(){
+  sessionStorage.removeItem('pc_license');
+  sessionStorage.removeItem('pc_email');
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('appScreen').style.display='none';
+  document.getElementById('licenseInput').value='';
+}
+
+// Auto-login if session active
+if(sessionStorage.getItem('pc_license')) showApp();
+
+// Enter key on license input
+document.getElementById('licenseInput').addEventListener('keydown',e=>{if(e.key==='Enter')verifyLicense();});
+
+// ── DESIGN CONTROLS ───────────────────────────────────────────────────────
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.tog').forEach(b=>{
+    if(b.onclick&&b.onclick.toString().includes('setLang'))
+      b.classList.toggle('active',(l==='de'&&b.textContent.includes('DE'))||(l==='en'&&b.textContent.includes('EN')));
+  });
+}
+
+document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{
+  pinFont=b.dataset.font;
+  document.querySelectorAll('[data-font]').forEach(x=>x.classList.toggle('active',x.dataset.font===pinFont));
+}));
+
+document.querySelectorAll('[data-layout]').forEach(b=>b.addEventListener('click',()=>{
+  pinLayout=b.dataset.layout;
+  document.querySelectorAll('[data-layout]').forEach(x=>x.classList.toggle('active',x.dataset.layout===pinLayout));
+}));
+
+document.querySelectorAll('.swatch').forEach(s=>s.addEventListener('click',()=>{
+  document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+  s.classList.add('active');
+  bg1=s.dataset.b1;bg2=s.dataset.b2;
+}));
+
+function applyCustom(){
+  bg1=document.getElementById('c1').value;
+  bg2=document.getElementById('c2').value;
+  document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+}
+
+function handleUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    uploadedImage=new Image();
+    uploadedImage.onload=()=>{
+      const t=document.getElementById('imgThumb');
+      t.src=ev.target.result;t.style.display='block';
+      document.getElementById('removeBtn').style.display='block';
+      document.getElementById('uploadZone').style.display='none';
+    };
+    uploadedImage.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImg(){
+  uploadedImage=null;
+  document.getElementById('imgThumb').style.display='none';
+  document.getElementById('removeBtn').style.display='none';
+  document.getElementById('uploadZone').style.display='block';
+  document.getElementById('imgUpload').value='';
+}
+
+// ── AUTO IMAGE FETCH ──────────────────────────────────────────────────────
+async function fetchAutoImage(query){
+  try{
+    const r=await fetch(`/api/image?q=${encodeURIComponent(query)}`);
+    const d=await r.json();
+    if(!d.url)return null;
+    return new Promise(resolve=>{
+      const img=new Image();
+      img.crossOrigin='anonymous';
+      img.onload=()=>resolve(img);
+      img.onerror=()=>resolve(null);
+      img.src=d.url;
+    });
+  }catch{return null;}
+}
+
+// ── CANVAS RENDER ─────────────────────────────────────────────────────────
+function lightness(hex){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return(r*299+g*587+b*114)/1000;
+}
+function textColor(){return lightness(bg1)>128?'#1A1917':'#F5F0E8';}
+function subColor(){return lightness(bg1)>128?'#6B6862':'#B4A48A';}
+function accentColor(){return lightness(bg1)>128?'#2C2C2A':'#C9A96E';}
+
+function renderPin(canvas,pin,autoImg){
+  const W=400,H=600,F=FONTS[pinFont];
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const tc=pin._layout==='overlay'?'#FFFFFF':textColor();
+  const sc=pin._layout==='overlay'?'rgba(255,255,255,.75)':subColor();
+  const ac=accentColor();
+
+  // Background
+  const gr=ctx.createLinearGradient(0,0,0,H);
+  gr.addColorStop(0,bg1);gr.addColorStop(1,bg2);
+  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+
+  const img=uploadedImage||autoImg;
+
+  if(img){
+    if(pin._layout==='split'){
+      ctx.save();ctx.beginPath();ctx.rect(0,0,W,H*.44);ctx.clip();
+      drawCover(ctx,img,0,0,W,H*.44);ctx.restore();
+    } else if(pin._layout==='overlay'){
+      drawCover(ctx,img,0,0,W,H);
+      ctx.fillStyle='rgba(0,0,0,.52)';ctx.fillRect(0,0,W,H);
+    } else {
+      const iS=W*.56,iX=(W-iS)/2,iY=22;
+      ctx.save();ctx.beginPath();
+      ctx.roundRect?ctx.roundRect(iX,iY,iS,iS,12):ctx.rect(iX,iY,iS,iS);
+      ctx.clip();drawCover(ctx,img,iX,iY,iS,iS);ctx.restore();
+    }
+  } else {
+    ctx.font='52px serif';ctx.textAlign='center';
+    ctx.fillText(pin.emoji||'✦',W/2,108);
+  }
+
+  const divY=img?(pin._layout==='split'?H*.44+18:img&&pin._layout!=='overlay'?W*.56+46:28):118;
+
+  ctx.strokeStyle=ac+'66';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(56,divY);ctx.lineTo(W-56,divY);ctx.stroke();
+
+  const aX=pin._layout==='left'?38:W/2;
+  ctx.textAlign=pin._layout==='left'?'left':'center';
+
+  ctx.fillStyle=tc;ctx.font=F.t;
+  const tl=wrap(pin.imageTitle||pin.title,pin._layout==='left'?28:32);
+  tl.slice(0,3).forEach((l,i)=>ctx.fillText(l,aX,divY+28+i*32));
+
+  const sy=divY+28+Math.min(tl.length,3)*32+10;
+  ctx.fillStyle=sc;ctx.font=F.s;
+  const sl=wrap(pin.imageSubtitle||'',pin._layout==='left'?34:40);
+  sl.slice(0,3).forEach((l,i)=>ctx.fillText(l,aX,sy+i*21));
+
+  if(pin.imagePoints?.length){
+    const py=sy+Math.min(sl.length,3)*21+18;
+    ctx.font=F.p;
+    pin.imagePoints.slice(0,3).forEach((pt,i)=>{
+      if(pin._layout==='left'){
+        ctx.fillStyle=ac;ctx.textAlign='left';ctx.fillText('›',36,py+i*26);
+        ctx.fillStyle=tc;ctx.fillText(pt.slice(0,42),54,py+i*26);
+      } else {
+        ctx.fillStyle=tc;ctx.textAlign='center';ctx.fillText('› '+pt.slice(0,34),W/2,py+i*26);
+      }
+    });
+  }
+
+  ctx.fillStyle=lightness(bg1)>128?'#2C2C2A':'#C9A96E';
+  rr(ctx,40,H-62,W-80,36,8);ctx.fill();
+  ctx.fillStyle=lightness(bg1)>128?'#FFFFFF':'#1A1917';
+  ctx.font=F.c;ctx.textAlign='center';
+  ctx.fillText(pin.cta||'Mehr erfahren →',W/2,H-39);
+}
+
+function drawCover(ctx,img,x,y,w,h){
+  const r=Math.max(w/img.width,h/img.height);
+  const sw=img.width*r,sh=img.height*r;
+  ctx.drawImage(img,x+(w-sw)/2,y+(h-sh)/2,sw,sh);
+}
+
+function wrap(t,m){
+  if(!t)return[];
+  const words=t.split(' ');const lines=[];let c='';
+  words.forEach(w=>{
+    if((c+' '+w).trim().length>m){if(c)lines.push(c.trim());c=w;}
+    else c=(c+' '+w).trim();
+  });
+  if(c)lines.push(c.trim());
+  return lines;
+}
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+}
+
+// ── GENERATE ─────────────────────────────────────────────────────────────
+async function generatePins(){
+  const topic=document.getElementById('topic').value.trim();
+  if(!topic){
+    document.getElementById('resultArea').innerHTML='<div class="err"><i class="ti ti-alert-circle"></i> Bitte ein Thema eingeben.</div>';
+    return;
+  }
+  const count=parseInt(document.getElementById('pinCount').value);
+  const audience=document.getElementById('audience').value.trim();
+  const goal=document.getElementById('goal').value;
+  const notes=document.getElementById('notes').value.trim();
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird erstellt…';
+
+  // Skeleton
+  let skeletons='';
+  for(let i=0;i<count;i++) skeletons+=`<div class="loading-card"><div class="loading-img"></div><div class="loading-lines"><div class="loading-line" style="width:80%"></div><div class="loading-line" style="width:100%"></div><div class="loading-line" style="width:60%"></div></div></div>`;
+  document.getElementById('resultArea').innerHTML=`<style>@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style><div class="loading-wrap">${skeletons}</div>`;
+
+  const goalMap={traffic:'Mehr Traffic',sales:'Produkt verkaufen',leads:'E-Mail-Leads',brand:'Markenbekanntheit',save:'Viral/Saves'};
+
+  const prompt=lang==='de'
+    ?`Du bist Pinterest-Marketing-Experte. Erstelle ${count} verschiedene hochkonvertierende Pinterest Pins auf DEUTSCH.\nThema: ${topic}\nZielgruppe: ${audience||'Allgemein'}\nZiel: ${goalMap[goal]}\nHinweise: ${notes||'keine'}\n\nJeder Pin soll einen anderen Blickwinkel haben. Die description soll ausführlich sein (3-5 Sätze, mehrere Zeilen).\n\nAntworte NUR mit einem JSON-Array (kein Markdown, keine Backticks):\n[{"title":"Titel max 60 Zeichen","description":"Ausführliche Beschreibung 3-5 Sätze mit Keywords, emotional, mehrere Zeilen","imageTitle":"max 5 Wörter","imageSubtitle":"max 8 Wörter","imagePoints":["Punkt 1","Punkt 2","Punkt 3"],"cta":"max 4 Wörter","tags":["tag1","tag2","tag3","tag4","tag5"],"emoji":"Emoji","seoKeywords":"3-5 Keywords","imageQuery":"englischer Suchbegriff für passendes Stockfoto"}]`
+    :`You are a Pinterest marketing expert. Create ${count} different high-converting Pinterest Pins in ENGLISH.\nTopic: ${topic}\nAudience: ${audience||'General'}\nGoal: ${goalMap[goal]}\nNotes: ${notes||'none'}\n\nEach pin should have a different angle. Description should be detailed (3-5 sentences, multiple lines).\n\nReply ONLY with a JSON array (no markdown, no backticks):\n[{"title":"title max 60 chars","description":"Detailed description 3-5 sentences with keywords, emotional, multiple lines","imageTitle":"max 5 words","imageSubtitle":"max 8 words","imagePoints":["point1","point2","point3"],"cta":"max 4 words","tags":["tag1","tag2","tag3","tag4","tag5"],"emoji":"emoji","seoKeywords":"3-5 keywords","imageQuery":"search term for matching stock photo"}]`;
+
+  try{
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    if(d.error)throw new Error(d.error.message||d.error);
+    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    let pins=JSON.parse(raw);
+    if(!Array.isArray(pins))pins=[pins];
+
+    generatedPins=pins.map(p=>({...p,_layout:pinLayout}));
+
+    // Render
+    let html=`<div class="pins-header"><h2>${pins.length} Pin${pins.length>1?'s':''} generiert</h2><button class="copy-all-btn" onclick="copyAll()"><i class="ti ti-copy"></i> Alle kopieren</button></div><div class="pins-grid" id="pinsGrid">`;
+    pins.forEach((_,i)=>html+=`<div class="pin-card" id="card${i}">
+      <div class="pin-image-area"><canvas id="canvas${i}"></canvas></div>
+      <div class="pin-body">
+        <div class="pin-num">Pin ${i+1}</div>
+        <div class="pin-title" id="ptitle${i}"></div>
+        <div class="pin-desc" id="pdesc${i}"></div>
+        <div class="pin-tags" id="ptags${i}"></div>
+        <div class="seo-row" id="pseo${i}"></div>
+        <div class="pin-actions">
+          <button class="act-btn" id="cpbtn${i}" onclick="copyPin(${i})"><i class="ti ti-copy"></i> Text</button>
+          <button class="act-btn" onclick="downloadPin(${i})"><i class="ti ti-download"></i> Bild</button>
+        </div>
+      </div>
+    </div>`);
+    html+='</div>';
+    document.getElementById('resultArea').innerHTML=html;
+
+    // Fill text + render canvases
+    for(let i=0;i<pins.length;i++){
+      const p=generatedPins[i];
+      document.getElementById(`ptitle${i}`).textContent=p.title;
+      document.getElementById(`pdesc${i}`).textContent=p.description;
+      document.getElementById(`ptags${i}`).innerHTML=p.tags.map(t=>`<span class="tag">#${t}</span>`).join('');
+      document.getElementById(`pseo${i}`).innerHTML=`<i class="ti ti-tag" style="font-size:11px;margin-right:3px"></i>${p.seoKeywords}`;
+      const canvas=document.getElementById(`canvas${i}`);
+      const autoImg=uploadedImage?null:await fetchAutoImage(p.imageQuery||topic);
+      renderPin(canvas,p,autoImg);
+    }
+
+  }catch(e){
+    document.getElementById('resultArea').innerHTML=`<div class="err"><i class="ti ti-alert-circle"></i> Fehler: ${e.message||'Bitte erneut versuchen.'}</div>`;
+  }
+
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-refresh"></i> Neu generieren';
+}
+
+function copyPin(i){
+  const p=generatedPins[i];
+  const text=`📌 ${p.title}\n\n${p.description}\n\n${p.tags.map(t=>'#'+t).join(' ')}\n\nSEO: ${p.seoKeywords}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.getElementById(`cpbtn${i}`);
+    b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';
+    setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Text';},2500);
+  });
+}
+
+function copyAll(){
+  const text=generatedPins.map((p,i)=>`── Pin ${i+1} ──\n📌 ${p.title}\n\n${p.description}\n\n${p.tags.map(t=>'#'+t).join(' ')}\nSEO: ${p.seoKeywords}`).join('\n\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.querySelector('.copy-all-btn');
+    b.innerHTML='<i class="ti ti-check"></i> Alle kopiert!';
+    b.style.background='var(--green-bg)';b.style.color='var(--green)';
+    setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle kopieren';b.style.background='';b.style.color='';},2500);
+  });
+}
+
+function downloadPin(i){
+  const c=document.getElementById(`canvas${i}`);
+  const a=document.createElement('a');
+  a.download=`pinterest-pin-${i+1}.png`;
+  a.href=c.toDataURL('image/png');
+  a.click();
+}
+</script>
+</body>
+</html>
