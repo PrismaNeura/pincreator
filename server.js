@@ -1,87 +1,46 @@
 const express = require('express');
 const fetch = (...args) => import('node-fetch').then(({ default: f }) => f(...args));
-const path = require('path');
 
 const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-// ── Gumroad License prüfen ──────────────────────────────────────────────────
-app.post('/api/verify-license', async (req, res) => {
+// ── Passwort Login ──────────────────────────────────────────────────────────
+app.post('/api/verify-license', (req, res) => {
   const { licenseKey } = req.body;
-  if (!licenseKey) return res.status(400).json({ valid: false, error: 'Kein Key angegeben' });
-
-  try {
-    const PRODUCT_ID = process.env.GUMROAD_PRODUCT_ID;
-    if (!PRODUCT_ID) return res.status(500).json({ valid: false, error: 'GUMROAD_PRODUCT_ID fehlt in den Secrets' });
-
-    const params = new URLSearchParams();
-params.append('product_permalink', 'oktubc');
-params.append('license_key', licenseKey);
-
-const r = await fetch('https://api.gumroad.com/v2/licenses/verify', {
-  method: 'POST',
-  body: params
-});
-    const data = await r.json();
-
-    if (!data.success) return res.json({ valid: false, error: 'Ungültiger Key' });
-
-    const purchase = data.purchase;
-    const cancelled = purchase.subscription_cancelled_at || purchase.subscription_ended_at;
-    if (cancelled) return res.json({ valid: false, error: 'Abo wurde gekündigt' });
-
-    return res.json({ valid: true, email: purchase.email });
-  } catch (e) {
-    return res.status(500).json({ valid: false, error: e.message });
+  const PASSWORD = process.env.ACCESS_PASSWORD || 'PinBoost2026';
+  if (licenseKey === PASSWORD) {
+    res.json({ valid: true, email: 'user' });
+  } else {
+    res.json({ valid: false, error: 'Falsches Passwort – bitte auf Gumroad kaufen.' });
   }
 });
 
 // ── Anthropic API Proxy ─────────────────────────────────────────────────────
 app.post('/api/generate', async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY fehlt in den Secrets' });
-
+  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY fehlt' });
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
-      },
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
       body: JSON.stringify(req.body)
     });
-    const data = await r.json();
-    res.json(data);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
+    res.json(await r.json());
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 // ── Unsplash Proxy ──────────────────────────────────────────────────────────
 app.get('/api/image', async (req, res) => {
-  const query = req.query.q || 'abstract';
   const unsplashKey = process.env.UNSPLASH_ACCESS_KEY;
-  const pexelsKey = process.env.PEXELS_API_KEY;
-
   try {
     if (unsplashKey) {
-      const r = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(query)}&orientation=portrait&client_id=${unsplashKey}`);
-      const data = await r.json();
-      if (data.urls) return res.json({ url: data.urls.regular });
-    }
-    if (pexelsKey) {
-      const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&orientation=portrait&per_page=5`, {
-        headers: { Authorization: pexelsKey }
-      });
-      const data = await r.json();
-      if (data.photos?.length) return res.json({ url: data.photos[Math.floor(Math.random()*data.photos.length)].src.large });
+      const r = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(req.query.q||'abstract')}&orientation=portrait&client_id=${unsplashKey}`);
+      const d = await r.json();
+      if (d.urls) return res.json({ url: d.urls.regular });
     }
     res.json({ url: null });
-  } catch (e) {
-    res.json({ url: null });
-  }
+  } catch { res.json({ url: null }); }
 });
 
 const PORT = process.env.PORT || 3000;
