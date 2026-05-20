@@ -63,37 +63,34 @@ app.post('/api/set-password', async (req, res) => {
 });
 
 // GUMROAD WEBHOOK
-app.post('/webhook/gumroad', async (req, res) => {
-  res.status(200).send('OK'); // Sofort antworten!
-  const data = req.body;
-  const email = (data.email || '').toLowerCase();
-  if (!email) return res.status(400).send('No email');
-  try {
-    const resourceName = data.resource_name;
-    if (resourceName === 'sale') {
-      const setupToken = crypto.randomBytes(32).toString('hex');
-      const expiresAt = new Date();
-      expiresAt.setMonth(expiresAt.getMonth() + 1);
-      const existing = await supabaseFetch(`/users?email=eq.${encodeURIComponent(email)}&select=id`, 'GET', null, true);
-      if (existing && existing.length) {
-        await supabaseFetch(`/users?id=eq.${existing[0].id}`, 'PATCH', { active: true, gumroad_sale_id: data.sale_id, expires_at: expiresAt.toISOString(), setup_token: setupToken }, true);
-      } else {
-        await supabaseFetch('/users', 'POST', { email, password_hash: crypto.randomBytes(32).toString('hex'), active: false, gumroad_sale_id: data.sale_id, expires_at: expiresAt.toISOString(), setup_token: setupToken }, true);
+app.post('/webhook/gumroad', (req, res) => {
+  res.status(200).send('OK');
+  // Im Hintergrund weiterlaufen
+  setImmediate(async () => {
+    const data = req.body;
+    const email = (data.email || '').toLowerCase();
+    if (!email) return;
+    try {
+      const resourceName = data.resource_name;
+      if (resourceName === 'sale') {
+        const setupToken = crypto.randomBytes(32).toString('hex');
+        const expiresAt = new Date();
+        expiresAt.setMonth(expiresAt.getMonth() + 1);
+        const existing = await supabaseFetch(`/users?email=eq.${encodeURIComponent(email)}&select=id`, 'GET', null, true);
+        if (existing && existing.length) {
+          await supabaseFetch(`/users?id=eq.${existing[0].id}`, 'PATCH', { active: true, gumroad_sale_id: data.sale_id, expires_at: expiresAt.toISOString(), setup_token: setupToken }, true);
+        } else {
+          await supabaseFetch('/users', 'POST', { email, password_hash: crypto.randomBytes(32).toString('hex'), active: false, gumroad_sale_id: data.sale_id, expires_at: expiresAt.toISOString(), setup_token: setupToken }, true);
+        }
+        const setupLink = `https://pincreator.onrender.com/setup?email=${encodeURIComponent(email)}&token=${setupToken}`;
+        await sendEmail(email, 'Willkommen bei PinCreator!', `Hallo!\n\nVielen Dank für deinen Kauf! 🎉\n\nKlicke hier um dein Passwort festzulegen:\n\n${setupLink}\n\nViel Erfolg!\nAnne Claus`);
+      } else if (['subscription_cancelled', 'subscription_ended', 'refund'].includes(resourceName)) {
+        await supabaseFetch(`/users?email=eq.${encodeURIComponent(email)}`, 'PATCH', { active: false }, true);
+        await sendEmail(email, 'PinCreator Abonnement beendet', `Hallo!\n\nDein Abonnement wurde beendet.\n\nJederzeit wieder aktivieren:\nhttps://gumroad.com/l/oktubc\n\nViele Grüße,\nAnne Claus`);
       }
-      const setupLink = `https://pincreator.onrender.com/setup?email=${encodeURIComponent(email)}&token=${setupToken}`;
-      await sendEmail(email, 'Willkommen bei PinCreator! Richte deinen Account ein',
-        `Hallo!\n\nVielen Dank für deinen Kauf! 🎉\n\nKlicke auf diesen Link um dein Passwort festzulegen:\n\n${setupLink}\n\nDieser Link ist 24 Stunden gültig.\n\nViel Erfolg!\nAnne Claus`
-      );
-    } else if (['subscription_cancelled', 'subscription_ended', 'refund'].includes(resourceName)) {
-      await supabaseFetch(`/users?email=eq.${encodeURIComponent(email)}`, 'PATCH', { active: false }, true);
-      await sendEmail(email, 'Dein PinCreator Abonnement wurde beendet',
-        `Hallo!\n\nDein Abonnement wurde beendet. Du kannst es jederzeit wieder aktivieren:\nhttps://gumroad.com/l/oktubc\n\nBei Fragen: claus.anne@gmx.de\n\nViele Grüße,\nAnne Claus`
-      );
-    }
-    res.status(200).send('OK');
-  } catch (e) { console.error('Webhook error:', e); res.status(500).send(e.message); }
+    } catch(e) { console.error('Webhook Hintergrund-Fehler:', e); }
+  });
 });
-
 async function sendEmail(to, subject, text) {
   const nodemailer = require('nodemailer');
   const transporter = nodemailer.createTransport({
