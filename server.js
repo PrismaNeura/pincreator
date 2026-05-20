@@ -93,19 +93,18 @@ app.post('/webhook/gumroad', (req, res) => {
   });
 });
 async function sendEmail(to, subject, text) {
-  const nodemailer = require('nodemailer');
-  const transporter = nodemailer.createTransport({
-    host: 'mail.gmx.net',
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.GMX_EMAIL,
-      pass: process.env.GMX_PASSWORD
-    }
-  });
   try {
+    const transporter = (await import('nodemailer')).default.createTransport({
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'boostupyourpins@gmx.de',
+        pass: process.env.BREVO_SMTP_KEY
+      }
+    });
     await transporter.sendMail({
-      from: `PinCreator <${process.env.GMX_EMAIL}>`,
+      from: 'PinCreator <boostupyourpins@gmx.de>',
       to,
       subject,
       text
@@ -114,7 +113,7 @@ async function sendEmail(to, subject, text) {
   } catch(e) {
     console.error('E-Mail Fehler:', e.message);
   }
-}
+}}
 // ANTHROPIC PROXY
 app.post('/api/generate', async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
