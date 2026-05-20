@@ -64,6 +64,7 @@ app.post('/api/set-password', async (req, res) => {
 
 // GUMROAD WEBHOOK
 app.post('/webhook/gumroad', async (req, res) => {
+  res.status(200).send('OK'); // Sofort antworten!
   const data = req.body;
   const email = (data.email || '').toLowerCase();
   if (!email) return res.status(400).send('No email');
