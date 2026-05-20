@@ -95,22 +95,21 @@ app.post('/webhook/gumroad', (req, res) => {
 });
 async function sendEmail(to, subject, text) {
   try {
-    const transporter = nodemailer.createTransport({
-      host: 'smtp-relay.brevo.com',
-      port: 587,
-      secure: false,
-      auth: {
-        user: 'boostupyourpins@gmx.de',
-        pass: process.env.BREVO_SMTP_KEY
-      }
+    const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_SMTP_KEY
+      },
+      body: JSON.stringify({
+        sender: { name: 'PinCreator', email: 'boostupyourpins@gmx.de' },
+        to: [{ email: to }],
+        subject,
+        textContent: text
+      })
     });
-    await transporter.sendMail({
-      from: 'PinCreator <boostupyourpins@gmx.de>',
-      to,
-      subject,
-      text
-    });
-    console.log('E-Mail gesendet an:', to);
+    const d = await r.json();
+    console.log('E-Mail gesendet:', JSON.stringify(d));
   } catch(e) {
     console.error('E-Mail Fehler:', e.message);
   }
