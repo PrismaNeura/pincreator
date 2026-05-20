@@ -1,6 +1,7 @@
 const express = require('express');
 const fetch = (...args) => import('node-fetch').then(({ default: f }) => f(...args));
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(express.json());
@@ -94,7 +95,7 @@ app.post('/webhook/gumroad', (req, res) => {
 });
 async function sendEmail(to, subject, text) {
   try {
-    const transporter = (await import('nodemailer')).default.createTransport({
+    const transporter = nodemailer.createTransport({
       host: 'smtp-relay.brevo.com',
       port: 587,
       secure: false,
@@ -113,7 +114,7 @@ async function sendEmail(to, subject, text) {
   } catch(e) {
     console.error('E-Mail Fehler:', e.message);
   }
-}}
+}
 // ANTHROPIC PROXY
 app.post('/api/generate', async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
