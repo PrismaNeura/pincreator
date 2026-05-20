@@ -102,7 +102,7 @@ async function sendEmail(to, subject, text) {
         'api-key': process.env.BREVO_SMTP_KEY
       },
       body: JSON.stringify({
-      sender: { name: 'PinCreator', email: 'contact@boostupyourpins.brevo.com' },
+      sender: { name: 'PinCreator', email: 'pincreator@boostyourpins.de' },
         to: [{ email: to }],
         subject,
         textContent: text
