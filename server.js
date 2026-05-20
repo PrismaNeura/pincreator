@@ -65,6 +65,7 @@ app.post('/api/set-password', async (req, res) => {
 // GUMROAD WEBHOOK
 app.post('/webhook/gumroad', (req, res) => {
   res.status(200).send('OK');
+  console.log('Webhook empfangen:', JSON.stringify(req.body));
   // Im Hintergrund weiterlaufen
   setImmediate(async () => {
     const data = req.body;
