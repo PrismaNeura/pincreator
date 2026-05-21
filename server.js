@@ -141,5 +141,8 @@ app.get('/api/image', async (req, res) => {
   } catch { res.json({ url: null }); }
 });
 
+app.get('/setup', (req, res) => {
+  res.sendFile('index.html', { root: 'public' });
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`PinCreator läuft auf Port ${PORT}`));
