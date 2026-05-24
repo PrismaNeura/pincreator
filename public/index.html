@@ -824,9 +824,7 @@ ONLY JSON:
       document.getElementById('resultArea').innerHTML=html;
 
       generatedPins=carousel.slides.map(s=>({...s,title:s.title,description:s.subtitle,caption:carousel.caption,hashtags:carousel.hashtags}));
-      window._carouselCaption=carousel.caption+'
-
-'+carousel.hashtags.map(t=>'#'+t).join(' ');
+      window._carouselCaption=carousel.caption+'\n\n'+carousel.hashtags.map(t=>'#'+t).join(' ');
 
       const autoImg=uploadedImage?null:await fetchAutoImage(topic,'squarish');
       for(let i=0;i<carousel.slides.length;i++){
