@@ -8,18 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#F7F4F0;--surface:#FFFFFF;--s2:#F2EEE9;
-  --border:rgba(44,44,42,0.12);--border2:rgba(44,44,42,0.22);
-  --text:#1A1917;--text2:#6B6862;--text3:#A09A93;
-  --red:#E7232D;--red-bg:#FEF0F0;
-  --purple:#534AB7;--purple-bg:#EEEDFE;
-  --green:#2D7A3A;--green-bg:#EAF3DE;
-  --r:12px;--rs:8px;
-}
+:root{--bg:#F7F4F0;--surface:#FFFFFF;--s2:#F2EEE9;--border:rgba(44,44,42,0.12);--border2:rgba(44,44,42,0.22);--text:#1A1917;--text2:#6B6862;--text3:#A09A93;--red:#E7232D;--red-bg:#FEF0F0;--purple:#534AB7;--purple-bg:#EEEDFE;--green:#2D7A3A;--green-bg:#EAF3DE;--r:12px;--rs:8px;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
-
-/* LOGIN & SETUP */
 .auth-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;}
 .auth-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:2.5rem;max-width:420px;width:100%;text-align:center;}
 .auth-logo{font-size:44px;color:var(--red);margin-bottom:1rem;}
@@ -34,8 +24,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .auth-ok{font-size:13px;color:#2D7A3A;padding:10px;background:#EAF3DE;border-radius:var(--rs);border:0.5px solid #97C459;margin-top:10px;display:none;text-align:left;}
 .auth-hint{font-size:12px;color:var(--text3);margin-top:1.5rem;}
 .auth-hint a{color:var(--purple);text-decoration:none;}
-
-/* APP */
 #appScreen{display:none;flex-direction:column;min-height:100vh;}
 .site-header{background:var(--surface);border-bottom:0.5px solid var(--border);padding:.875rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo{display:flex;align-items:center;gap:9px;font-weight:600;font-size:17px;}
@@ -43,50 +31,41 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .badge{font-size:11px;padding:3px 10px;background:var(--red-bg);color:var(--red);border-radius:20px;font-weight:500;}
 .user-email{font-size:12px;color:var(--text3);}
 .logout-btn{font-size:12px;padding:5px 12px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2);}
-
 .hero{text-align:center;padding:2.5rem 2rem 1.5rem;max-width:600px;margin:0 auto;}
 .hero h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,4vw,38px);line-height:1.2;margin-bottom:.75rem;}
 .hero h1 span{color:var(--red);}
 .hero p{font-size:15px;color:var(--text2);line-height:1.7;}
-
 .container{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 2rem;flex:1;}
-
 .form-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1.5rem;margin-bottom:1.5rem;}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;}
 .fs{display:flex;flex-direction:column;gap:5px;}
 .lbl{font-size:11px;font-weight:500;letter-spacing:.05em;color:var(--text3);text-transform:uppercase;}
 input[type=text],input[type=email],input[type=password],textarea,select{width:100%;font-family:'DM Sans',sans-serif;font-size:14px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text);padding:9px 12px;outline:none;transition:border-color .15s;}
 input:focus,textarea:focus,select:focus{border-color:var(--border2);}
-textarea{height:60px;resize:vertical;}
-
-.options-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:1rem;}
+.options-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-top:1rem;}
 .tog-group{display:flex;gap:5px;flex-wrap:wrap;}
-.tog{flex:1;min-width:50px;padding:7px 5px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;}
+.tog{flex:1;min-width:45px;padding:7px 5px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;}
 .tog.active{background:var(--purple-bg);color:var(--purple);border-color:#AFA9EC;}
-
 .color-swatches{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
-.swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;}
+.swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;}
 .swatch.active{border-color:var(--text);transform:scale(1.15);}
 .custom-colors{display:flex;align-items:center;gap:6px;margin-top:6px;}
 .custom-colors input[type=color]{width:26px;height:26px;border:0.5px solid var(--border);border-radius:50%;padding:2px;cursor:pointer;background:none;}
-
 .upload-zone{border:0.5px dashed var(--border2);border-radius:var(--rs);padding:10px;text-align:center;cursor:pointer;font-size:12px;color:var(--text3);position:relative;margin-top:4px;}
 .upload-zone:hover{background:var(--s2);}
 .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
 .img-thumb{width:100%;height:56px;object-fit:cover;border-radius:var(--rs);margin-top:5px;}
 .remove-img{width:100%;margin-top:4px;font-size:11px;padding:4px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2);}
-
 .gen-section{display:flex;align-items:center;gap:1rem;margin-top:1.25rem;flex-wrap:wrap;}
 .count-select{font-family:'DM Sans',sans-serif;font-size:14px;padding:10px 14px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text);}
 .gen-btn{flex:1;min-width:200px;padding:13px;font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;background:var(--red);border:none;border-radius:var(--rs);color:#fff;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
 .gen-btn:hover{background:#C41E27;}
 .gen-btn:disabled{background:#E0AEB0;cursor:not-allowed;}
-
+.section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);padding-top:.875rem;border-top:0.5px solid var(--border);margin-top:.875rem;margin-bottom:.5rem;}
 .pins-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
 .pins-header h2{font-size:16px;font-weight:500;}
 .copy-all-btn{font-size:13px;padding:7px 14px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:5px;transition:all .15s;}
 .copy-all-btn:hover{background:var(--green-bg);color:var(--green);border-color:#97C459;}
-
 .pins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;}
 .pin-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;animation:fadeUp .4s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -102,7 +81,6 @@ textarea{height:60px;resize:vertical;}
 .pin-actions{display:flex;gap:6px;}
 .act-btn{flex:1;padding:7px;font-size:12px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s;}
 .act-btn:hover,.act-btn.ok{background:var(--green-bg);color:var(--green);border-color:#97C459;}
-
 .placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;background:var(--surface);border:0.5px dashed var(--border2);border-radius:var(--r);color:var(--text3);font-size:14px;gap:12px;text-align:center;}
 .loading-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.25rem;}
 .loading-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);overflow:hidden;}
@@ -111,8 +89,6 @@ textarea{height:60px;resize:vertical;}
 .loading-line{height:12px;border-radius:4px;background:linear-gradient(90deg,var(--s2) 25%,var(--bg) 50%,var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .err{font-size:13px;color:#A32D2D;padding:12px 14px;background:#FCEBEB;border-radius:var(--rs);border:0.5px solid #F09595;margin-bottom:1rem;}
-
-/* FOOTER */
 .site-footer{background:var(--surface);border-top:0.5px solid var(--border);padding:1.5rem 2rem;margin-top:auto;}
 .footer-inner{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:.75rem;align-items:center;text-align:center;}
 .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;}
@@ -120,8 +96,6 @@ textarea{height:60px;resize:vertical;}
 .footer-links a:hover{color:var(--text2);}
 .footer-copy{font-size:11px;color:var(--text3);}
 .footer-legal{font-size:11px;color:var(--text3);max-width:600px;line-height:1.6;}
-
-/* LEGAL MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--surface);border-radius:var(--r);max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:2rem;position:relative;}
@@ -130,13 +104,11 @@ textarea{height:60px;resize:vertical;}
 .modal p,.modal li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:.5rem;}
 .modal ul{padding-left:1.25rem;margin-bottom:.5rem;}
 .modal-close{position:absolute;top:1rem;right:1rem;font-size:20px;cursor:pointer;color:var(--text3);background:none;border:none;line-height:1;}
-
 @media(max-width:600px){.site-header{padding:.875rem 1rem;}.container{padding:1rem 1rem 2rem;}.form-grid,.options-row{grid-template-columns:1fr;}.gen-section{flex-direction:column;}.gen-btn,.count-select{width:100%;}.footer-links{gap:1rem;}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen" class="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">📌</div>
@@ -144,15 +116,12 @@ textarea{height:60px;resize:vertical;}
     <p>KI-gestützte Pinterest Pins in Sekunden.<br>Melde dich mit deinen Zugangsdaten an.</p>
     <input type="email" class="auth-input" id="loginEmail" placeholder="E-Mail-Adresse">
     <input type="password" class="auth-input" id="loginPassword" placeholder="Passwort">
-    <button class="auth-btn" id="loginBtn" onclick="doLogin()">
-      <i class="ti ti-login"></i> Anmelden
-    </button>
+    <button class="auth-btn" id="loginBtn" onclick="doLogin()"><i class="ti ti-login"></i> Anmelden</button>
     <div class="auth-err" id="loginErr"></div>
     <p class="auth-hint">Noch kein Zugang? <a href="https://gumroad.com/l/oktubc" target="_blank">Hier Abonnement kaufen →</a></p>
   </div>
 </div>
 
-<!-- PASSWORT SETUP -->
 <div id="setupScreen" class="auth-screen" style="display:none">
   <div class="auth-card">
     <div class="auth-logo">🔑</div>
@@ -161,15 +130,12 @@ textarea{height:60px;resize:vertical;}
     <input type="email" class="auth-input" id="setupEmail" placeholder="E-Mail-Adresse" readonly>
     <input type="password" class="auth-input" id="setupPassword" placeholder="Neues Passwort (min. 8 Zeichen)">
     <input type="password" class="auth-input" id="setupPassword2" placeholder="Passwort wiederholen">
-    <button class="auth-btn" id="setupBtn" onclick="doSetup()">
-      <i class="ti ti-check"></i> Passwort speichern & einloggen
-    </button>
+    <button class="auth-btn" id="setupBtn" onclick="doSetup()"><i class="ti ti-check"></i> Passwort speichern & einloggen</button>
     <div class="auth-err" id="setupErr"></div>
     <div class="auth-ok" id="setupOk"></div>
   </div>
 </div>
 
-<!-- APP -->
 <div id="appScreen">
   <header class="site-header">
     <div class="logo">📌 PinCreator</div>
@@ -182,7 +148,7 @@ textarea{height:60px;resize:vertical;}
 
   <section class="hero">
     <h1>Pinterest Pins, die <span>verkaufen</span></h1>
-    <p>Bis zu 5 Pins gleichzeitig – mit KI-Text, automatischem Bild und sofort kopierbereit.</p>
+    <p>Bis zu 5 Pins gleichzeitig – mit KI-Text, kreativem Design und sofort kopierbereit.</p>
   </section>
 
   <main class="container">
@@ -212,6 +178,7 @@ textarea{height:60px;resize:vertical;}
         </div>
       </div>
 
+      <div class="section-label">Sprache & Schrift</div>
       <div class="options-row">
         <div class="fs">
           <div class="lbl">Sprache</div>
@@ -238,6 +205,57 @@ textarea{height:60px;resize:vertical;}
             <button class="tog" data-layout="overlay">Overlay</button>
           </div>
         </div>
+      </div>
+
+      <div class="section-label">Dekoration</div>
+      <div class="options-row">
+        <div class="fs">
+          <div class="lbl">Muster</div>
+          <div class="tog-group">
+            <button class="tog active" data-pattern="none">Keins</button>
+            <button class="tog" data-pattern="dots">Punkte</button>
+            <button class="tog" data-pattern="grid">Gitter</button>
+            <button class="tog" data-pattern="waves">Wellen</button>
+            <button class="tog" data-pattern="circles">Kreise</button>
+            <button class="tog" data-pattern="diagonal">Streifen</button>
+          </div>
+        </div>
+        <div class="fs">
+          <div class="lbl">Rahmen</div>
+          <div class="tog-group">
+            <button class="tog active" data-border="none">Keiner</button>
+            <button class="tog" data-border="single">Einfach</button>
+            <button class="tog" data-border="double">Doppelt</button>
+            <button class="tog" data-border="corner">Ecken</button>
+            <button class="tog" data-border="thick">Breit</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Hintergrund & Bild</div>
+      <div class="options-row">
+        <div class="fs">
+          <div class="lbl">Hintergrundfarbe</div>
+          <div class="color-swatches" id="swatchRow">
+            <div class="swatch active" data-b1="#FAFAF8" data-b2="#F0EDE8" style="background:linear-gradient(135deg,#FAFAF8,#F0EDE8)"></div>
+            <div class="swatch" data-b1="#E7232D" data-b2="#B01920" style="background:linear-gradient(135deg,#E7232D,#B01920)"></div>
+            <div class="swatch" data-b1="#18150F" data-b2="#2A221A" style="background:linear-gradient(135deg,#18150F,#2A221A)"></div>
+            <div class="swatch" data-b1="#EBF4FF" data-b2="#D5E8F7" style="background:linear-gradient(135deg,#EBF4FF,#D5E8F7)"></div>
+            <div class="swatch" data-b1="#EAF3DE" data-b2="#C0DD97" style="background:linear-gradient(135deg,#EAF3DE,#C0DD97)"></div>
+            <div class="swatch" data-b1="#FBEAF0" data-b2="#F4C0D1" style="background:linear-gradient(135deg,#FBEAF0,#F4C0D1)"></div>
+            <div class="swatch" data-b1="#FAEEDA" data-b2="#FAC775" style="background:linear-gradient(135deg,#FAEEDA,#FAC775)"></div>
+            <div class="swatch" data-b1="#E1F5EE" data-b2="#5DCAA5" style="background:linear-gradient(135deg,#E1F5EE,#5DCAA5)"></div>
+            <div class="swatch" data-b1="#1A0533" data-b2="#3D0F6E" style="background:linear-gradient(135deg,#1A0533,#3D0F6E)"></div>
+            <div class="swatch" data-b1="#0A2540" data-b2="#C9A96E" style="background:linear-gradient(135deg,#0A2540,#C9A96E)"></div>
+            <div class="swatch" data-b1="#2D0A0A" data-b2="#8B0000" style="background:linear-gradient(135deg,#2D0A0A,#8B0000)"></div>
+            <div class="swatch" data-b1="#FFFFFF" data-b2="#F0F0F0" style="background:linear-gradient(135deg,#FFFFFF,#F0F0F0);border:1px solid #ddd"></div>
+          </div>
+          <div class="custom-colors">
+            <input type="color" id="c1" value="#9B59B6">
+            <input type="color" id="c2" value="#6C3483">
+            <button class="tog" onclick="applyCustom()" style="flex:none;padding:4px 10px;font-size:11px">Eigene Farbe</button>
+          </div>
+        </div>
         <div class="fs">
           <div class="lbl">Eigenes Bild</div>
           <div class="upload-zone" id="uploadZone">
@@ -247,27 +265,6 @@ textarea{height:60px;resize:vertical;}
           </div>
           <img id="imgThumb" class="img-thumb" style="display:none">
           <button id="removeBtn" class="remove-img" style="display:none" onclick="removeImg()">✕ Entfernen</button>
-        </div>
-      </div>
-
-      <div class="fs" style="margin-top:1rem">
-        <div class="lbl">Hintergrundfarbe</div>
-        <div class="color-swatches" id="swatchRow">
-          <div class="swatch active" data-b1="#FAFAF8" data-b2="#F0EDE8" style="background:linear-gradient(135deg,#FAFAF8,#F0EDE8)"></div>
-          <div class="swatch" data-b1="#E7232D" data-b2="#B01920" style="background:linear-gradient(135deg,#E7232D,#B01920)"></div>
-          <div class="swatch" data-b1="#18150F" data-b2="#2A221A" style="background:linear-gradient(135deg,#18150F,#2A221A)"></div>
-          <div class="swatch" data-b1="#EBF4FF" data-b2="#D5E8F7" style="background:linear-gradient(135deg,#EBF4FF,#D5E8F7)"></div>
-          <div class="swatch" data-b1="#EAF3DE" data-b2="#C0DD97" style="background:linear-gradient(135deg,#EAF3DE,#C0DD97)"></div>
-          <div class="swatch" data-b1="#FBEAF0" data-b2="#F4C0D1" style="background:linear-gradient(135deg,#FBEAF0,#F4C0D1)"></div>
-          <div class="swatch" data-b1="#FAEEDA" data-b2="#FAC775" style="background:linear-gradient(135deg,#FAEEDA,#FAC775)"></div>
-          <div class="swatch" data-b1="#E1F5EE" data-b2="#5DCAA5" style="background:linear-gradient(135deg,#E1F5EE,#5DCAA5)"></div>
-          <div class="swatch" data-b1="#1A0533" data-b2="#3D0F6E" style="background:linear-gradient(135deg,#1A0533,#3D0F6E)"></div>
-          <div class="swatch" data-b1="#032233" data-b2="#0A4A6E" style="background:linear-gradient(135deg,#032233,#0A4A6E)"></div>
-        </div>
-        <div class="custom-colors">
-          <input type="color" id="c1" value="#9B59B6">
-          <input type="color" id="c2" value="#6C3483">
-          <button class="tog" onclick="applyCustom()" style="flex:none;padding:4px 10px;font-size:11px">Eigene Farbe</button>
         </div>
       </div>
 
@@ -299,177 +296,152 @@ textarea{height:60px;resize:vertical;}
         <a href="#" onclick="openModal('impressum')">Impressum</a>
         <a href="#" onclick="openModal('datenschutz')">Datenschutzerklärung</a>
         <a href="#" onclick="openModal('agb')">AGB</a>
-        <a href="mailto:claus.anne@gmx.de">Kontakt</a>
+        <a href="mailto:hallo@boostyourpins.de">Kontakt</a>
         <a href="https://gumroad.com/l/oktubc" target="_blank">Abonnement verwalten</a>
       </div>
-      <div class="footer-legal">
-        Durch die Nutzung von PinCreator stimmst du unseren <a href="#" onclick="openModal('agb')" style="color:var(--purple);text-decoration:none">AGB</a> und unserer <a href="#" onclick="openModal('datenschutz')" style="color:var(--purple);text-decoration:none">Datenschutzerklärung</a> zu. Die generierten Pins sind urheberrechtsfrei nutzbar.
-      </div>
+      <div class="footer-legal">Durch die Nutzung von PinCreator stimmst du unseren <a href="#" onclick="openModal('agb')" style="color:var(--purple);text-decoration:none">AGB</a> und unserer <a href="#" onclick="openModal('datenschutz')" style="color:var(--purple);text-decoration:none">Datenschutzerklärung</a> zu.</div>
       <div class="footer-copy">© 2026 Anne Claus · PinCreator · Herzberg</div>
     </div>
   </footer>
 </div>
 
-<!-- MODALS -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal" id="modalContent"></div>
 </div>
 
 <script>
-// ── AUTH ──────────────────────────────────────────────────────────────────
-const MODALS = {
-  impressum: `<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Impressum</h2><p><strong>Angaben gemäß § 5 TMG</strong></p><p>Anne Claus<br>Mauerstraße 15<br>04916 Herzberg</p><p><strong>Kontakt:</strong><br>E-Mail: claus.anne@gmx.de</p>`,
-  datenschutz: `<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Datenschutzerklärung</h2><h3>Verantwortlicher</h3><p>Anne Claus, Mauerstraße 15, 04916 Herzberg<br>E-Mail: claus.anne@gmx.de</p><h3>Welche Daten wir erheben</h3><ul><li>E-Mail-Adresse zur Account-Verwaltung</li><li>Zahlungsdaten – ausschließlich von Gumroad verarbeitet</li></ul><h3>Zweck der Datenverarbeitung</h3><p>Wir verarbeiten deine Daten ausschließlich zur Account-Verwaltung und Abo-Prüfung. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p><h3>Datenspeicherung</h3><p>Deine E-Mail wird in unserer Datenbank (Supabase, Server EU-West/Irland) gespeichert und nach Kündigung auf Anfrage gelöscht.</p><h3>Drittanbieter</h3><ul><li><strong>Gumroad</strong> – Zahlungsabwicklung (USA)</li><li><strong>Anthropic</strong> – KI-Textgenerierung (USA)</li><li><strong>Render</strong> – Hosting (USA)</li></ul><h3>Deine Rechte</h3><p>Auskunft, Berichtigung, Löschung: claus.anne@gmx.de. Antwort innerhalb von 30 Tagen.</p>`,
-  agb: `<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Allgemeine Geschäftsbedingungen</h2><h3>§ 1 Anbieter</h3><p>Anne Claus, Mauerstraße 15, 04916 Herzberg, claus.anne@gmx.de</p><h3>§ 2 Leistung</h3><p>PinCreator ist ein webbasiertes KI-Tool zur Erstellung von Pinterest Pins (Texte, Bilder, Hashtags).</p><h3>§ 3 Abonnement</h3><p>Preis: 7,00 €/Monat inkl. MwSt. Automatische monatliche Verlängerung über Gumroad.</p><h3>§ 4 Kündigung</h3><p>Jederzeit zum Ende des Abrechnungszeitraums über Gumroad möglich.</p><h3>§ 5 Widerruf</h3><p>14 Tage Widerrufsrecht ab Vertragsschluss. Bei digitalen Inhalten erlischt das Widerrufsrecht mit Beginn der Nutzung.</p><h3>§ 6 Nutzungsrechte</h3><p>Generierte Pins dürfen kommerziell genutzt werden. Der Zugang ist persönlich und nicht übertragbar.</p><h3>§ 7 Haftung</h3><p>Haftung beschränkt auf grobe Fahrlässigkeit und Vorsatz. Es gilt deutsches Recht.</p>`
+const MODALS={
+  impressum:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Impressum</h2><p><strong>Angaben gemäß § 5 TMG</strong></p><p>Anne Claus<br>Mauerstraße 15<br>04916 Herzberg</p><p><strong>Kontakt:</strong><br>E-Mail: hallo@boostyourpins.de</p>`,
+  datenschutz:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Datenschutzerklärung</h2><h3>Verantwortlicher</h3><p>Anne Claus, Mauerstraße 15, 04916 Herzberg<br>E-Mail: hallo@boostyourpins.de</p><h3>Welche Daten wir erheben</h3><ul><li>E-Mail-Adresse zur Account-Verwaltung</li><li>Zahlungsdaten – ausschließlich von Gumroad verarbeitet</li></ul><h3>Zweck der Datenverarbeitung</h3><p>Wir verarbeiten deine Daten ausschließlich zur Account-Verwaltung und Abo-Prüfung. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p><h3>Datenspeicherung</h3><p>Deine E-Mail wird in unserer Datenbank (Supabase, Server EU-West/Irland) gespeichert und nach Kündigung auf Anfrage gelöscht.</p><h3>Deine Rechte</h3><p>Auskunft, Berichtigung, Löschung: hallo@boostyourpins.de</p>`,
+  agb:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Allgemeine Geschäftsbedingungen</h2><h3>§ 1 Anbieter</h3><p>Anne Claus, Mauerstraße 15, 04916 Herzberg, hallo@boostyourpins.de</p><h3>§ 2 Leistung</h3><p>PinCreator ist ein webbasiertes KI-Tool zur Erstellung von Pinterest Pins.</p><h3>§ 3 Abonnement</h3><p>Preis: 7,00 €/Monat inkl. MwSt. Automatische monatliche Verlängerung über Gumroad.</p><h3>§ 4 Kündigung</h3><p>Jederzeit zum Ende des Abrechnungszeitraums über Gumroad möglich.</p><h3>§ 5 Nutzungsrechte</h3><p>Generierte Pins dürfen kommerziell genutzt werden. Der Zugang ist persönlich und nicht übertragbar.</p><h3>§ 6 Haftung</h3><p>Haftung beschränkt auf grobe Fahrlässigkeit und Vorsatz. Es gilt deutsches Recht.</p>`
 };
+function openModal(t){document.getElementById('modalContent').innerHTML=MODALS[t];document.getElementById('modalOverlay').classList.add('open');return false;}
+function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalBtn();}
+function closeModalBtn(){document.getElementById('modalOverlay').classList.remove('open');}
 
-function openModal(type) {
-  document.getElementById('modalContent').innerHTML = MODALS[type];
-  document.getElementById('modalOverlay').classList.add('open');
-  return false;
-}
-function closeModal(e) { if(e.target === document.getElementById('modalOverlay')) closeModalBtn(); }
-function closeModalBtn() { document.getElementById('modalOverlay').classList.remove('open'); }
+const urlParams=new URLSearchParams(window.location.search);
+if(urlParams.get('email')&&urlParams.get('token')){document.getElementById('loginScreen').style.display='none';document.getElementById('setupScreen').style.display='flex';document.getElementById('setupEmail').value=urlParams.get('email');window._setupToken=urlParams.get('token');}
+if(sessionStorage.getItem('pc_email'))showApp(sessionStorage.getItem('pc_email'));
 
-// Setup-Link prüfen
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('email') && urlParams.get('token')) {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('setupScreen').style.display = 'flex';
-  document.getElementById('setupEmail').value = urlParams.get('email');
-  window._setupToken = urlParams.get('token');
-}
-
-// Auto-login
-if (sessionStorage.getItem('pc_email')) showApp(sessionStorage.getItem('pc_email'));
-
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  if (!email || !password) return showLoginErr('Bitte E-Mail und Passwort eingeben.');
-  const btn = document.getElementById('loginBtn');
-  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird geprüft…';
+async function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  if(!email||!password)return showLoginErr('Bitte E-Mail und Passwort eingeben.');
+  const btn=document.getElementById('loginBtn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird geprüft…';
   hideLoginErr();
-  try {
-    const r = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
-    const d = await r.json();
-    if (d.success) { sessionStorage.setItem('pc_email', d.email); showApp(d.email); }
-    else showLoginErr(d.error || 'Login fehlgeschlagen.');
-  } catch(e) { showLoginErr('Verbindungsfehler. Bitte erneut versuchen.'); }
-  btn.disabled = false; btn.innerHTML = '<i class="ti ti-login"></i> Anmelden';
+  try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});const d=await r.json();if(d.success){sessionStorage.setItem('pc_email',d.email);showApp(d.email);}else showLoginErr(d.error||'Login fehlgeschlagen.');}catch(e){showLoginErr('Verbindungsfehler.');}
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-login"></i> Anmelden';
 }
-
-async function doSetup() {
-  const email = document.getElementById('setupEmail').value.trim();
-  const password = document.getElementById('setupPassword').value;
-  const password2 = document.getElementById('setupPassword2').value;
-  if (password.length < 8) return showSetupErr('Passwort muss mindestens 8 Zeichen haben.');
-  if (password !== password2) return showSetupErr('Passwörter stimmen nicht überein.');
-  const btn = document.getElementById('setupBtn');
-  btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird gespeichert…';
-  try {
-    const r = await fetch('/api/set-password', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password, token: window._setupToken}) });
-    const d = await r.json();
-    if (d.success) {
-      document.getElementById('setupOk').style.display = 'block';
-      document.getElementById('setupOk').textContent = '✅ Passwort gespeichert! Du wirst eingeloggt…';
-      setTimeout(() => { sessionStorage.setItem('pc_email', email); showApp(email); }, 1500);
-    } else showSetupErr(d.error || 'Fehler beim Speichern.');
-  } catch(e) { showSetupErr('Verbindungsfehler.'); }
-  btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> Passwort speichern & einloggen';
+async function doSetup(){
+  const email=document.getElementById('setupEmail').value.trim();
+  const password=document.getElementById('setupPassword').value;
+  const password2=document.getElementById('setupPassword2').value;
+  if(password.length<8)return showSetupErr('Passwort muss mindestens 8 Zeichen haben.');
+  if(password!==password2)return showSetupErr('Passwörter stimmen nicht überein.');
+  const btn=document.getElementById('setupBtn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird gespeichert…';
+  try{const r=await fetch('/api/set-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,token:window._setupToken})});const d=await r.json();if(d.success){document.getElementById('setupOk').style.display='block';document.getElementById('setupOk').textContent='Passwort gespeichert! Du wirst eingeloggt…';setTimeout(()=>{sessionStorage.setItem('pc_email',email);showApp(email);},1500);}else showSetupErr(d.error||'Fehler.');}catch(e){showSetupErr('Verbindungsfehler.');}
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-check"></i> Passwort speichern & einloggen';
 }
+function showApp(email){document.getElementById('loginScreen').style.display='none';document.getElementById('setupScreen').style.display='none';document.getElementById('appScreen').style.display='flex';document.getElementById('userEmail').textContent=email;}
+function logout(){sessionStorage.clear();location.reload();}
+function showLoginErr(msg){const e=document.getElementById('loginErr');e.textContent=msg;e.style.display='block';}
+function hideLoginErr(){document.getElementById('loginErr').style.display='none';}
+function showSetupErr(msg){const e=document.getElementById('setupErr');e.textContent=msg;e.style.display='block';}
+document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-function showApp(email) {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('setupScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = 'flex';
-  document.getElementById('userEmail').textContent = email;
-}
-function logout() { sessionStorage.clear(); location.reload(); }
-function showLoginErr(msg) { const e = document.getElementById('loginErr'); e.textContent = msg; e.style.display = 'block'; }
-function hideLoginErr() { document.getElementById('loginErr').style.display = 'none'; }
-function showSetupErr(msg) { const e = document.getElementById('setupErr'); e.textContent = msg; e.style.display = 'block'; }
+let lang='de',pinFont='sans',pinLayout='centered',pinPattern='none',pinBorder='none';
+let bg1='#FAFAF8',bg2='#F0EDE8',uploadedImage=null,generatedPins=[];
+const FONTS={sans:{t:'bold 26px Arial,sans-serif',s:'14px Arial,sans-serif',p:'12px Arial,sans-serif',c:'bold 13px Arial,sans-serif'},serif:{t:'bold 26px Georgia,serif',s:'14px Georgia,serif',p:'12px Georgia,serif',c:'bold 13px Georgia,serif'},bold:{t:'900 30px Arial Black,sans-serif',s:'bold 13px Arial,sans-serif',p:'bold 11px Arial,sans-serif',c:'900 13px Arial Black,sans-serif'},script:{t:'bold 26px Palatino Linotype,Georgia,serif',s:'italic 15px Georgia,serif',p:'italic 12px Georgia,serif',c:'bold italic 14px Georgia,serif'}};
 
-document.getElementById('loginPassword').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
-
-// ── DESIGN CONTROLS ───────────────────────────────────────────────────────
-let lang='de', pinFont='sans', pinLayout='centered', bg1='#FAFAF8', bg2='#F0EDE8', uploadedImage=null, generatedPins=[];
-
-const FONTS = {
-  sans:{t:'bold 24px Arial,sans-serif',s:'14px Arial,sans-serif',p:'12px Arial,sans-serif',c:'bold 13px Arial,sans-serif'},
-  serif:{t:'bold 24px Georgia,serif',s:'14px Georgia,serif',p:'12px Georgia,serif',c:'bold 13px Georgia,serif'},
-  bold:{t:'900 28px "Arial Black",sans-serif',s:'bold 13px Arial,sans-serif',p:'bold 11px Arial,sans-serif',c:'900 12px "Arial Black",sans-serif'},
-  script:{t:'bold 24px "Palatino Linotype",Georgia,serif',s:'italic 14px Georgia,serif',p:'italic 12px Georgia,serif',c:'bold italic 13px Georgia,serif'}
-};
-
-function setLang(l){lang=l;document.querySelectorAll('.tog').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setLang'))b.classList.toggle('active',(l==='de'&&b.textContent.includes('DE')||l==='de'&&b.textContent.includes('Deutsch'))||(l==='en'&&(b.textContent.includes('EN')||b.textContent.includes('English'))))});}
+function setLang(l){lang=l;document.querySelectorAll('.tog').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setLang'))b.classList.toggle('active',(l==='de'&&(b.textContent.includes('DE')||b.textContent.includes('Deutsch')))||(l==='en'&&(b.textContent.includes('EN')||b.textContent.includes('English'))))});}
 document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{pinFont=b.dataset.font;document.querySelectorAll('[data-font]').forEach(x=>x.classList.toggle('active',x.dataset.font===pinFont));}));
 document.querySelectorAll('[data-layout]').forEach(b=>b.addEventListener('click',()=>{pinLayout=b.dataset.layout;document.querySelectorAll('[data-layout]').forEach(x=>x.classList.toggle('active',x.dataset.layout===pinLayout));}));
+document.querySelectorAll('[data-pattern]').forEach(b=>b.addEventListener('click',()=>{pinPattern=b.dataset.pattern;document.querySelectorAll('[data-pattern]').forEach(x=>x.classList.toggle('active',x.dataset.pattern===pinPattern));}));
+document.querySelectorAll('[data-border]').forEach(b=>b.addEventListener('click',()=>{pinBorder=b.dataset.border;document.querySelectorAll('[data-border]').forEach(x=>x.classList.toggle('active',x.dataset.border===pinBorder));}));
 document.querySelectorAll('.swatch').forEach(s=>s.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');bg1=s.dataset.b1;bg2=s.dataset.b2;}));
 function applyCustom(){bg1=document.getElementById('c1').value;bg2=document.getElementById('c2').value;document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));}
 function handleUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{uploadedImage=new Image();uploadedImage.onload=()=>{document.getElementById('imgThumb').src=ev.target.result;document.getElementById('imgThumb').style.display='block';document.getElementById('removeBtn').style.display='block';document.getElementById('uploadZone').style.display='none';};uploadedImage.src=ev.target.result;};r.readAsDataURL(f);}
 function removeImg(){uploadedImage=null;document.getElementById('imgThumb').style.display='none';document.getElementById('removeBtn').style.display='none';document.getElementById('uploadZone').style.display='block';document.getElementById('imgUpload').value='';}
 
-// ── CANVAS RENDER ─────────────────────────────────────────────────────────
 function lum(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return(r*299+g*587+b*114)/1000;}
 function wrap(t,m){if(!t)return[];const w=t.split(' ');const l=[];let c='';w.forEach(x=>{if((c+' '+x).trim().length>m){if(c)l.push(c.trim());c=x;}else c=(c+' '+x).trim();});if(c)l.push(c.trim());return l;}
 function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);}
 function cover(ctx,img,x,y,w,h){const r=Math.max(w/img.width,h/img.height);ctx.drawImage(img,x+(w-img.width*r)/2,y+(h-img.height*r)/2,img.width*r,img.height*r);}
+
+function drawPattern(ctx,W,H,ac){
+  ctx.save();ctx.globalAlpha=0.08;ctx.strokeStyle=ac;ctx.fillStyle=ac;
+  if(pinPattern==='dots'){for(let x=20;x<W;x+=28)for(let y=20;y<H;y+=28){ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();}}
+  else if(pinPattern==='grid'){ctx.lineWidth=0.8;for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
+  else if(pinPattern==='waves'){ctx.lineWidth=1.5;for(let y=30;y<H+30;y+=35){ctx.beginPath();ctx.moveTo(0,y);for(let x=0;x<W;x+=4)ctx.lineTo(x,y+Math.sin(x/18)*10);ctx.stroke();}}
+  else if(pinPattern==='circles'){ctx.lineWidth=1;for(let i=1;i<8;i++){ctx.beginPath();ctx.arc(W/2,H/2,i*55,0,Math.PI*2);ctx.stroke();}}
+  else if(pinPattern==='diagonal'){ctx.lineWidth=1;for(let i=-H;i<W+H;i+=30){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}}
+  ctx.restore();
+}
+
+function drawBorder(ctx,W,H,ac){
+  ctx.strokeStyle=ac;
+  if(pinBorder==='single'){ctx.lineWidth=2;ctx.strokeRect(14,14,W-28,H-28);}
+  else if(pinBorder==='double'){ctx.lineWidth=1.5;ctx.strokeRect(12,12,W-24,H-24);ctx.strokeRect(20,20,W-40,H-40);}
+  else if(pinBorder==='corner'){ctx.lineWidth=2.5;const s=40;[[14,14,1,0],[14,14,0,1],[W-14,14,-1,0],[W-14,14,0,1],[14,H-14,1,0],[14,H-14,0,-1],[W-14,H-14,-1,0],[W-14,H-14,0,-1]].forEach(([x,y,dx,dy])=>{ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx*s,y+dy*s);ctx.stroke();});}
+  else if(pinBorder==='thick'){ctx.lineWidth=6;ctx.strokeRect(10,10,W-20,H-20);}
+}
 
 function renderPin(canvas,pin,autoImg){
   const W=400,H=600,F=FONTS[pinFont];
   canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
   const isOverlay=pinLayout==='overlay';
-  const tc=isOverlay?'#FFFFFF':lum(bg1)>128?'#1A1917':'#F5F0E8';
-  const sc=isOverlay?'rgba(255,255,255,.75)':lum(bg1)>128?'#6B6862':'#B4A48A';
-  const ac=lum(bg1)>128?'#2C2C2A':'#C9A96E';
-  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,bg1);g.addColorStop(1,bg2);
-  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  const dark=lum(bg1)<128;
+  const tc=isOverlay?'#FFFFFF':dark?'#F5F0E8':'#1A1917';
+  const sc=isOverlay?'rgba(255,255,255,.75)':dark?'#B4A48A':'#6B6862';
+  const ac=dark?'#C9A96E':'#2C2C2A';
+  const gr=ctx.createLinearGradient(0,0,W,H);gr.addColorStop(0,bg1);gr.addColorStop(1,bg2);
+  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  drawPattern(ctx,W,H,ac);
   const img=uploadedImage||autoImg;
   if(img){
     if(pinLayout==='split'){ctx.save();ctx.beginPath();ctx.rect(0,0,W,H*.43);ctx.clip();cover(ctx,img,0,0,W,H*.43);ctx.restore();}
-    else if(isOverlay){cover(ctx,img,0,0,W,H);ctx.fillStyle='rgba(0,0,0,.52)';ctx.fillRect(0,0,W,H);}
-    else{const s=W*.55,ix=(W-s)/2,iy=20;ctx.save();ctx.beginPath();ctx.rect(ix,iy,s,s);ctx.clip();cover(ctx,img,ix,iy,s,s);ctx.restore();}
-  } else {ctx.font='50px serif';ctx.textAlign='center';ctx.fillText(pin.emoji||'✦',W/2,105);}
-  const dy=img?(pinLayout==='split'?H*.43+16:isOverlay?22:W*.55+44):115;
-  ctx.strokeStyle=ac+'66';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(55,dy);ctx.lineTo(W-55,dy);ctx.stroke();
+    else if(isOverlay){cover(ctx,img,0,0,W,H);ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,0,W,H);}
+    else{const s=W*.54,ix=(W-s)/2,iy=22;ctx.save();ctx.beginPath();rr(ctx,ix,iy,s,s,10);ctx.clip();cover(ctx,img,ix,iy,s,s);ctx.restore();}
+  } else {ctx.font='52px serif';ctx.textAlign='center';ctx.fillText(pin.emoji||'✦',W/2,108);}
+  drawBorder(ctx,W,H,ac);
+  const dy=img?(pinLayout==='split'?H*.43+18:isOverlay?24:W*.54+50):120;
+  ctx.strokeStyle=ac+'55';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(50,dy);ctx.lineTo(W-50,dy);ctx.stroke();
   const ax=pinLayout==='left'?36:W/2;ctx.textAlign=pinLayout==='left'?'left':'center';
-  ctx.fillStyle=tc;ctx.font=F.t;
-  const tl=wrap(pin.imageTitle||pin.title,pinLayout==='left'?28:32);tl.slice(0,3).forEach((l,i)=>ctx.fillText(l,ax,dy+26+i*32));
-  const sy=dy+26+Math.min(tl.length,3)*32+9;ctx.fillStyle=sc;ctx.font=F.s;
-  const sl=wrap(pin.imageSubtitle||'',pinLayout==='left'?34:40);sl.slice(0,3).forEach((l,i)=>ctx.fillText(l,ax,sy+i*21));
-  if(pin.imagePoints?.length){const py=sy+Math.min(sl.length,3)*21+16;ctx.font=F.p;pin.imagePoints.slice(0,3).forEach((pt,i)=>{if(pinLayout==='left'){ctx.fillStyle=ac;ctx.textAlign='left';ctx.fillText('›',34,py+i*26);ctx.fillStyle=tc;ctx.fillText(pt.slice(0,42),52,py+i*26);}else{ctx.fillStyle=tc;ctx.textAlign='center';ctx.fillText('› '+pt.slice(0,34),W/2,py+i*26);}});}
-  const ctaBg=lum(bg1)>128?'#2C2C2A':'#C9A96E';ctx.fillStyle=ctaBg;rr(ctx,38,H-60,W-76,34,7);ctx.fill();
-  ctx.fillStyle=lum(bg1)>128?'#FFFFFF':'#1A1917';ctx.font=F.c;ctx.textAlign='center';ctx.fillText(pin.cta||'Mehr erfahren →',W/2,H-38);
+  const titleColor=isOverlay?'#FFFFFF':tc;
+  ctx.fillStyle=titleColor;ctx.font=F.t;
+  const tl=wrap(pin.imageTitle||pin.title,pinLayout==='left'?26:30);tl.slice(0,3).forEach((l,i)=>ctx.fillText(l,ax,dy+28+i*34));
+  const sy=dy+28+Math.min(tl.length,3)*34+10;ctx.fillStyle=isOverlay?'rgba(255,255,255,.8)':sc;ctx.font=F.s;
+  const sl=wrap(pin.imageSubtitle||'',pinLayout==='left'?32:38);sl.slice(0,3).forEach((l,i)=>ctx.fillText(l,ax,sy+i*22));
+  if(pin.imagePoints?.length){const py=sy+Math.min(sl.length,3)*22+18;ctx.font=F.p;pin.imagePoints.slice(0,3).forEach((pt,i)=>{if(pinLayout==='left'){ctx.fillStyle=ac;ctx.textAlign='left';ctx.fillText('›',34,py+i*27);ctx.fillStyle=titleColor;ctx.fillText(pt.slice(0,40),52,py+i*27);}else{ctx.fillStyle=titleColor;ctx.textAlign='center';ctx.fillText('› '+pt.slice(0,32),W/2,py+i*27);}});}
+  const ctaBg=dark?'#C9A96E':'#1A1917';ctx.fillStyle=ctaBg;rr(ctx,36,H-62,W-72,36,8);ctx.fill();
+  ctx.fillStyle=dark?'#1A1917':'#FFFFFF';ctx.font=F.c;ctx.textAlign='center';ctx.fillText(pin.cta||'Mehr erfahren →',W/2,H-39);
 }
 
-// ── GENERATE ──────────────────────────────────────────────────────────────
+async function fetchAutoImage(query){
+  try{const r=await fetch('/api/image?q='+encodeURIComponent(query));const d=await r.json();if(!d.url)return null;return new Promise(resolve=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=d.url;});}catch{return null;}
+}
+
 async function generatePins(){
   const topic=document.getElementById('topic').value.trim();
-  if(!topic){document.getElementById('resultArea').innerHTML='<div class="err"><i class="ti ti-alert-circle"></i> Bitte ein Thema eingeben.</div>';return;}
+  if(!topic){document.getElementById('resultArea').innerHTML='<div class="err">Bitte ein Thema eingeben.</div>';return;}
   const count=parseInt(document.getElementById('pinCount').value);
   const audience=document.getElementById('audience').value.trim();
   const goal=document.getElementById('goal').value;
   const notes=document.getElementById('notes').value.trim();
-  const btn=document.getElementById('genBtn');
-  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird erstellt…';
+  const btn=document.getElementById('genBtn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird erstellt…';
   let sk='';for(let i=0;i<count;i++)sk+=`<div class="loading-card"><div class="loading-img"></div><div class="loading-lines"><div class="loading-line" style="width:80%"></div><div class="loading-line"></div><div class="loading-line" style="width:60%"></div></div></div>`;
   document.getElementById('resultArea').innerHTML=`<style>@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style><div class="loading-wrap">${sk}</div>`;
   const gm={traffic:'Mehr Traffic',sales:'Produkt verkaufen',leads:'E-Mail-Leads',brand:'Markenbekanntheit',save:'Viral/Saves'};
-  const prompt=lang==='de'
-    ?`Du bist Pinterest-Marketing-Experte. Erstelle ${count} verschiedene hochkonvertierende Pinterest Pins auf DEUTSCH.\nThema: ${topic}\nZielgruppe: ${audience||'Allgemein'}\nZiel: ${gm[goal]}\nHinweise: ${notes||'keine'}\n\nJeder Pin soll einen anderen Blickwinkel haben. Description = 3-5 Sätze, ausführlich, mehrere Zeilen.\nAntworte NUR mit JSON-Array (kein Markdown):\n[{"title":"max 60 Zeichen","description":"3-5 Sätze ausführlich emotional","imageTitle":"max 5 Wörter","imageSubtitle":"max 8 Wörter","imagePoints":["Punkt 1","Punkt 2","Punkt 3"],"cta":"max 4 Wörter","tags":["tag1","tag2","tag3","tag4","tag5"],"emoji":"Emoji","seoKeywords":"3-5 Keywords","imageQuery":"englischer Suchbegriff für Stockfoto"}]`
-    :`You are a Pinterest marketing expert. Create ${count} different high-converting Pins in ENGLISH.\nTopic: ${topic}\nAudience: ${audience||'General'}\nGoal: ${gm[goal]}\nNotes: ${notes||'none'}\n\nEach pin different angle. Description = 3-5 sentences, detailed.\nReply ONLY with JSON array (no markdown):\n[{"title":"max 60 chars","description":"3-5 sentences detailed emotional","imageTitle":"max 5 words","imageSubtitle":"max 8 words","imagePoints":["pt1","pt2","pt3"],"cta":"max 4 words","tags":["t1","t2","t3","t4","t5"],"emoji":"emoji","seoKeywords":"3-5 keywords","imageQuery":"stock photo search term"}]`;
+  const prompt=lang==='de'?`Du bist Pinterest-Marketing-Experte. Erstelle ${count} verschiedene hochkonvertierende Pinterest Pins auf DEUTSCH.\nThema: ${topic}\nZielgruppe: ${audience||'Allgemein'}\nZiel: ${gm[goal]}\nHinweise: ${notes||'keine'}\n\nJeder Pin anderen Blickwinkel. Description 3-5 Sätze ausführlich.\nNUR JSON-Array (kein Markdown):\n[{"title":"max 60 Zeichen","description":"3-5 Sätze emotional","imageTitle":"max 5 Wörter","imageSubtitle":"max 8 Wörter","imagePoints":["Punkt 1","Punkt 2","Punkt 3"],"cta":"max 4 Wörter","tags":["t1","t2","t3","t4","t5"],"emoji":"Emoji","seoKeywords":"3-5 Keywords","imageQuery":"englischer Suchbegriff Stockfoto"}]`:`You are Pinterest marketing expert. Create ${count} different high-converting Pins in ENGLISH.\nTopic: ${topic}\nAudience: ${audience||'General'}\nGoal: ${gm[goal]}\nNotes: ${notes||'none'}\n\nEach pin different angle. Description 3-5 sentences.\nONLY JSON array (no markdown):\n[{"title":"max 60 chars","description":"3-5 sentences emotional","imageTitle":"max 5 words","imageSubtitle":"max 8 words","imagePoints":["pt1","pt2","pt3"],"cta":"max 4 words","tags":["t1","t2","t3","t4","t5"],"emoji":"emoji","seoKeywords":"3-5 keywords","imageQuery":"stock photo search term"}]`;
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
-    const d=await r.json();
-    if(d.error)throw new Error(d.error.message||d.error);
+    const d=await r.json();if(d.error)throw new Error(d.error.message||d.error);
     generatedPins=JSON.parse(d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());
     if(!Array.isArray(generatedPins))generatedPins=[generatedPins];
     let html=`<div class="pins-header"><h2>${generatedPins.length} Pin${generatedPins.length>1?'s':''} generiert</h2><button class="copy-all-btn" onclick="copyAll()"><i class="ti ti-copy"></i> Alle kopieren</button></div><div class="pins-grid">`;
     generatedPins.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">Pin ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div><div class="pin-tags" id="pg${i}"></div><div class="seo-row" id="ps${i}"></div><div class="pin-actions"><button class="act-btn" id="ab${i}" onclick="copyPin(${i})"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="dlPin(${i})"><i class="ti ti-download"></i> Bild</button></div></div></div>`);
-    html+='</div>';
-    document.getElementById('resultArea').innerHTML=html;
+    html+='</div>';document.getElementById('resultArea').innerHTML=html;
     for(let i=0;i<generatedPins.length;i++){
       const p=generatedPins[i];
       document.getElementById(`pt${i}`).textContent=p.title;
@@ -479,12 +451,8 @@ async function generatePins(){
       const autoImg=uploadedImage?null:await fetchAutoImage(p.imageQuery||topic);
       renderPin(document.getElementById(`cv${i}`),p,autoImg);
     }
-  }catch(e){document.getElementById('resultArea').innerHTML=`<div class="err"><i class="ti ti-alert-circle"></i> Fehler: ${e.message||'Bitte erneut versuchen.'}</div>`;}
+  }catch(e){document.getElementById('resultArea').innerHTML=`<div class="err">Fehler: ${e.message||'Bitte erneut versuchen.'}</div>`;}
   btn.disabled=false;btn.innerHTML='<i class="ti ti-refresh"></i> Neu generieren';
-}
-
-async function fetchAutoImage(query){
-  try{const r=await fetch(`/api/image?q=${encodeURIComponent(query)}`);const d=await r.json();if(!d.url)return null;return new Promise(resolve=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=d.url;});}catch{return null;}
 }
 
 function copyPin(i){
