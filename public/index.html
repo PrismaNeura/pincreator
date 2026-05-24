@@ -27,10 +27,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 #appScreen{display:none;flex-direction:column;min-height:100vh;}
 .site-header{background:var(--surface);border-bottom:0.5px solid var(--border);padding:.875rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .logo{display:flex;align-items:center;gap:9px;font-weight:600;font-size:17px;}
-.header-right{display:flex;align-items:center;gap:10px;}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .badge{font-size:11px;padding:3px 10px;background:var(--red-bg);color:var(--red);border-radius:20px;font-weight:500;}
+.plan-badge{font-size:11px;padding:3px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px;font-weight:500;}
 .user-email{font-size:12px;color:var(--text3);}
 .logout-btn{font-size:12px;padding:5px 12px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2);}
+.pin-counter{font-size:12px;padding:5px 12px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text2);}
+.pin-counter.warning{background:#FAEEDA;color:#854F0B;border-color:#EF9F27;}
+.pin-counter.danger{background:#FCEBEB;color:#A32D2D;border-color:#F09595;}
 .hero{text-align:center;padding:2.5rem 2rem 1.5rem;max-width:600px;margin:0 auto;}
 .hero h1{font-family:'DM Serif Display',serif;font-size:clamp(24px,4vw,38px);line-height:1.2;margin-bottom:.75rem;}
 .hero h1 span{color:var(--red);}
@@ -46,11 +50,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 .tog-group{display:flex;gap:5px;flex-wrap:wrap;}
 .tog{flex:1;min-width:45px;padding:7px 5px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;}
 .tog.active{background:var(--purple-bg);color:var(--purple);border-color:#AFA9EC;}
-.color-swatches{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
-.swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;}
-.swatch.active{border-color:var(--text);transform:scale(1.15);}
-.custom-colors{display:flex;align-items:center;gap:6px;margin-top:6px;}
-.custom-colors input[type=color]{width:26px;height:26px;border:0.5px solid var(--border);border-radius:50%;padding:2px;cursor:pointer;background:none;}
+.gradient-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:6px;margin-top:4px;}
+.swatch{width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .15s;flex-shrink:0;}
+.swatch.active{border-color:var(--text);transform:scale(1.12);box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.custom-colors{display:flex;align-items:center;gap:6px;margin-top:8px;}
+.custom-colors input[type=color]{width:28px;height:28px;border:0.5px solid var(--border);border-radius:6px;padding:2px;cursor:pointer;background:none;}
 .upload-zone{border:0.5px dashed var(--border2);border-radius:var(--rs);padding:10px;text-align:center;cursor:pointer;font-size:12px;color:var(--text3);position:relative;margin-top:4px;}
 .upload-zone:hover{background:var(--s2);}
 .upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;}
@@ -62,6 +66,11 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 .gen-btn:hover{background:#C41E27;}
 .gen-btn:disabled{background:#E0AEB0;cursor:not-allowed;}
 .section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);padding-top:.875rem;border-top:0.5px solid var(--border);margin-top:.875rem;margin-bottom:.5rem;}
+.limit-banner{background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:var(--rs);padding:12px 16px;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.limit-banner.danger{background:#FCEBEB;border-color:#F09595;}
+.limit-banner span{font-size:13px;color:#854F0B;}
+.limit-banner.danger span{color:#A32D2D;}
+.upgrade-btn{font-size:12px;padding:6px 14px;background:var(--red);color:#fff;border:none;border-radius:var(--rs);cursor:pointer;text-decoration:none;white-space:nowrap;}
 .pins-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
 .pins-header h2{font-size:16px;font-weight:500;}
 .copy-all-btn{font-size:13px;padding:7px 14px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2);display:flex;align-items:center;gap:5px;transition:all .15s;}
@@ -92,10 +101,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 .site-footer{background:var(--surface);border-top:0.5px solid var(--border);padding:1.5rem 2rem;margin-top:auto;}
 .footer-inner{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:.75rem;align-items:center;text-align:center;}
 .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;}
-.footer-links a{font-size:12px;color:var(--text3);text-decoration:none;transition:color .15s;}
+.footer-links a{font-size:12px;color:var(--text3);text-decoration:none;}
 .footer-links a:hover{color:var(--text2);}
 .footer-copy{font-size:11px;color:var(--text3);}
-.footer-legal{font-size:11px;color:var(--text3);max-width:600px;line-height:1.6;}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--surface);border-radius:var(--r);max-width:640px;width:100%;max-height:80vh;overflow-y:auto;padding:2rem;position:relative;}
@@ -104,7 +112,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 .modal p,.modal li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:.5rem;}
 .modal ul{padding-left:1.25rem;margin-bottom:.5rem;}
 .modal-close{position:absolute;top:1rem;right:1rem;font-size:20px;cursor:pointer;color:var(--text3);background:none;border:none;line-height:1;}
-@media(max-width:600px){.site-header{padding:.875rem 1rem;}.container{padding:1rem 1rem 2rem;}.form-grid,.options-row{grid-template-columns:1fr;}.gen-section{flex-direction:column;}.gen-btn,.count-select{width:100%;}.footer-links{gap:1rem;}}
+@media(max-width:600px){.site-header{padding:.875rem 1rem;}.container{padding:1rem 1rem 2rem;}.form-grid,.options-row{grid-template-columns:1fr;}.gen-section{flex-direction:column;}.gen-btn,.count-select{width:100%;}.gradient-grid{grid-template-columns:repeat(auto-fill,minmax(32px,1fr));}}
 </style>
 </head>
 <body>
@@ -127,7 +135,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
     <div class="auth-logo">🔑</div>
     <h1>Passwort festlegen</h1>
     <p>Willkommen bei PinCreator! Lege jetzt dein persönliches Passwort fest.</p>
-    <input type="email" class="auth-input" id="setupEmail" placeholder="E-Mail-Adresse" readonly>
+    <input type="email" class="auth-input" id="setupEmail" readonly>
     <input type="password" class="auth-input" id="setupPassword" placeholder="Neues Passwort (min. 8 Zeichen)">
     <input type="password" class="auth-input" id="setupPassword2" placeholder="Passwort wiederholen">
     <button class="auth-btn" id="setupBtn" onclick="doSetup()"><i class="ti ti-check"></i> Passwort speichern & einloggen</button>
@@ -141,6 +149,8 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
     <div class="logo">📌 PinCreator</div>
     <div class="header-right">
       <span class="badge">KI-powered</span>
+      <span class="plan-badge" id="planBadge"></span>
+      <span class="pin-counter" id="pinCounter"></span>
       <span class="user-email" id="userEmail"></span>
       <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:13px;margin-right:4px"></i>Abmelden</button>
     </div>
@@ -148,10 +158,12 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 
   <section class="hero">
     <h1>Pinterest Pins, die <span>verkaufen</span></h1>
-    <p>Bis zu 5 Pins gleichzeitig – mit KI-Text, kreativem Design und sofort kopierbereit.</p>
+    <p>Bis zu 5 Pins gleichzeitig – mit KI-Text, kreativen Designs und sofort kopierbereit.</p>
   </section>
 
   <main class="container">
+    <div id="limitBanner" style="display:none"></div>
+
     <div class="form-card">
       <div class="form-grid">
         <div class="fs" style="grid-column:1/-1">
@@ -160,7 +172,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         </div>
         <div class="fs">
           <label class="lbl">Zielgruppe</label>
-          <input type="text" id="audience" placeholder="z.B. Frauen 25–40, Unternehmer…">
+          <input type="text" id="audience" placeholder="z.B. Frauen 25–40…">
         </div>
         <div class="fs">
           <label class="lbl">Ziel des Pins</label>
@@ -178,7 +190,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         </div>
       </div>
 
-      <div class="section-label">Sprache & Schrift</div>
+      <div class="section-label">Sprache, Schrift & Layout</div>
       <div class="options-row">
         <div class="fs">
           <div class="lbl">Sprache</div>
@@ -232,28 +244,16 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         </div>
       </div>
 
-      <div class="section-label">Hintergrund & Bild</div>
+      <div class="section-label">Farbverlauf & Bild</div>
       <div class="options-row">
-        <div class="fs">
-          <div class="lbl">Hintergrundfarbe</div>
-          <div class="color-swatches" id="swatchRow">
-            <div class="swatch active" data-b1="#FAFAF8" data-b2="#F0EDE8" style="background:linear-gradient(135deg,#FAFAF8,#F0EDE8)"></div>
-            <div class="swatch" data-b1="#E7232D" data-b2="#B01920" style="background:linear-gradient(135deg,#E7232D,#B01920)"></div>
-            <div class="swatch" data-b1="#18150F" data-b2="#2A221A" style="background:linear-gradient(135deg,#18150F,#2A221A)"></div>
-            <div class="swatch" data-b1="#EBF4FF" data-b2="#D5E8F7" style="background:linear-gradient(135deg,#EBF4FF,#D5E8F7)"></div>
-            <div class="swatch" data-b1="#EAF3DE" data-b2="#C0DD97" style="background:linear-gradient(135deg,#EAF3DE,#C0DD97)"></div>
-            <div class="swatch" data-b1="#FBEAF0" data-b2="#F4C0D1" style="background:linear-gradient(135deg,#FBEAF0,#F4C0D1)"></div>
-            <div class="swatch" data-b1="#FAEEDA" data-b2="#FAC775" style="background:linear-gradient(135deg,#FAEEDA,#FAC775)"></div>
-            <div class="swatch" data-b1="#E1F5EE" data-b2="#5DCAA5" style="background:linear-gradient(135deg,#E1F5EE,#5DCAA5)"></div>
-            <div class="swatch" data-b1="#1A0533" data-b2="#3D0F6E" style="background:linear-gradient(135deg,#1A0533,#3D0F6E)"></div>
-            <div class="swatch" data-b1="#0A2540" data-b2="#C9A96E" style="background:linear-gradient(135deg,#0A2540,#C9A96E)"></div>
-            <div class="swatch" data-b1="#2D0A0A" data-b2="#8B0000" style="background:linear-gradient(135deg,#2D0A0A,#8B0000)"></div>
-            <div class="swatch" data-b1="#FFFFFF" data-b2="#F0F0F0" style="background:linear-gradient(135deg,#FFFFFF,#F0F0F0);border:1px solid #ddd"></div>
-          </div>
+        <div class="fs" style="grid-column:1/-1">
+          <div class="lbl">Farbverlauf wählen</div>
+          <div class="gradient-grid" id="swatchRow"></div>
           <div class="custom-colors">
             <input type="color" id="c1" value="#9B59B6">
             <input type="color" id="c2" value="#6C3483">
-            <button class="tog" onclick="applyCustom()" style="flex:none;padding:4px 10px;font-size:11px">Eigene Farbe</button>
+            <input type="color" id="c3" value="#2C2C2A">
+            <button class="tog" onclick="applyCustom()" style="flex:none;padding:4px 10px;font-size:11px">Eigene 3 Farben</button>
           </div>
         </div>
         <div class="fs">
@@ -285,7 +285,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
     <div id="resultArea">
       <div class="placeholder">
         <i class="ti ti-pin" style="font-size:40px;opacity:.3"></i>
-        <span>Füll das Formular aus und klick auf „Pins generieren"<br>– bis zu 5 fertige Pins auf einmal!</span>
+        <span>Füll das Formular aus und klick auf „Pins generieren"</span>
       </div>
     </div>
   </main>
@@ -299,7 +299,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         <a href="mailto:hallo@boostyourpins.de">Kontakt</a>
         <a href="https://gumroad.com/l/oktubc" target="_blank">Abonnement verwalten</a>
       </div>
-      <div class="footer-legal">Durch die Nutzung von PinCreator stimmst du unseren <a href="#" onclick="openModal('agb')" style="color:var(--purple);text-decoration:none">AGB</a> und unserer <a href="#" onclick="openModal('datenschutz')" style="color:var(--purple);text-decoration:none">Datenschutzerklärung</a> zu.</div>
       <div class="footer-copy">© 2026 Anne Claus · PinCreator · Herzberg</div>
     </div>
   </footer>
@@ -311,17 +310,75 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 
 <script>
 const MODALS={
-  impressum:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Impressum</h2><p><strong>Angaben gemäß § 5 TMG</strong></p><p>Anne Claus<br>Mauerstraße 15<br>04916 Herzberg</p><p><strong>Kontakt:</strong><br>E-Mail: hallo@boostyourpins.de</p>`,
-  datenschutz:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Datenschutzerklärung</h2><h3>Verantwortlicher</h3><p>Anne Claus, Mauerstraße 15, 04916 Herzberg<br>E-Mail: hallo@boostyourpins.de</p><h3>Welche Daten wir erheben</h3><ul><li>E-Mail-Adresse zur Account-Verwaltung</li><li>Zahlungsdaten – ausschließlich von Gumroad verarbeitet</li></ul><h3>Zweck der Datenverarbeitung</h3><p>Wir verarbeiten deine Daten ausschließlich zur Account-Verwaltung und Abo-Prüfung. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p><h3>Datenspeicherung</h3><p>Deine E-Mail wird in unserer Datenbank (Supabase, Server EU-West/Irland) gespeichert und nach Kündigung auf Anfrage gelöscht.</p><h3>Deine Rechte</h3><p>Auskunft, Berichtigung, Löschung: hallo@boostyourpins.de</p>`,
-  agb:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Allgemeine Geschäftsbedingungen</h2><h3>§ 1 Anbieter</h3><p>Anne Claus, Mauerstraße 15, 04916 Herzberg, hallo@boostyourpins.de</p><h3>§ 2 Leistung</h3><p>PinCreator ist ein webbasiertes KI-Tool zur Erstellung von Pinterest Pins.</p><h3>§ 3 Abonnement</h3><p>Preis: 7,00 €/Monat inkl. MwSt. Automatische monatliche Verlängerung über Gumroad.</p><h3>§ 4 Kündigung</h3><p>Jederzeit zum Ende des Abrechnungszeitraums über Gumroad möglich.</p><h3>§ 5 Nutzungsrechte</h3><p>Generierte Pins dürfen kommerziell genutzt werden. Der Zugang ist persönlich und nicht übertragbar.</p><h3>§ 6 Haftung</h3><p>Haftung beschränkt auf grobe Fahrlässigkeit und Vorsatz. Es gilt deutsches Recht.</p>`
+  impressum:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Impressum</h2><p>Anne Claus<br>Mauerstraße 15<br>04916 Herzberg<br>E-Mail: hallo@boostyourpins.de</p>`,
+  datenschutz:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>Datenschutzerklärung</h2><h3>Verantwortlicher</h3><p>Anne Claus, Mauerstraße 15, 04916 Herzberg, hallo@boostyourpins.de</p><h3>Daten</h3><p>E-Mail zur Account-Verwaltung. Zahlungen über Gumroad. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p><h3>Rechte</h3><p>Auskunft, Berichtigung, Löschung: hallo@boostyourpins.de</p>`,
+  agb:`<button class="modal-close" onclick="closeModalBtn()">✕</button><h2>AGB</h2><h3>Anbieter</h3><p>Anne Claus, Mauerstraße 15, 04916 Herzberg</p><h3>Pläne</h3><ul><li>Starter: 7€/Monat – 500 Pins</li><li>Standard: 12€/Monat – 1.000 Pins</li><li>Pro: 19€/Monat – 2.000 Pins</li><li>Unlimited: 29€/Monat – unbegrenzt</li></ul><h3>Kündigung</h3><p>Jederzeit über Gumroad. Generierte Pins dürfen kommerziell genutzt werden. Zugang ist persönlich und nicht übertragbar. Es gilt deutsches Recht.</p>`
 };
 function openModal(t){document.getElementById('modalContent').innerHTML=MODALS[t];document.getElementById('modalOverlay').classList.add('open');return false;}
 function closeModal(e){if(e.target===document.getElementById('modalOverlay'))closeModalBtn();}
 function closeModalBtn(){document.getElementById('modalOverlay').classList.remove('open');}
 
+const GRADIENTS=[
+  {label:'Creme',stops:['#FAFAF8','#F0EDE8','#E5E0D8']},
+  {label:'Mitternacht',stops:['#0F2027','#203A43','#2C5364']},
+  {label:'NavyGold',stops:['#0A2540','#1A3A5C','#C9A96E']},
+  {label:'SchwarzGold',stops:['#1A1A1A','#2C2C2A','#C9A96E']},
+  {label:'Sonnenuntergang',stops:['#FF6B6B','#FF8E53','#FFE66D']},
+  {label:'Feuer',stops:['#8B0000','#CC2200','#FF6B00']},
+  {label:'Dämmerung',stops:['#1A0533','#4A1A6E','#E91E8C']},
+  {label:'Vaporwave',stops:['#2D0068','#9B59B6','#FF6EC7']},
+  {label:'Ozean',stops:['#0D47A1','#1976D2','#00BCD4']},
+  {label:'Tiefsee',stops:['#001F3F','#0A3D62','#48CAE4']},
+  {label:'Smaragd',stops:['#004D40','#00796B','#1DE9B6']},
+  {label:'Neon Jungle',stops:['#0A3D1F','#11998E','#38EF7D']},
+  {label:'Weinrot',stops:['#4A0E0E','#8B0000','#D32F2F']},
+  {label:'Candy',stops:['#C2185B','#FF5F6D','#FFC371']},
+  {label:'Lavendel',stops:['#4A148C','#7B1FA2','#CE93D8']},
+  {label:'Koralle',stops:['#BF360C','#E64A19','#FFAB91']},
+  {label:'Rosé',stops:['#880E4F','#E91E8C','#F8BBD0']},
+  {label:'Pfirsich',stops:['#E65100','#FF9A9E','#FECFEF']},
+  {label:'Sonnenaufgang',stops:['#3D0066','#FF6EC7','#FFD93D']},
+  {label:'Herbst',stops:['#3E2723','#BF360C','#FFB300']},
+  {label:'Erde',stops:['#1B5E20','#558B2F','#D4E157']},
+  {label:'Mint',stops:['#006064','#00897B','#B2DFDB']},
+  {label:'Baby Blue',stops:['#0D47A1','#42A5F5','#E0F7FA']},
+  {label:'Lavendel Soft',stops:['#4527A0','#7E57C2','#F3E5F5']},
+  {label:'Gold Premium',stops:['#212121','#8B6914','#FFD700']},
+  {label:'Silber',stops:['#263238','#546E7A','#CFD8DC']},
+  {label:'Warmweiß',stops:['#FFFFFF','#FFF8F0','#FFE0B2']},
+  {label:'Nacht',stops:['#000000','#1A1A2E','#16213E']},
+];
+
+let currentGradient=GRADIENTS[0];
+let uploadedImage=null,generatedPins=[];
+let lang='de',pinFont='sans',pinLayout='centered',pinPattern='none',pinBorder='none';
+let userEmail='',pinsUsed=0,pinsLimit=500,isAdmin=false;
+
+function buildSwatches(){
+  const row=document.getElementById('swatchRow');
+  GRADIENTS.forEach((g,i)=>{
+    const div=document.createElement('div');
+    div.className='swatch'+(i===0?' active':'');
+    div.title=g.label;
+    div.style.background=`linear-gradient(135deg,${g.stops[0]},${g.stops[1]},${g.stops[2]})`;
+    div.addEventListener('click',()=>{
+      document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+      div.classList.add('active');
+      currentGradient=g;
+    });
+    row.appendChild(div);
+  });
+}
+buildSwatches();
+
+function applyCustom(){
+  currentGradient={label:'Eigene',stops:[document.getElementById('c1').value,document.getElementById('c2').value,document.getElementById('c3').value]};
+  document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));
+}
+
 const urlParams=new URLSearchParams(window.location.search);
 if(urlParams.get('email')&&urlParams.get('token')){document.getElementById('loginScreen').style.display='none';document.getElementById('setupScreen').style.display='flex';document.getElementById('setupEmail').value=urlParams.get('email');window._setupToken=urlParams.get('token');}
-if(sessionStorage.getItem('pc_email'))showApp(sessionStorage.getItem('pc_email'));
+if(sessionStorage.getItem('pc_data')){const d=JSON.parse(sessionStorage.getItem('pc_data'));showApp(d);}
 
 async function doLogin(){
   const email=document.getElementById('loginEmail').value.trim();
@@ -329,9 +386,15 @@ async function doLogin(){
   if(!email||!password)return showLoginErr('Bitte E-Mail und Passwort eingeben.');
   const btn=document.getElementById('loginBtn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird geprüft…';
   hideLoginErr();
-  try{const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});const d=await r.json();if(d.success){sessionStorage.setItem('pc_email',d.email);showApp(d.email);}else showLoginErr(d.error||'Login fehlgeschlagen.');}catch(e){showLoginErr('Verbindungsfehler.');}
+  try{
+    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+    const d=await r.json();
+    if(d.success){sessionStorage.setItem('pc_data',JSON.stringify(d));showApp(d);}
+    else showLoginErr(d.error||'Login fehlgeschlagen.');
+  }catch(e){showLoginErr('Verbindungsfehler.');}
   btn.disabled=false;btn.innerHTML='<i class="ti ti-login"></i> Anmelden';
 }
+
 async function doSetup(){
   const email=document.getElementById('setupEmail').value.trim();
   const password=document.getElementById('setupPassword').value;
@@ -339,29 +402,59 @@ async function doSetup(){
   if(password.length<8)return showSetupErr('Passwort muss mindestens 8 Zeichen haben.');
   if(password!==password2)return showSetupErr('Passwörter stimmen nicht überein.');
   const btn=document.getElementById('setupBtn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird gespeichert…';
-  try{const r=await fetch('/api/set-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,token:window._setupToken})});const d=await r.json();if(d.success){document.getElementById('setupOk').style.display='block';document.getElementById('setupOk').textContent='Passwort gespeichert! Du wirst eingeloggt…';setTimeout(()=>{sessionStorage.setItem('pc_email',email);showApp(email);},1500);}else showSetupErr(d.error||'Fehler.');}catch(e){showSetupErr('Verbindungsfehler.');}
+  try{
+    const r=await fetch('/api/set-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password,token:window._setupToken})});
+    const d=await r.json();
+    if(d.success){document.getElementById('setupOk').style.display='block';document.getElementById('setupOk').textContent='Passwort gespeichert! Du wirst eingeloggt…';setTimeout(()=>{sessionStorage.setItem('pc_data',JSON.stringify({email,plan:'starter',planName:'Starter',pinsUsed:0,pinsLimit:500}));showApp({email,plan:'starter',planName:'Starter',pinsUsed:0,pinsLimit:500});},1500);}
+    else showSetupErr(d.error||'Fehler.');
+  }catch(e){showSetupErr('Verbindungsfehler.');}
   btn.disabled=false;btn.innerHTML='<i class="ti ti-check"></i> Passwort speichern & einloggen';
 }
-function showApp(email){document.getElementById('loginScreen').style.display='none';document.getElementById('setupScreen').style.display='none';document.getElementById('appScreen').style.display='flex';document.getElementById('userEmail').textContent=email;}
+
+function showApp(data){
+  userEmail=data.email;pinsUsed=data.pinsUsed||0;pinsLimit=data.pinsLimit||500;isAdmin=data.isAdmin||false;
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('appScreen').style.display='flex';
+  document.getElementById('userEmail').textContent=data.email;
+  document.getElementById('planBadge').textContent=data.planName||'Starter';
+  updateCounter();
+}
+
+function updateCounter(){
+  const el=document.getElementById('pinCounter');
+  const banner=document.getElementById('limitBanner');
+  if(isAdmin){el.textContent='Admin ∞';el.className='pin-counter';banner.style.display='none';return;}
+  const pct=pinsLimit===Infinity?0:pinsUsed/pinsLimit;
+  if(pinsLimit===Infinity){el.textContent='Unbegrenzt';el.className='pin-counter';banner.style.display='none';}
+  else if(pct>=1){
+    el.textContent=`${pinsUsed}/${pinsLimit} Pins`;el.className='pin-counter danger';
+    banner.style.display='flex';banner.className='limit-banner danger';
+    banner.innerHTML=`<span><i class="ti ti-alert-circle"></i> Dein Monatslimit ist erreicht! Upgrade für mehr Pins.</span><a href="https://gumroad.com/l/oktubc" target="_blank" class="upgrade-btn">Jetzt upgraden</a>`;
+  } else if(pct>=0.8){
+    el.textContent=`${pinsUsed}/${pinsLimit} Pins`;el.className='pin-counter warning';
+    banner.style.display='flex';banner.className='limit-banner';
+    banner.innerHTML=`<span><i class="ti ti-alert-triangle"></i> Du hast ${Math.round(pct*100)}% deines Limits erreicht (${pinsLimit-pinsUsed} Pins verbleibend).</span><a href="https://gumroad.com/l/oktubc" target="_blank" class="upgrade-btn">Upgraden</a>`;
+  } else {
+    el.textContent=`${pinsUsed}/${pinsLimit} Pins`;el.className='pin-counter';banner.style.display='none';
+  }
+}
+
 function logout(){sessionStorage.clear();location.reload();}
 function showLoginErr(msg){const e=document.getElementById('loginErr');e.textContent=msg;e.style.display='block';}
 function hideLoginErr(){document.getElementById('loginErr').style.display='none';}
 function showSetupErr(msg){const e=document.getElementById('setupErr');e.textContent=msg;e.style.display='block';}
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-let lang='de',pinFont='sans',pinLayout='centered',pinPattern='none',pinBorder='none';
-let bg1='#FAFAF8',bg2='#F0EDE8',uploadedImage=null,generatedPins=[];
-const FONTS={sans:{t:'bold 26px Arial,sans-serif',s:'14px Arial,sans-serif',p:'12px Arial,sans-serif',c:'bold 13px Arial,sans-serif'},serif:{t:'bold 26px Georgia,serif',s:'14px Georgia,serif',p:'12px Georgia,serif',c:'bold 13px Georgia,serif'},bold:{t:'900 30px Arial Black,sans-serif',s:'bold 13px Arial,sans-serif',p:'bold 11px Arial,sans-serif',c:'900 13px Arial Black,sans-serif'},script:{t:'bold 26px Palatino Linotype,Georgia,serif',s:'italic 15px Georgia,serif',p:'italic 12px Georgia,serif',c:'bold italic 14px Georgia,serif'}};
-
 function setLang(l){lang=l;document.querySelectorAll('.tog').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setLang'))b.classList.toggle('active',(l==='de'&&(b.textContent.includes('DE')||b.textContent.includes('Deutsch')))||(l==='en'&&(b.textContent.includes('EN')||b.textContent.includes('English'))))});}
 document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{pinFont=b.dataset.font;document.querySelectorAll('[data-font]').forEach(x=>x.classList.toggle('active',x.dataset.font===pinFont));}));
 document.querySelectorAll('[data-layout]').forEach(b=>b.addEventListener('click',()=>{pinLayout=b.dataset.layout;document.querySelectorAll('[data-layout]').forEach(x=>x.classList.toggle('active',x.dataset.layout===pinLayout));}));
 document.querySelectorAll('[data-pattern]').forEach(b=>b.addEventListener('click',()=>{pinPattern=b.dataset.pattern;document.querySelectorAll('[data-pattern]').forEach(x=>x.classList.toggle('active',x.dataset.pattern===pinPattern));}));
 document.querySelectorAll('[data-border]').forEach(b=>b.addEventListener('click',()=>{pinBorder=b.dataset.border;document.querySelectorAll('[data-border]').forEach(x=>x.classList.toggle('active',x.dataset.border===pinBorder));}));
-document.querySelectorAll('.swatch').forEach(s=>s.addEventListener('click',()=>{document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));s.classList.add('active');bg1=s.dataset.b1;bg2=s.dataset.b2;}));
-function applyCustom(){bg1=document.getElementById('c1').value;bg2=document.getElementById('c2').value;document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));}
 function handleUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{uploadedImage=new Image();uploadedImage.onload=()=>{document.getElementById('imgThumb').src=ev.target.result;document.getElementById('imgThumb').style.display='block';document.getElementById('removeBtn').style.display='block';document.getElementById('uploadZone').style.display='none';};uploadedImage.src=ev.target.result;};r.readAsDataURL(f);}
 function removeImg(){uploadedImage=null;document.getElementById('imgThumb').style.display='none';document.getElementById('removeBtn').style.display='none';document.getElementById('uploadZone').style.display='block';document.getElementById('imgUpload').value='';}
+
+const FONTS={sans:{t:'bold 26px Arial,sans-serif',s:'14px Arial,sans-serif',p:'12px Arial,sans-serif',c:'bold 13px Arial,sans-serif'},serif:{t:'bold 26px Georgia,serif',s:'14px Georgia,serif',p:'12px Georgia,serif',c:'bold 13px Georgia,serif'},bold:{t:'900 30px Arial Black,sans-serif',s:'bold 13px Arial,sans-serif',p:'bold 11px Arial,sans-serif',c:'900 13px Arial Black,sans-serif'},script:{t:'bold 26px Palatino Linotype,Georgia,serif',s:'italic 15px Georgia,serif',p:'italic 12px Georgia,serif',c:'bold italic 14px Georgia,serif'}};
 
 function lum(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return(r*299+g*587+b*114)/1000;}
 function wrap(t,m){if(!t)return[];const w=t.split(' ');const l=[];let c='';w.forEach(x=>{if((c+' '+x).trim().length>m){if(c)l.push(c.trim());c=x;}else c=(c+' '+x).trim();});if(c)l.push(c.trim());return l;}
@@ -369,7 +462,7 @@ function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y)
 function cover(ctx,img,x,y,w,h){const r=Math.max(w/img.width,h/img.height);ctx.drawImage(img,x+(w-img.width*r)/2,y+(h-img.height*r)/2,img.width*r,img.height*r);}
 
 function drawPattern(ctx,W,H,ac){
-  ctx.save();ctx.globalAlpha=0.08;ctx.strokeStyle=ac;ctx.fillStyle=ac;
+  ctx.save();ctx.globalAlpha=0.07;ctx.strokeStyle=ac;ctx.fillStyle=ac;
   if(pinPattern==='dots'){for(let x=20;x<W;x+=28)for(let y=20;y<H;y+=28){ctx.beginPath();ctx.arc(x,y,2.5,0,Math.PI*2);ctx.fill();}}
   else if(pinPattern==='grid'){ctx.lineWidth=0.8;for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}}
   else if(pinPattern==='waves'){ctx.lineWidth=1.5;for(let y=30;y<H+30;y+=35){ctx.beginPath();ctx.moveTo(0,y);for(let x=0;x<W;x+=4)ctx.lineTo(x,y+Math.sin(x/18)*10);ctx.stroke();}}
@@ -377,7 +470,6 @@ function drawPattern(ctx,W,H,ac){
   else if(pinPattern==='diagonal'){ctx.lineWidth=1;for(let i=-H;i<W+H;i+=30){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i+H,H);ctx.stroke();}}
   ctx.restore();
 }
-
 function drawBorder(ctx,W,H,ac){
   ctx.strokeStyle=ac;
   if(pinBorder==='single'){ctx.lineWidth=2;ctx.strokeRect(14,14,W-28,H-28);}
@@ -390,12 +482,14 @@ function renderPin(canvas,pin,autoImg){
   const W=400,H=600,F=FONTS[pinFont];
   canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
+  const stops=currentGradient.stops;
   const isOverlay=pinLayout==='overlay';
-  const dark=lum(bg1)<128;
+  const dark=lum(stops[0])<128;
   const tc=isOverlay?'#FFFFFF':dark?'#F5F0E8':'#1A1917';
   const sc=isOverlay?'rgba(255,255,255,.75)':dark?'#B4A48A':'#6B6862';
   const ac=dark?'#C9A96E':'#2C2C2A';
-  const gr=ctx.createLinearGradient(0,0,W,H);gr.addColorStop(0,bg1);gr.addColorStop(1,bg2);
+  const gr=ctx.createLinearGradient(0,0,W,H);
+  gr.addColorStop(0,stops[0]);gr.addColorStop(0.5,stops[1]);gr.addColorStop(1,stops[2]);
   ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
   drawPattern(ctx,W,H,ac);
   const img=uploadedImage||autoImg;
@@ -426,19 +520,38 @@ async function generatePins(){
   const topic=document.getElementById('topic').value.trim();
   if(!topic){document.getElementById('resultArea').innerHTML='<div class="err">Bitte ein Thema eingeben.</div>';return;}
   const count=parseInt(document.getElementById('pinCount').value);
+
+  if(!isAdmin){
+    const check=await fetch('/api/check-limit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,count})});
+    const cd=await check.json();
+    if(!cd.allowed){
+      document.getElementById('resultArea').innerHTML=`<div class="err"><i class="ti ti-alert-circle"></i> ${cd.limitReached?'Dein Monatslimit ist erreicht. Bitte upgrade deinen Plan!':'Limit erreicht.'} <a href="https://gumroad.com/l/oktubc" target="_blank" style="color:var(--red)">Jetzt upgraden →</a></div>`;
+      return;
+    }
+  }
+
   const audience=document.getElementById('audience').value.trim();
   const goal=document.getElementById('goal').value;
   const notes=document.getElementById('notes').value.trim();
-  const btn=document.getElementById('genBtn');btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird erstellt…';
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader-2" style="animation:spin 1s linear infinite"></i> Wird erstellt…';
   let sk='';for(let i=0;i<count;i++)sk+=`<div class="loading-card"><div class="loading-img"></div><div class="loading-lines"><div class="loading-line" style="width:80%"></div><div class="loading-line"></div><div class="loading-line" style="width:60%"></div></div></div>`;
   document.getElementById('resultArea').innerHTML=`<style>@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}</style><div class="loading-wrap">${sk}</div>`;
   const gm={traffic:'Mehr Traffic',sales:'Produkt verkaufen',leads:'E-Mail-Leads',brand:'Markenbekanntheit',save:'Viral/Saves'};
-  const prompt=lang==='de'?`Du bist Pinterest-Marketing-Experte. Erstelle ${count} verschiedene hochkonvertierende Pinterest Pins auf DEUTSCH.\nThema: ${topic}\nZielgruppe: ${audience||'Allgemein'}\nZiel: ${gm[goal]}\nHinweise: ${notes||'keine'}\n\nJeder Pin anderen Blickwinkel. Description 3-5 Sätze ausführlich.\nNUR JSON-Array (kein Markdown):\n[{"title":"max 60 Zeichen","description":"3-5 Sätze emotional","imageTitle":"max 5 Wörter","imageSubtitle":"max 8 Wörter","imagePoints":["Punkt 1","Punkt 2","Punkt 3"],"cta":"max 4 Wörter","tags":["t1","t2","t3","t4","t5"],"emoji":"Emoji","seoKeywords":"3-5 Keywords","imageQuery":"englischer Suchbegriff Stockfoto"}]`:`You are Pinterest marketing expert. Create ${count} different high-converting Pins in ENGLISH.\nTopic: ${topic}\nAudience: ${audience||'General'}\nGoal: ${gm[goal]}\nNotes: ${notes||'none'}\n\nEach pin different angle. Description 3-5 sentences.\nONLY JSON array (no markdown):\n[{"title":"max 60 chars","description":"3-5 sentences emotional","imageTitle":"max 5 words","imageSubtitle":"max 8 words","imagePoints":["pt1","pt2","pt3"],"cta":"max 4 words","tags":["t1","t2","t3","t4","t5"],"emoji":"emoji","seoKeywords":"3-5 keywords","imageQuery":"stock photo search term"}]`;
+  const prompt=lang==='de'?`Du bist Pinterest-Marketing-Experte. Erstelle ${count} verschiedene hochkonvertierende Pinterest Pins auf DEUTSCH.\nThema: ${topic}\nZielgruppe: ${audience||'Allgemein'}\nZiel: ${gm[goal]}\nHinweise: ${notes||'keine'}\nJeder Pin anderen Blickwinkel. Description 3-5 Sätze.\nNUR JSON-Array:\n[{"title":"max 60 Zeichen","description":"3-5 Sätze emotional","imageTitle":"max 5 Wörter","imageSubtitle":"max 8 Wörter","imagePoints":["P1","P2","P3"],"cta":"max 4 Wörter","tags":["t1","t2","t3","t4","t5"],"emoji":"Emoji","seoKeywords":"3-5 Keywords","imageQuery":"englischer Stockfoto-Begriff"}]`:`You are Pinterest marketing expert. Create ${count} different high-converting Pins in ENGLISH.\nTopic: ${topic}\nAudience: ${audience||'General'}\nGoal: ${gm[goal]}\nNotes: ${notes||'none'}\nEach pin different angle. Description 3-5 sentences.\nONLY JSON array:\n[{"title":"max 60 chars","description":"3-5 sentences emotional","imageTitle":"max 5 words","imageSubtitle":"max 8 words","imagePoints":["p1","p2","p3"],"cta":"max 4 words","tags":["t1","t2","t3","t4","t5"],"emoji":"emoji","seoKeywords":"3-5 keywords","imageQuery":"stock photo term"}]`;
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();if(d.error)throw new Error(d.error.message||d.error);
     generatedPins=JSON.parse(d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());
     if(!Array.isArray(generatedPins))generatedPins=[generatedPins];
+
+    if(!isAdmin){
+      const countRes=await fetch('/api/count-pins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,count:generatedPins.length})});
+      const cd=await countRes.json();
+      if(cd.success){pinsUsed=cd.pinsUsed;updateCounter();}
+      const data=JSON.parse(sessionStorage.getItem('pc_data')||'{}');data.pinsUsed=pinsUsed;sessionStorage.setItem('pc_data',JSON.stringify(data));
+    }
+
     let html=`<div class="pins-header"><h2>${generatedPins.length} Pin${generatedPins.length>1?'s':''} generiert</h2><button class="copy-all-btn" onclick="copyAll()"><i class="ti ti-copy"></i> Alle kopieren</button></div><div class="pins-grid">`;
     generatedPins.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">Pin ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div><div class="pin-tags" id="pg${i}"></div><div class="seo-row" id="ps${i}"></div><div class="pin-actions"><button class="act-btn" id="ab${i}" onclick="copyPin(${i})"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="dlPin(${i})"><i class="ti ti-download"></i> Bild</button></div></div></div>`);
     html+='</div>';document.getElementById('resultArea').innerHTML=html;
@@ -455,14 +568,8 @@ async function generatePins(){
   btn.disabled=false;btn.innerHTML='<i class="ti ti-refresh"></i> Neu generieren';
 }
 
-function copyPin(i){
-  const p=generatedPins[i];const text=`📌 ${p.title}\n\n${p.description}\n\n${p.tags.map(t=>'#'+t).join(' ')}\n\nSEO: ${p.seoKeywords}`;
-  navigator.clipboard.writeText(text).then(()=>{const b=document.getElementById(`ab${i}`);b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Text';},2500);});
-}
-function copyAll(){
-  const text=generatedPins.map((p,i)=>`── Pin ${i+1} ──\n📌 ${p.title}\n\n${p.description}\n\n${p.tags.map(t=>'#'+t).join(' ')}\nSEO: ${p.seoKeywords}`).join('\n\n');
-  navigator.clipboard.writeText(text).then(()=>{const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Alle kopiert!';b.style.background='var(--green-bg)';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle kopieren';b.style.background='';b.style.color='';},2500);});
-}
+function copyPin(i){const p=generatedPins[i];navigator.clipboard.writeText(`📌 ${p.title}\n\n${p.description}\n\n${p.tags.map(t=>'#'+t).join(' ')}\n\nSEO: ${p.seoKeywords}`).then(()=>{const b=document.getElementById(`ab${i}`);b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Text';},2500);});}
+function copyAll(){const text=generatedPins.map((p,i)=>`── Pin ${i+1} ──\n📌 ${p.title}\n\n${p.description}\n\n${p.tags.map(t=>'#'+t).join(' ')}\nSEO: ${p.seoKeywords}`).join('\n\n');navigator.clipboard.writeText(text).then(()=>{const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Alle kopiert!';b.style.background='var(--green-bg)';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle kopieren';b.style.background='';b.style.color='';},2500);});}
 function dlPin(i){const c=document.getElementById(`cv${i}`);const a=document.createElement('a');a.download=`pinterest-pin-${i+1}.png`;a.href=c.toDataURL('image/png');a.click();}
 </script>
 </body>
