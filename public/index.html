@@ -397,7 +397,7 @@ const PLATFORM_CONFIG={
   instagram:{ratio:'1/1',ratioClass:'ratio-11',label:'Instagram Post',btnText:'Posts generieren',orientation:'squarish'},
   stories:{ratio:'9/16',ratioClass:'ratio-916',label:'Story',btnText:'Stories generieren',orientation:'portrait'},
   carousel:{ratio:'1/1',ratioClass:'ratio-11',label:'Karussell Slide',btnText:'Karussell generieren',orientation:'squarish'},
-  reels:{ratio:null,ratioClass:null,label:'Reels Script',btnText:'Scripts generieren',orientation:null}
+  reels:{ratio:null,ratioClass:null,label:'Produktions-Storyboard',btnText:'Storyboards generieren',orientation:null}
 };
 
 function buildSwatches(){
@@ -663,17 +663,55 @@ async function fetchAutoImage(query,orientation){
   try{const r=await fetch(`/api/image?q=${encodeURIComponent(query)}&orientation=${orientation||'portrait'}`);const d=await r.json();if(!d.url)return null;return new Promise(resolve=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=d.url;});}catch{return null;}
 }
 
+const SZENEN_COLORS={'Hook':'#E7232D','Problem':'#FF8E53','Lösung':'#2D7A3A','Solution':'#2D7A3A','Beweis':'#185FA5','Proof':'#185FA5','CTA':'#534AB7'};
 function buildReelsHtml(script,i){
-  return `<div class="reels-card">
-    <div class="pin-num">Script ${i+1}</div>
-    <div class="reels-title">${script.title}</div>
-    <div class="reels-section"><div class="reels-label">Hook (erste 3 Sek.)</div><div class="reels-text">${script.hook}</div></div>
-    <div class="reels-section"><div class="reels-label">Inhalt</div><div class="reels-text">${script.content}</div></div>
-    <div class="reels-section"><div class="reels-label">Call-to-Action</div><div class="reels-text">${script.cta}</div></div>
-    <div class="reels-section"><div class="reels-label">Caption</div><div class="reels-text">${script.caption}</div></div>
-    <div class="pin-tags">${script.hashtags.map(t=>`<span class="tag">#${t}</span>`).join('')}</div>
-    <div class="pin-actions">
-      <button class="act-btn" id="rab${i}" onclick="copyReels(${i})"><i class="ti ti-copy"></i> Kopieren</button>
+  const szenenHtml=(script.szenen||[]).map(s=>{
+    const col=SZENEN_COLORS[s.typ]||'#6B6862';
+    return `<div style="border:0.5px solid ${col}33;border-radius:8px;padding:12px;margin-bottom:10px;background:${col}08">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="background:${col};color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">${s.typ}</span>
+        <span style="font-size:11px;color:var(--text3)">${s.dauer}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <div style="font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;margin-bottom:3px">🎤 Sprechtext</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.5">${s.sprechtext}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;margin-bottom:3px">📸 Bildidee</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.5">${s.bildidee}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;margin-bottom:3px">💬 Text-Overlay</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.5;font-weight:500">${s.textoverlay}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;margin-bottom:3px">✂️ Übergang</div>
+          <div style="font-size:12px;color:var(--text);line-height:1.5">${s.uebergang}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="reels-card" style="grid-column:1/-1">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="pin-num">Produktions-Storyboard ${i+1}</div>
+        <div class="reels-title">${script.title}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;padding:4px 10px;background:var(--s2);border:0.5px solid var(--border);border-radius:20px">⏱ ${script.duration||script.dauer||'15-30 Sek'}</span>
+        <span style="font-size:11px;padding:4px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px">🎵 ${script.musik}</span>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;margin-bottom:8px">Szenen</div>
+    ${szenenHtml}
+    <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)">
+      <div style="font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;margin-bottom:6px">📝 Caption + Hashtags</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:8px;white-space:pre-line">${script.caption}</div>
+      <div class="pin-tags">${(script.hashtags||[]).map(t=>`<span class="tag">#${t}</span>`).join('')}</div>
+    </div>
+    <div class="pin-actions" style="margin-top:10px">
+      <button class="act-btn" id="rab${i}" onclick="copyReels(${i})"><i class="ti ti-copy"></i> Alles kopieren</button>
     </div>
   </div>`;
 }
@@ -735,7 +773,7 @@ async function generatePins(){
     }
 
     if(currentPlatform==='reels'){
-      let html=`<div class="pins-header"><h2>${generatedPins.length} Reels Script${generatedPins.length>1?'s':''}</h2><button class="copy-all-btn" onclick="copyAllReels()"><i class="ti ti-copy"></i> Alle kopieren</button></div><div class="pins-grid">`;
+      let html=`<div class="pins-header"><h2>${generatedPins.length} Produktions-Storyboard${generatedPins.length>1?'s':''}</h2><button class="copy-all-btn" onclick="copyAllReels()"><i class="ti ti-copy"></i> Alle kopieren</button></div><div class="pins-grid" style="grid-template-columns:1fr">`;
       generatedPins.forEach((s,i)=>html+=buildReelsHtml(s,i));
       html+='</div>';
       document.getElementById('resultArea').innerHTML=html;
