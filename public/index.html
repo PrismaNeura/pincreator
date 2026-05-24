@@ -303,13 +303,16 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
       </div>
 
       <div class="gen-section">
-        <select class="count-select" id="pinCount">
+        <select class="count-select" id="pinCount" style="display:block">
           <option value="1">1 Post</option>
           <option value="2">2 Posts</option>
           <option value="3">3 Posts</option>
           <option value="4">4 Posts</option>
           <option value="5" selected>5 Posts</option>
         </select>
+        <div id="carouselInfo" style="display:none;font-size:13px;color:var(--text2);padding:9px 14px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);">
+          <i class="ti ti-layout-cards" style="margin-right:5px"></i>1 Karussell mit 6 Slides
+        </div>
         <button class="gen-btn" id="genBtn" onclick="generatePins()">
           <i class="ti ti-wand"></i> <span id="genBtnText">Posts generieren</span>
         </button>
@@ -470,6 +473,11 @@ function setPlatform(p){
   document.getElementById('genBtnText').textContent=PLATFORM_CONFIG[p].btnText;
   const designOpts=document.getElementById('designOptions');
   designOpts.style.display=p==='reels'?'none':'block';
+  // Karussell: kein Count-Selector
+  const countSel=document.getElementById('pinCount');
+  const carInfo=document.getElementById('carouselInfo');
+  if(p==='carousel'){countSel.style.display='none';carInfo.style.display='block';}
+  else{countSel.style.display='block';carInfo.style.display='none';}
   document.getElementById('resultArea').innerHTML=`<div class="placeholder"><i class="ti ti-wand" style="font-size:40px;opacity:.3"></i><span>${PLATFORM_CONFIG[p].label} generieren – Formular ausfüllen und klicken</span></div>`;
 }
 
@@ -585,6 +593,72 @@ function renderPin(canvas,pin,W,H){
   ctx.fillText(pin.cta||'Mehr erfahren →',W/2,H-H*.065);
 }
 
+function renderCarouselSlide(canvas,slide,W,H,bgImg){
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  const stops=currentGradient.s;
+  const dark=lum(stops[0])<128;
+  const tc=dark?'#F5F0E8':'#1A1917';
+  const sc=dark?'#B4A48A':'#6B6862';
+  const ac=dark?'#C9A96E':'#2C2C2A';
+
+  // Background
+  const gr=ctx.createLinearGradient(0,0,W,H);
+  gr.addColorStop(0,stops[0]);gr.addColorStop(0.5,stops[1]);gr.addColorStop(1,stops[2]);
+  ctx.fillStyle=gr;ctx.fillRect(0,0,W,H);
+  drawPattern(ctx,W,H,ac);
+  drawBorder(ctx,W,H,ac);
+
+  // Slide number indicator
+  ctx.fillStyle=ac+'55';
+  ctx.fillRect(W-36,12,24,24);
+  ctx.fillStyle=tc;ctx.font='bold 11px Arial';ctx.textAlign='center';
+  ctx.fillText(slide.slideNum+'/6',W-24,28);
+
+  if(slide.type==='hook'){
+    // Hook slide: big emoji + big title
+    ctx.font='64px serif';ctx.textAlign='center';ctx.fillText(slide.emoji||'✨',W/2,H*0.38);
+    ctx.strokeStyle=ac+'66';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(W*0.12,H*0.48);ctx.lineTo(W*0.88,H*0.48);ctx.stroke();
+    ctx.fillStyle=tc;ctx.font='bold 28px Arial,sans-serif';ctx.textAlign='center';
+    const tl=wrap(slide.title,18);tl.slice(0,3).forEach((l,i)=>ctx.fillText(l,W/2,H*0.55+i*36));
+  } else if(slide.type==='cta'){
+    // CTA slide: centered with button feel
+    ctx.font='52px serif';ctx.textAlign='center';ctx.fillText(slide.emoji||'🎯',W/2,H*0.32);
+    ctx.fillStyle=tc;ctx.font='bold 24px Arial,sans-serif';ctx.textAlign='center';
+    const tl=wrap(slide.title,20);tl.slice(0,2).forEach((l,i)=>ctx.fillText(l,W/2,H*0.48+i*32));
+    if(slide.subtitle){ctx.fillStyle=sc;ctx.font='14px Arial,sans-serif';const sl=wrap(slide.subtitle,30);sl.slice(0,2).forEach((l,i)=>ctx.fillText(l,W/2,H*0.62+i*22));}
+    const ctaBg=dark?'#C9A96E':'#1A1917';ctx.fillStyle=ctaBg;rr(ctx,W*0.1,H*0.76,W*0.8,H*0.1,8);ctx.fill();
+    ctx.fillStyle=dark?'#1A1917':'#FFFFFF';ctx.font='bold 13px Arial,sans-serif';ctx.textAlign='center';ctx.fillText('Jetzt starten →',W/2,H*0.83);
+  } else {
+    // Content slide: emoji top-left + title + text
+    ctx.font='42px serif';ctx.textAlign='left';ctx.fillText(slide.emoji||'✦',W*0.1,H*0.22);
+    ctx.strokeStyle=ac+'66';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(W*0.1,H*0.28);ctx.lineTo(W*0.9,H*0.28);ctx.stroke();
+    ctx.fillStyle=tc;ctx.font='bold 22px Arial,sans-serif';ctx.textAlign='left';
+    const tl=wrap(slide.title,22);tl.slice(0,2).forEach((l,i)=>ctx.fillText(l,W*0.1,H*0.38+i*30));
+    if(slide.subtitle){
+      ctx.fillStyle=sc;ctx.font='13px Arial,sans-serif';
+      const sl=wrap(slide.subtitle,34);sl.slice(0,4).forEach((l,i)=>ctx.fillText(l,W*0.1,H*0.52+i*22));
+    }
+    // Slide progress dots
+    const dotY=H*0.9;const dotSpacing=16;const totalDots=6;
+    const startX=W/2-(totalDots-1)*dotSpacing/2;
+    for(let d=0;d<totalDots;d++){
+      ctx.fillStyle=d===slide.slideNum-1?ac:ac+'44';
+      ctx.beginPath();ctx.arc(startX+d*dotSpacing,dotY,d===slide.slideNum-1?5:3,0,Math.PI*2);ctx.fill();
+    }
+  }
+}
+
+function copyCaption(){
+  if(window._carouselCaption){
+    navigator.clipboard.writeText(window._carouselCaption).then(()=>{
+      const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';
+      b.style.background='var(--green-bg)';b.style.color='var(--green)';
+      setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Caption kopieren';b.style.background='';b.style.color='';},2500);
+    });
+  }
+}
+
 async function fetchAutoImage(query,orientation){
   try{const r=await fetch(`/api/image?q=${encodeURIComponent(query)}&orientation=${orientation||'portrait'}`);const d=await r.json();if(!d.url)return null;return new Promise(resolve=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=d.url;});}catch{return null;}
 }
@@ -666,7 +740,68 @@ async function generatePins(){
       html+='</div>';
       document.getElementById('resultArea').innerHTML=html;
     } else {
-      const dims={pinterest:{w:400,h:600},instagram:{w:400,h:400},stories:{w:338,h:600},carousel:{w:400,h:400}};
+      if(currentPlatform==='carousel'){
+      // Special carousel handling
+      const carouselPrompt=lang==='de'
+        ?`Erstelle ein zusammenhängendes Instagram Karussell auf DEUTSCH zum Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${gm[goal]}
+Hinweise: ${notes||'keine'}
+
+Erstelle 6 Slides die zusammen eine Geschichte erzählen:
+- Slide 1: Hook/Titel der neugierig macht (max 6 Wörter)
+- Slide 2-5: Je ein Kernpunkt (max 8 Wörter Titel, 1-2 Sätze Text)
+- Slide 6: Call-to-Action
+
+NUR JSON:
+{"topic":"Karussell-Thema","caption":"Instagram Caption 3-5 Sätze mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10","tag11","tag12","tag13","tag14","tag15","tag16","tag17","tag18","tag19","tag20"],"slides":[{"slideNum":1,"type":"hook","title":"Kurzer Hook","subtitle":"","emoji":"Emoji"},{"slideNum":2,"type":"point","title":"Kurzer Titel","subtitle":"1-2 Sätze","emoji":"Emoji"},{"slideNum":3,"type":"point","title":"Kurzer Titel","subtitle":"1-2 Sätze","emoji":"Emoji"},{"slideNum":4,"type":"point","title":"Kurzer Titel","subtitle":"1-2 Sätze","emoji":"Emoji"},{"slideNum":5,"type":"point","title":"Kurzer Titel","subtitle":"1-2 Sätze","emoji":"Emoji"},{"slideNum":6,"type":"cta","title":"Call to Action","subtitle":"1 Satz","emoji":"Emoji"}]}`
+        :`Create a cohesive Instagram Carousel in ENGLISH about: ${topic}
+Audience: ${audience||'General'}
+Goal: ${gm[goal]}
+Notes: ${notes||'none'}
+
+Create 6 slides that tell a story together:
+- Slide 1: Hook/title that creates curiosity (max 6 words)
+- Slides 2-5: One key point each (max 8 word title, 1-2 sentence text)
+- Slide 6: Call-to-action
+
+ONLY JSON:
+{"topic":"carousel topic","caption":"Instagram caption 3-5 sentences with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10","tag11","tag12","tag13","tag14","tag15","tag16","tag17","tag18","tag19","tag20"],"slides":[{"slideNum":1,"type":"hook","title":"Short hook","subtitle":"","emoji":"emoji"},{"slideNum":2,"type":"point","title":"Short title","subtitle":"1-2 sentences","emoji":"emoji"},{"slideNum":3,"type":"point","title":"Short title","subtitle":"1-2 sentences","emoji":"emoji"},{"slideNum":4,"type":"point","title":"Short title","subtitle":"1-2 sentences","emoji":"emoji"},{"slideNum":5,"type":"point","title":"Short title","subtitle":"1-2 sentences","emoji":"emoji"},{"slideNum":6,"type":"cta","title":"Call to action","subtitle":"1 sentence","emoji":"emoji"}]}`;
+
+      const cr=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:carouselPrompt}]})});
+      const cd=await cr.json();if(cd.error)throw new Error(cd.error.message||cd.error);
+      const carousel=JSON.parse(cd.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());
+
+      if(!isAdmin){
+        const countRes=await fetch('/api/count-pins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,count:1})});
+        const countData=await countRes.json();
+        if(countData.success){pinsUsed=countData.pinsUsed;updateCounter();}
+      }
+
+      let html=`<div class="pins-header"><h2>Karussell: ${carousel.topic}</h2><div style="display:flex;gap:8px"><button class="copy-all-btn" onclick="copyCaption()"><i class="ti ti-copy"></i> Caption kopieren</button><button class="dl-all-btn" onclick="dlAll()"><i class="ti ti-download"></i> Alle Slides</button></div></div>`;
+      html+=`<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:1rem;"><div class="lbl" style="margin-bottom:6px">Caption + Hashtags</div><div style="font-size:13px;color:var(--text2);line-height:1.65;white-space:pre-line;margin-bottom:8px">${carousel.caption}</div><div class="pin-tags">${carousel.hashtags.map(t=>`<span class="tag">#${t}</span>`).join('')}</div></div>`;
+      html+=`<div class="pins-grid">`;
+      carousel.slides.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">Slide ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div></div></div>`);
+      html+=`</div>`;
+      document.getElementById('resultArea').innerHTML=html;
+
+      generatedPins=carousel.slides.map(s=>({...s,title:s.title,description:s.subtitle,caption:carousel.caption,hashtags:carousel.hashtags}));
+      window._carouselCaption=carousel.caption+'
+
+'+carousel.hashtags.map(t=>'#'+t).join(' ');
+
+      const autoImg=uploadedImage?null:await fetchAutoImage(topic,'squarish');
+      for(let i=0;i<carousel.slides.length;i++){
+        const slide=carousel.slides[i];
+        document.getElementById(`pt${i}`).textContent=slide.title;
+        document.getElementById(`pd${i}`).textContent=slide.subtitle||'';
+        renderCarouselSlide(document.getElementById(`cv${i}`),slide,400,400,autoImg&&slide.slideNum===1?autoImg:null);
+      }
+      btn.disabled=false;btn.innerHTML=`<i class="ti ti-refresh"></i> Neues Karussell`;
+      return;
+    }
+
+    const dims={pinterest:{w:400,h:600},instagram:{w:400,h:400},stories:{w:338,h:600},carousel:{w:400,h:400}};
       const dim=dims[currentPlatform]||{w:400,h:600};
       let html=`<div class="pins-header"><h2>${generatedPins.length} ${cfg.label}${generatedPins.length>1?'s':''}</h2><div style="display:flex;gap:8px"><button class="copy-all-btn" onclick="copyAll()"><i class="ti ti-copy"></i> Alle Texte</button><button class="dl-all-btn" onclick="dlAll()"><i class="ti ti-download"></i> Alle Bilder</button></div></div><div class="pins-grid">`;
       generatedPins.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area ${cfg.ratioClass}"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">${cfg.label} ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div><div class="pin-tags" id="pg${i}"></div><div class="seo-row" id="ps${i}"></div><div class="pin-actions"><button class="act-btn" id="ab${i}" onclick="copyPin(${i})"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="dlPin(${i})"><i class="ti ti-download"></i> Bild</button></div></div></div>`);
