@@ -497,7 +497,7 @@ function hideLoginErr(){document.getElementById('loginErr').style.display='none'
 function showSetupErr(msg){const e=document.getElementById('setupErr');e.textContent=msg;e.style.display='block';}
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-function setLang(l){lang=l;document.querySelectorAll('.tog').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setLang'))b.classList.toggle('active',(l==='de'&&b.textContent==='DE')||(l==='en'&&b.textContent==='EN'));});}
+function setLang(l){lang=l;document.querySelectorAll('.tog').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setLang')){b.classList.remove('active');if((l==='de'&&b.textContent.includes('DE'))||(l==='en'&&b.textContent.includes('EN')))b.classList.add('active');}});}
 document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{pinFont=b.dataset.font;document.querySelectorAll('[data-font]').forEach(x=>x.classList.toggle('active',x.dataset.font===pinFont));}));
 document.querySelectorAll('[data-layout]').forEach(b=>b.addEventListener('click',()=>{pinLayout=b.dataset.layout;document.querySelectorAll('[data-layout]').forEach(x=>x.classList.toggle('active',x.dataset.layout===pinLayout));}));
 document.querySelectorAll('[data-pattern]').forEach(b=>b.addEventListener('click',()=>{pinPattern=b.dataset.pattern;document.querySelectorAll('[data-pattern]').forEach(x=>x.classList.toggle('active',x.dataset.pattern===pinPattern));}));
