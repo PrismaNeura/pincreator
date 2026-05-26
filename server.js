@@ -166,15 +166,36 @@ app.get('/api/image', async (req, res) => {
   const unsplashKey = process.env.UNSPLASH_ACCESS_KEY;
   try {
     if (unsplashKey) {
-      const r = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(req.query.q || 'abstract')}&orientation=${req.query.orientation || 'portrait'}&client_id=${unsplashKey}`);
+      const orientation = req.query.orientation || 'portrait';
+      const r = await fetch(`https://api.unsplash.com/photos/random?query=${encodeURIComponent(req.query.q || 'abstract')}&orientation=${orientation}&client_id=${unsplashKey}`);
       const d = await r.json();
-      if (d.urls) return res.json({ url: d.urls.regular });
+      if (d.urls) {
+        // Return full size for HD rendering
+        const url = d.urls.full || d.urls.regular;
+        // Add CORS headers to allow canvas use
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        return res.json({ url, credit: d.user?.name || '' });
+      }
     }
     res.json({ url: null });
   } catch { res.json({ url: null }); }
 });
 
 app.get('/setup', (req, res) => res.sendFile('index.html', { root: 'public' }));
+
+// Image proxy to avoid CORS issues with canvas
+app.get('/api/image-proxy', async (req, res) => {
+  try {
+    const url = req.query.url;
+    if (!url) return res.status(400).send('No URL');
+    const r = await fetch(url);
+    const buf = await r.buffer();
+    res.setHeader('Content-Type', r.headers.get('content-type') || 'image/jpeg');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    res.send(buf);
+  } catch (e) { res.status(500).send('Error'); }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`PinCreator läuft auf Port ${PORT}`));
