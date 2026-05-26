@@ -505,7 +505,7 @@ document.querySelectorAll('[data-border]').forEach(b=>b.addEventListener('click'
 function handleUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{uploadedImage=new Image();uploadedImage.onload=()=>{document.getElementById('imgThumb').src=ev.target.result;document.getElementById('imgThumb').style.display='block';document.getElementById('removeBtn').style.display='block';document.getElementById('uploadZone').style.display='none';};uploadedImage.src=ev.target.result;};r.readAsDataURL(f);}
 function removeImg(){uploadedImage=null;document.getElementById('imgThumb').style.display='none';document.getElementById('removeBtn').style.display='none';document.getElementById('uploadZone').style.display='block';document.getElementById('imgUpload').value='';}
 
-const FONTS={sans:{t:'bold 72px Arial,sans-serif',s:'42px Arial,sans-serif',p:'36px Arial,sans-serif',c:'bold 38px Arial,sans-serif'},serif:{t:'bold 72px Georgia,serif',s:'42px Georgia,serif',p:'36px Georgia,serif',c:'bold 38px Georgia,serif'},bold:{t:'900 80px Arial Black,sans-serif',s:'bold 38px Arial,sans-serif',p:'bold 32px Arial,sans-serif',c:'900 38px Arial Black,sans-serif'},script:{t:'bold 72px Palatino Linotype,Georgia,serif',s:'italic 42px Georgia,serif',p:'italic 36px Georgia,serif',c:'bold italic 38px Georgia,serif'}};
+const FONTS={sans:{t:'bold 52px Arial,sans-serif',s:'28px Arial,sans-serif',p:'24px Arial,sans-serif',c:'bold 26px Arial,sans-serif'},serif:{t:'bold 52px Georgia,serif',s:'28px Georgia,serif',p:'24px Georgia,serif',c:'bold 26px Georgia,serif'},bold:{t:'900 58px Arial Black,sans-serif',s:'bold 26px Arial,sans-serif',p:'bold 22px Arial,sans-serif',c:'900 26px Arial Black,sans-serif'},script:{t:'bold 52px Palatino Linotype,Georgia,serif',s:'italic 28px Georgia,serif',p:'italic 24px Georgia,serif',c:'bold italic 26px Georgia,serif'}};
 
 function lum(h){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return(r*299+g*587+b*114)/1000;}
 function wrap(t,m){if(!t)return[];const w=t.split(' ');const l=[];let c='';w.forEach(x=>{if((c+' '+x).trim().length>m){if(c)l.push(c.trim());c=x;}else c=(c+' '+x).trim();});if(c)l.push(c.trim());return l;}
@@ -538,7 +538,7 @@ function renderPin(canvas,pin,W,H){
   ctx.imageSmoothingEnabled=true;
   ctx.imageSmoothingQuality='high';
   const F=FONTS[pinFont];
-  const sc2=W/400;
+  const sc2=W/800;
   const stops=currentGradient.s;
   const isOverlay=pinLayout==='overlay';
   const dark=lum(stops[0])<128;
@@ -602,7 +602,7 @@ function renderCarouselSlide(canvas,slide,W,H,bgImg){
   canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
-  const sc2=W/400;
+  const sc2=W/800;
   const stops=currentGradient.s;
   const dark=lum(stops[0])<128;
   const tc=dark?'#F5F0E8':'#1A1917';
@@ -663,12 +663,20 @@ async function fetchAutoImage(query,orientation){
     const r=await fetch(`/api/image?q=${encodeURIComponent(query)}&orientation=${orientation||'portrait'}`);
     const d=await r.json();
     if(!d.url)return null;
-    // Use image proxy to avoid CORS issues with canvas
+    // Load via proxy to avoid CORS issues
     const proxyUrl='/api/image-proxy?url='+encodeURIComponent(d.url);
     return new Promise(resolve=>{
       const img=new Image();
+      img.crossOrigin='anonymous';
       img.onload=()=>resolve(img);
-      img.onerror=()=>resolve(null);
+      img.onerror=()=>{
+        // Fallback: try direct URL
+        const img2=new Image();
+        img2.crossOrigin='anonymous';
+        img2.onload=()=>resolve(img2);
+        img2.onerror=()=>resolve(null);
+        img2.src=d.url+'&w=800&q=80';
+      };
       img.src=proxyUrl;
     });
   }catch{return null;}
@@ -848,7 +856,7 @@ ONLY JSON:
       return;
     }
 
-    const dims={pinterest:{w:1000,h:1500},instagram:{w:1080,h:1080},stories:{w:1080,h:1920},carousel:{w:1080,h:1080}};
+    const dims={pinterest:{w:800,h:1200},instagram:{w:800,h:800},stories:{w:600,h:1066},carousel:{w:800,h:800}};
       const dim=dims[currentPlatform]||{w:400,h:600};
       let html=`<div class="pins-header"><h2>${generatedPins.length} ${cfg.label}${generatedPins.length>1?'s':''}</h2><div style="display:flex;gap:8px"><button class="copy-all-btn" onclick="copyAll()"><i class="ti ti-copy"></i> Alle Texte</button><button class="dl-all-btn" onclick="dlAll()"><i class="ti ti-download"></i> Alle Bilder</button></div></div><div class="pins-grid">`;
       generatedPins.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area ${cfg.ratioClass}"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">${cfg.label} ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div><div class="pin-tags" id="pg${i}"></div><div class="seo-row" id="ps${i}"></div><div class="pin-actions"><button class="act-btn" id="ab${i}" onclick="copyPin(${i})"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="dlPin(${i})"><i class="ti ti-download"></i> Bild</button></div></div></div>`);
