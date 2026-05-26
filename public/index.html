@@ -532,7 +532,7 @@ function drawBorder(ctx,W,H,ac){
   else if(pinBorder==='thick'){ctx.lineWidth=18*sc;ctx.strokeRect(25*sc,25*sc,W-50*sc,H-50*sc);}
 }
 
-function renderPin(canvas,pin,W,H){
+function renderPin(canvas,pin,W,H,autoImg=null){
   canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
   ctx.imageSmoothingEnabled=true;
@@ -551,7 +551,7 @@ function renderPin(canvas,pin,W,H){
   drawPattern(ctx,W,H,ac);
 
   const isSquare=W===H;
-  const img=uploadedImage;
+  const img=autoImg||uploadedImage;
   if(img){
     if(pinLayout==='split'){ctx.save();ctx.beginPath();ctx.rect(0,0,W,H*.43);ctx.clip();cover(ctx,img,0,0,W,H*.43);ctx.restore();}
     else if(isOverlay){cover(ctx,img,0,0,W,H);ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,0,W,H);}
@@ -663,23 +663,15 @@ async function fetchAutoImage(query,orientation){
     const r=await fetch(`/api/image?q=${encodeURIComponent(query)}&orientation=${orientation||'portrait'}`);
     const d=await r.json();
     if(!d.url)return null;
-    // Load via proxy to avoid CORS issues
-    const proxyUrl='/api/image-proxy?url='+encodeURIComponent(d.url);
     return new Promise(resolve=>{
+      // Try proxy first (avoids CORS)
+      const proxyUrl='/api/image-proxy?url='+encodeURIComponent(d.url);
       const img=new Image();
-      img.crossOrigin='anonymous';
       img.onload=()=>resolve(img);
-      img.onerror=()=>{
-        // Fallback: try direct URL
-        const img2=new Image();
-        img2.crossOrigin='anonymous';
-        img2.onload=()=>resolve(img2);
-        img2.onerror=()=>resolve(null);
-        img2.src=d.url+'&w=800&q=80';
-      };
+      img.onerror=()=>resolve(null);
       img.src=proxyUrl;
     });
-  }catch{return null;}
+  }catch(e){console.log('Image fetch error:',e);return null;}
 }
 
 const SZENEN_COLORS={'Hook':'#E7232D','Problem':'#FF8E53','Lösung':'#2D7A3A','Solution':'#2D7A3A','Beweis':'#185FA5','Proof':'#185FA5','CTA':'#534AB7'};
@@ -867,9 +859,9 @@ ONLY JSON:
         document.getElementById(`pd${i}`).textContent=p.description;
         document.getElementById(`pg${i}`).innerHTML=(p.tags||[]).map(t=>`<span class="tag">#${t}</span>`).join('');
         document.getElementById(`ps${i}`).innerHTML=`<i class="ti ti-tag" style="font-size:10px;margin-right:2px"></i>${p.seoKeywords}`;
-        const autoImg=uploadedImage?null:await fetchAutoImage(p.imageQuery||topic,cfg.orientation);
+        const autoImg=uploadedImage||await fetchAutoImage(p.imageQuery||topic,cfg.orientation);
         const canvas=document.getElementById(`cv${i}`);
-        renderPin(canvas,p,dim.w,dim.h);
+        renderPin(canvas,p,dim.w,dim.h,autoImg);
       }
     }
   }catch(e){document.getElementById('resultArea').innerHTML=`<div class="err">Fehler: ${e.message||'Bitte erneut versuchen.'}</div>`;}
