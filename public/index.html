@@ -1015,7 +1015,7 @@ ONLY JSON:
       generatedPins=carousel.slides.map(s=>({...s,title:s.title,description:s.subtitle,caption:carousel.caption,hashtags:carousel.hashtags}));
       window._carouselCaption=carousel.caption+'\n\n'+carousel.hashtags.map(t=>'#'+t).join(' ');
 
-      const autoImg=uploadedImages[0]s[0]?null:await fetchAutoImage(topic,'squarish');
+      const autoImg=uploadedImages[0]?null:await fetchAutoImage(topic,'squarish');
       for(let i=0;i<carousel.slides.length;i++){
         const slide=carousel.slides[i];
         document.getElementById(`pt${i}`).textContent=slide.title;
