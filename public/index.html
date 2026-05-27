@@ -620,6 +620,19 @@ function drawBorder(ctx,W,H,ac){
   else if(pinBorder==='thick'){ctx.lineWidth=18*sc;ctx.strokeRect(25*sc,25*sc,W-50*sc,H-50*sc);}
 }
 
+// Helper: wrap text by pixel width
+function wrapPx(ctx,text,maxW){
+  if(!text)return[];
+  const words=text.split(' ');const lines=[];let line='';
+  words.forEach(w=>{
+    const test=line?line+' '+w:w;
+    if(ctx.measureText(test).width>maxW&&line){lines.push(line);line=w;}
+    else line=test;
+  });
+  if(line)lines.push(line);
+  return lines;
+}
+
 function renderPin(canvas,pin,W,H,autoImg=null){
   canvas.width=W;canvas.height=H;
   const ctx=canvas.getContext('2d');
@@ -760,19 +773,6 @@ function renderPin(canvas,pin,W,H,autoImg=null){
   ctx.font=`bold ${ctaFS}px Arial,sans-serif`;
   ctx.textAlign='center';
   ctx.fillText(pin.cta||'Mehr erfahren →',W/2,btnY+btnH*0.62);
-}
-
-// Helper: wrap text by pixel width
-function wrapPx(ctx,text,maxW){
-  if(!text)return[];
-  const words=text.split(' ');const lines=[];let line='';
-  words.forEach(w=>{
-    const test=line?line+' '+w:w;
-    if(ctx.measureText(test).width>maxW&&line){lines.push(line);line=w;}
-    else line=test;
-  });
-  if(line)lines.push(line);
-  return lines;
 }
 
 
@@ -1015,7 +1015,7 @@ ONLY JSON:
       generatedPins=carousel.slides.map(s=>({...s,title:s.title,description:s.subtitle,caption:carousel.caption,hashtags:carousel.hashtags}));
       window._carouselCaption=carousel.caption+'\n\n'+carousel.hashtags.map(t=>'#'+t).join(' ');
 
-      const autoImg=uploadedImages[0]?null:await fetchAutoImage(topic,'squarish');
+      const autoImg=uploadedImages[0]s[0]?null:await fetchAutoImage(topic,'squarish');
       for(let i=0;i<carousel.slides.length;i++){
         const slide=carousel.slides[i];
         document.getElementById(`pt${i}`).textContent=slide.title;
