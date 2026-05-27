@@ -645,6 +645,7 @@ function renderPin(canvas,pin,W,H,autoImg=null){
   const sc=isOverlay?'rgba(255,255,255,.75)':dark?'#C4B49A':'#6B6862';
   const ac=dark?'#C9A96E':'#2C2C2A';
   const isSquare=W===H;
+  const pad=W*0.06;
 
   // Background gradient
   const gr=ctx.createLinearGradient(0,0,W,H);
@@ -683,7 +684,6 @@ function renderPin(canvas,pin,W,H,autoImg=null){
       ctx.fillStyle=fade;ctx.fillRect(0,imgH*0.7,W,imgH*0.3);
     } else {
       // Centered image with rounded corners
-      const pad=W*0.06;
       const iw=W-pad*2;
       const ih=isSquare?H*0.42:H*0.40;
       const iy=W*0.05;
