@@ -302,6 +302,24 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         </div>
       </div>
 
+      <div class="section-label">Style Preset</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem">
+        <button class="style-preset" data-preset="vibrant" onclick="applyPreset('vibrant')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:linear-gradient(135deg,#FF6B6B,#FF8E53,#FFE66D);border:2px solid transparent;border-radius:8px;color:#1A1917;cursor:pointer">✨ Vibrant</button>
+        <button class="style-preset" data-preset="premium" onclick="applyPreset('premium')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:linear-gradient(135deg,#1A1A1A,#2C2C2A,#C9A96E);border:2px solid transparent;border-radius:8px;color:#C9A96E;cursor:pointer">🖤 Premium</button>
+        <button class="style-preset" data-preset="soft" onclick="applyPreset('soft')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:linear-gradient(135deg,#880E4F,#E91E8C,#F8BBD0);border:2px solid transparent;border-radius:8px;color:#1A1917;cursor:pointer">🌸 Soft</button>
+        <button class="style-preset" data-preset="bold" onclick="applyPreset('bold')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:linear-gradient(135deg,#8B0000,#CC2200,#FF6B00);border:2px solid transparent;border-radius:8px;color:#FFFFFF;cursor:pointer">🔥 Bold</button>
+        <button class="style-preset" data-preset="ocean" onclick="applyPreset('ocean')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:linear-gradient(135deg,#001F3F,#0A3D62,#48CAE4);border:2px solid transparent;border-radius:8px;color:#FFFFFF;cursor:pointer">🌊 Ocean</button>
+        <button class="style-preset" data-preset="random" onclick="applyPreset('random')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:var(--s2);border:2px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer">🎲 Zufall</button>
+      </div>
+
+      <div class="section-label">Bild-Layout</div>
+      <div class="tog-group" style="margin-bottom:1rem">
+        <button class="tog active" data-multilayout="single">1 Bild</button>
+        <button class="tog" data-multilayout="collage">Collage</button>
+        <button class="tog" data-multilayout="stacked">Gestapelt</button>
+        <button class="tog" data-multilayout="corner">Ecke</button>
+      </div>
+
       <div class="gen-section">
         <select class="count-select" id="pinCount" style="display:block">
           <option value="1">1 Post</option>
@@ -387,7 +405,8 @@ const GRADIENTS=[
 ];
 
 let currentGradient=GRADIENTS[0];
-let uploadedImage=null,generatedPins=[];
+let uploadedImages=[null,null,null],generatedPins=[];
+let multiLayout='single';
 let lang='de',pinFont='sans',pinLayout='centered',pinPattern='none',pinBorder='none';
 let userEmail='',pinsUsed=0,pinsLimit=500,isAdmin=false,userFeatures=['pinterest'];
 let currentPlatform='pinterest';
@@ -499,11 +518,80 @@ document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key
 
 function setLang(l){lang=l;document.querySelectorAll('.tog').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setLang')){b.classList.remove('active');if((l==='de'&&b.textContent.includes('DE'))||(l==='en'&&b.textContent.includes('EN')))b.classList.add('active');}});}
 document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{pinFont=b.dataset.font;document.querySelectorAll('[data-font]').forEach(x=>x.classList.toggle('active',x.dataset.font===pinFont));}));
+document.querySelectorAll('[data-multilayout]').forEach(b=>b.addEventListener('click',()=>{multiLayout=b.dataset.multilayout;document.querySelectorAll('[data-multilayout]').forEach(x=>x.classList.toggle('active',x.dataset.multilayout===multiLayout));}));
 document.querySelectorAll('[data-layout]').forEach(b=>b.addEventListener('click',()=>{pinLayout=b.dataset.layout;document.querySelectorAll('[data-layout]').forEach(x=>x.classList.toggle('active',x.dataset.layout===pinLayout));}));
 document.querySelectorAll('[data-pattern]').forEach(b=>b.addEventListener('click',()=>{pinPattern=b.dataset.pattern;document.querySelectorAll('[data-pattern]').forEach(x=>x.classList.toggle('active',x.dataset.pattern===pinPattern));}));
 document.querySelectorAll('[data-border]').forEach(b=>b.addEventListener('click',()=>{pinBorder=b.dataset.border;document.querySelectorAll('[data-border]').forEach(x=>x.classList.toggle('active',x.dataset.border===pinBorder));}));
-function handleUpload(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{uploadedImage=new Image();uploadedImage.onload=()=>{document.getElementById('imgThumb').src=ev.target.result;document.getElementById('imgThumb').style.display='block';document.getElementById('removeBtn').style.display='block';document.getElementById('uploadZone').style.display='none';};uploadedImage.src=ev.target.result;};r.readAsDataURL(f);}
-function removeImg(){uploadedImage=null;document.getElementById('imgThumb').style.display='none';document.getElementById('removeBtn').style.display='none';document.getElementById('uploadZone').style.display='block';document.getElementById('imgUpload').value='';}
+function handleMultiUpload(e,slot){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      uploadedImages[slot]=img;
+      updateImgPreviews();
+    };
+    img.src=ev.target.result;
+  };
+  r.readAsDataURL(f);
+}
+function updateImgPreviews(){
+  const prev=document.getElementById('imgPreviews');
+  const rmBtn=document.getElementById('removeAllBtn');
+  prev.innerHTML='';
+  let hasAny=false;
+  uploadedImages.forEach((img,i)=>{
+    if(img){
+      hasAny=true;
+      const wrap=document.createElement('div');
+      wrap.style.cssText='position:relative;width:60px;height:60px';
+      const im=document.createElement('img');
+      im.src=img.src;im.style.cssText='width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border)';
+      const rm=document.createElement('button');
+      rm.innerHTML='✕';rm.style.cssText='position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#E7232D;color:#fff;border:none;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0';
+      rm.onclick=()=>{uploadedImages[i]=null;updateImgPreviews();};
+      wrap.appendChild(im);wrap.appendChild(rm);prev.appendChild(wrap);
+    }
+  });
+  rmBtn.style.display=hasAny?'block':'none';
+}
+function removeAllImgs(){uploadedImages=[null,null,null];updateImgPreviews();}
+
+// Style Presets
+const PRESETS={
+  vibrant:{grad:{l:'Sonnenuntergang',s:['#FF6B6B','#FF8E53','#FFE66D']},pattern:'dots',border:'corner',font:'bold',layout:'centered'},
+  premium:{grad:{l:'SchwarzGold',s:['#1A1A1A','#2C2C2A','#C9A96E']},pattern:'none',border:'corner',font:'serif',layout:'centered'},
+  soft:{grad:{l:'Rosé',s:['#880E4F','#E91E8C','#F8BBD0']},pattern:'waves',border:'none',font:'script',layout:'centered'},
+  bold:{grad:{l:'Feuer',s:['#8B0000','#CC2200','#FF6B00']},pattern:'diagonal',border:'thick',font:'bold',layout:'left'},
+  ocean:{grad:{l:'Tiefsee',s:['#001F3F','#0A3D62','#48CAE4']},pattern:'circles',border:'single',font:'sans',layout:'centered'},
+};
+function applyPreset(name){
+  if(name==='random'){
+    const keys=Object.keys(PRESETS);
+    name=keys[Math.floor(Math.random()*keys.length)];
+  }
+  const p=PRESETS[name];
+  if(!p)return;
+  // Apply gradient
+  currentGradient=p.grad;
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+  // Apply pattern
+  pinPattern=p.pattern;
+  document.querySelectorAll('[data-pattern]').forEach(b=>b.classList.toggle('active',b.dataset.pattern===p.pattern));
+  // Apply border
+  pinBorder=p.border;
+  document.querySelectorAll('[data-border]').forEach(b=>b.classList.toggle('active',b.dataset.border===p.border));
+  // Apply font
+  pinFont=p.font;
+  document.querySelectorAll('[data-font]').forEach(b=>b.classList.toggle('active',b.dataset.font===p.font));
+  // Apply layout
+  pinLayout=p.layout;
+  document.querySelectorAll('[data-layout]').forEach(b=>b.classList.toggle('active',b.dataset.layout===p.layout));
+  // Highlight preset button
+  document.querySelectorAll('.style-preset').forEach(b=>b.style.outline='none');
+  const btn=document.querySelector(`[data-preset="${name}"]`);
+  if(btn)btn.style.outline='3px solid var(--text)';
+}
 
 const FONTS={sans:{t:'bold 52px Arial,sans-serif',s:'28px Arial,sans-serif',p:'24px Arial,sans-serif',c:'bold 26px Arial,sans-serif'},serif:{t:'bold 52px Georgia,serif',s:'28px Georgia,serif',p:'24px Georgia,serif',c:'bold 26px Georgia,serif'},bold:{t:'900 58px Arial Black,sans-serif',s:'bold 26px Arial,sans-serif',p:'bold 22px Arial,sans-serif',c:'900 26px Arial Black,sans-serif'},script:{t:'bold 52px Palatino Linotype,Georgia,serif',s:'italic 28px Georgia,serif',p:'italic 24px Georgia,serif',c:'bold italic 26px Georgia,serif'}};
 
@@ -554,7 +642,13 @@ function renderPin(canvas,pin,W,H,autoImg=null){
   drawPattern(ctx,W,H,ac);
 
   // Image
-  const img=autoImg||uploadedImage;
+  // Collect images: uploaded + auto
+  const imgs=[];
+  uploadedImages.forEach(i=>{if(i)imgs.push(i);});
+  if(imgs.length===0&&autoImg)imgs.push(autoImg);
+  const img=imgs[0]||null;
+  const img2=imgs[1]||null;
+  const img3=imgs[2]||null;
   const imgH=isSquare?H*0.45:H*0.42;
   if(img){
     if(pinLayout==='overlay'){
@@ -598,10 +692,10 @@ function renderPin(canvas,pin,W,H,autoImg=null){
   drawBorder(ctx,W,H,ac);
 
   // Text area start
-  const pad=W*0.08;
   let ty;
   if(pinLayout==='overlay') ty=H*0.48;
   else if(pinLayout==='split') ty=imgH+H*0.04;
+  else if(img&&multiLayout==='stacked'&&img2) ty=isSquare?H*0.31:H*0.29;
   else if(img) ty=isSquare?H*0.5:H*0.46;
   else ty=isSquare?H*0.32:H*0.27;
 
