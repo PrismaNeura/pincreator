@@ -1015,7 +1015,7 @@ ONLY JSON:
       generatedPins=carousel.slides.map(s=>({...s,title:s.title,description:s.subtitle,caption:carousel.caption,hashtags:carousel.hashtags}));
       window._carouselCaption=carousel.caption+'\n\n'+carousel.hashtags.map(t=>'#'+t).join(' ');
 
-      const autoImg=uploadedImage?null:await fetchAutoImage(topic,'squarish');
+      const autoImg=uploadedImages[0]?null:await fetchAutoImage(topic,'squarish');
       for(let i=0;i<carousel.slides.length;i++){
         const slide=carousel.slides[i];
         document.getElementById(`pt${i}`).textContent=slide.title;
@@ -1037,7 +1037,7 @@ ONLY JSON:
         document.getElementById(`pd${i}`).textContent=p.description;
         document.getElementById(`pg${i}`).innerHTML=(p.tags||[]).map(t=>`<span class="tag">#${t}</span>`).join('');
         document.getElementById(`ps${i}`).innerHTML=`<i class="ti ti-tag" style="font-size:10px;margin-right:2px"></i>${p.seoKeywords}`;
-        const autoImg=uploadedImage||await fetchAutoImage(p.imageQuery||topic,cfg.orientation);
+        const autoImg=uploadedImages[0]||await fetchAutoImage(p.imageQuery||topic,cfg.orientation);
         const canvas=document.getElementById(`cv${i}`);
         renderPin(canvas,p,dim.w,dim.h,autoImg);
       }
