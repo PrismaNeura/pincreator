@@ -312,14 +312,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         <button class="style-preset" data-preset="random" onclick="applyPreset('random')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:var(--s2);border:2px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer">🎲 Zufall</button>
       </div>
 
-      <div class="section-label">Bild-Layout</div>
-      <div class="tog-group" style="margin-bottom:1rem">
-        <button class="tog active" data-multilayout="single">1 Bild</button>
-        <button class="tog" data-multilayout="collage">Collage</button>
-        <button class="tog" data-multilayout="stacked">Gestapelt</button>
-        <button class="tog" data-multilayout="corner">Ecke</button>
-      </div>
-
       <div class="gen-section">
         <select class="count-select" id="pinCount" style="display:block">
           <option value="1">1 Post</option>
@@ -406,7 +398,7 @@ const GRADIENTS=[
 
 let currentGradient=GRADIENTS[0];
 let uploadedImages=[null,null,null],generatedPins=[];
-let multiLayout='single';
+const multiLayout='single'; // Always single image per pin
 let lang='de',pinFont='sans',pinLayout='centered',pinPattern='none',pinBorder='none';
 let userEmail='',pinsUsed=0,pinsLimit=500,isAdmin=false,userFeatures=['pinterest'];
 let currentPlatform='pinterest';
@@ -518,7 +510,7 @@ document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key
 
 function setLang(l){lang=l;document.querySelectorAll('.tog').forEach(b=>{if(b.onclick&&b.onclick.toString().includes('setLang')){b.classList.remove('active');if((l==='de'&&b.textContent.includes('DE'))||(l==='en'&&b.textContent.includes('EN')))b.classList.add('active');}});}
 document.querySelectorAll('[data-font]').forEach(b=>b.addEventListener('click',()=>{pinFont=b.dataset.font;document.querySelectorAll('[data-font]').forEach(x=>x.classList.toggle('active',x.dataset.font===pinFont));}));
-document.querySelectorAll('[data-multilayout]').forEach(b=>b.addEventListener('click',()=>{multiLayout=b.dataset.multilayout;document.querySelectorAll('[data-multilayout]').forEach(x=>x.classList.toggle('active',x.dataset.multilayout===multiLayout));}));
+// multiLayout buttons removed
 document.querySelectorAll('[data-layout]').forEach(b=>b.addEventListener('click',()=>{pinLayout=b.dataset.layout;document.querySelectorAll('[data-layout]').forEach(x=>x.classList.toggle('active',x.dataset.layout===pinLayout));}));
 document.querySelectorAll('[data-pattern]').forEach(b=>b.addEventListener('click',()=>{pinPattern=b.dataset.pattern;document.querySelectorAll('[data-pattern]').forEach(x=>x.classList.toggle('active',x.dataset.pattern===pinPattern));}));
 document.querySelectorAll('[data-border]').forEach(b=>b.addEventListener('click',()=>{pinBorder=b.dataset.border;document.querySelectorAll('[data-border]').forEach(x=>x.classList.toggle('active',x.dataset.border===pinBorder));}));
