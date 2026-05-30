@@ -149,6 +149,52 @@ async function sendEmail(to, subject, text) {
   } catch (e) { console.error('E-Mail Fehler:', e.message); }
 }
 
+// IP-based demo rate limiting
+const demoUsage = new Map();
+const DEMO_LIMIT = 3;
+const DEMO_WINDOW = 24 * 60 * 60 * 1000; // 24 hours
+
+// Cleanup old entries every hour
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, data] of demoUsage.entries()) {
+    if (now - data.firstUsed > DEMO_WINDOW) demoUsage.delete(ip);
+  }
+}, 60 * 60 * 1000);
+
+app.post('/api/demo', async (req, res) => {
+  const ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const usage = demoUsage.get(ip);
+
+  if (usage) {
+    if (now - usage.firstUsed > DEMO_WINDOW) {
+      // Reset after 24 hours
+      demoUsage.set(ip, { count: 1, firstUsed: now });
+    } else if (usage.count >= DEMO_LIMIT) {
+      return res.status(429).json({ error: 'limit', message: 'Demo-Limit erreicht. Bitte Abonnement starten.' });
+    } else {
+      usage.count++;
+    }
+  } else {
+    demoUsage.set(ip, { count: 1, firstUsed: now });
+  }
+
+  const remaining = DEMO_LIMIT - (demoUsage.get(ip)?.count || 0);
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY fehlt' });
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify(req.body)
+    });
+    const data = await r.json();
+    data.demoRemaining = remaining;
+    res.json(data);
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 app.post('/api/generate', async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY fehlt' });
