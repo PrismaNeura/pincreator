@@ -181,6 +181,8 @@ app.get('/api/image', async (req, res) => {
   } catch { res.json({ url: null }); }
 });
 
+app.get('/', (req, res) => res.sendFile('landingpage.html', { root: 'public' }));
+app.get('/app', (req, res) => res.sendFile('index.html', { root: 'public' }));
 app.get('/setup', (req, res) => res.sendFile('index.html', { root: 'public' }));
 
 // Image proxy to avoid CORS issues with canvas
