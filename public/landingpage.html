@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="BoostYourPins – KI-gestützter Social Media Generator für Pinterest, Instagram, Stories, Karussell & Reels. Professionelle Posts in Sekunden. Ab 9€/Monat.">
+<meta name="keywords" content="Pinterest Marketing Tool, KI Social Media Generator, Pinterest Pins erstellen, Instagram Posts KI, Social Media Automatisierung, passives Einkommen Pinterest">
+<meta name="author" content="BoostYourPins">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://boostyourpins.de/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://boostyourpins.de/">
+<meta property="og:title" content="BoostYourPins – KI Social Media Generator">
+<meta property="og:description" content="Pinterest Pins, Instagram Posts, Stories, Karussell & Reels – erstellt von KI in Sekunden. Kein Design-Skill nötig. Ab 9€/Monat.">
+<meta property="og:image" content="https://boostyourpins.de/og-image.jpg">
+<meta property="og:locale" content="de_DE">
+<meta property="og:site_name" content="BoostYourPins">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://boostyourpins.de/">
+<meta name="twitter:title" content="BoostYourPins – KI Social Media Generator">
+<meta name="twitter:description" content="Pinterest Pins, Instagram Posts, Stories & Reels in Sekunden. KI erstellt alles – Text, Bild, Hashtags, Keywords. Ab 9€/Monat.">
+<meta name="twitter:image" content="https://boostyourpins.de/og-image.jpg">
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "BoostYourPins",
+  "applicationCategory": "BusinessApplication",
+  "description": "KI-gestützter Social Media Generator für Pinterest, Instagram, Stories, Karussell und Reels. Erstellt professionelle Posts in Sekunden.",
+  "url": "https://boostyourpins.de",
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Starter",
+      "price": "9.00",
+      "priceCurrency": "EUR",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "9.00",
+        "priceCurrency": "EUR",
+        "unitText": "MONTH"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Creator",
+      "price": "19.00",
+      "priceCurrency": "EUR",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "19.00",
+        "priceCurrency": "EUR",
+        "unitText": "MONTH"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro",
+      "price": "29.00",
+      "priceCurrency": "EUR",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "29.00",
+        "priceCurrency": "EUR",
+        "unitText": "MONTH"
+      }
+    },
+    {
+      "@type": "Offer",
+      "name": "Unlimited",
+      "price": "39.00",
+      "priceCurrency": "EUR",
+      "priceSpecification": {
+        "@type": "UnitPriceSpecification",
+        "price": "39.00",
+        "priceCurrency": "EUR",
+        "unitText": "MONTH"
+      }
+    }
+  ],
+  "featureList": [
+    "Pinterest Pin Generator",
+    "Instagram Post Generator",
+    "Stories Generator",
+    "Karussell Generator",
+    "Reels Storyboard Generator",
+    "SEO-Keywords automatisch",
+    "28 Premium Farbverläufe",
+    "5 Style-Presets",
+    "Deutsch und Englisch"
+  ],
+  "operatingSystem": "Web",
+  "applicationSubCategory": "Social Media Tool",
+  "inLanguage": ["de", "en"],
+  "provider": {
+    "@type": "Organization",
+    "name": "BoostYourPins",
+    "url": "https://boostyourpins.de"
+  }
+}
+</script>
+
+<title>BoostYourPins – KI Social Media Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#0D9488;
+  --teal-light:#2DD4BF;
+  --teal-dark:#042F2E;
+  --violet:#7C3AED;
+  --violet-light:#A78BFA;
+  --violet-mid:#5B21B6;
+  --white:#FFFFFF;
+  --off:#F0FDF4;
+  --text:#0F172A;
+  --text2:#475569;
+  --text3:#94A3B8;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:#050D1A;color:var(--white);overflow-x:hidden}
+
+/* MESH BACKGROUND */
+.mesh{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 20%,rgba(13,148,136,0.18) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 80% at 90% 80%,rgba(124,58,237,0.2) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(45,212,191,0.05) 0%,transparent 50%),
+    #050D1A}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(24px);background:rgba(5,13,26,0.7)}
+.nav-logo{font-family:'Outfit',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em;background:linear-gradient(135deg,var(--teal-light),var(--violet-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-right{display:flex;gap:10px;align-items:center}
+.btn-ghost{padding:8px 18px;border:1px solid rgba(255,255,255,0.12);border-radius:100px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);background:transparent;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-ghost:hover{border-color:rgba(45,212,191,0.4);color:var(--teal-light)}
+.btn-pill{padding:9px 20px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet));border:none;color:#fff;cursor:pointer;text-decoration:none;transition:all .2s;position:relative;overflow:hidden}
+.btn-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--teal-light),var(--violet-light));opacity:0;transition:opacity .2s}
+.btn-pill:hover::before{opacity:1}
+.btn-pill span{position:relative;z-index:1}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8rem 2rem 5rem;position:relative;z-index:1;text-align:center}
+.hero-inner{max-width:820px}
+.hero-chip{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 8px;background:rgba(13,148,136,0.12);border:1px solid rgba(45,212,191,0.2);border-radius:100px;font-size:12px;font-weight:600;color:var(--teal-light);letter-spacing:.04em;margin-bottom:2rem}
+.hero-chip-dot{width:6px;height:6px;background:var(--teal-light);border-radius:50%;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.hero h1{font-family:'Outfit',sans-serif;font-size:clamp(34px,5.5vw,68px);font-weight:700;line-height:1.1;letter-spacing:-.02em;margin-bottom:1.5rem}
+.hero h1 .grad{background:linear-gradient(135deg,var(--teal-light) 0%,var(--violet-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,0.5);line-height:1.7;max-width:540px;margin:0 auto 2.5rem}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
+.btn-hero-main{padding:16px 36px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet-mid));border:none;color:#fff;cursor:pointer;text-decoration:none;transition:all .3s;box-shadow:0 0 40px rgba(13,148,136,0.3)}
+.btn-hero-main:hover{transform:translateY(-2px);box-shadow:0 8px 50px rgba(13,148,136,0.45)}
+.btn-hero-sec{padding:16px 36px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-hero-sec:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2)}
+.platform-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.plat{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.03);transition:all .2s}
+.plat:hover{border-color:rgba(45,212,191,0.3);color:var(--teal-light)}
+
+/* MARQUEE */
+.marquee-wrap{border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);padding:1rem 0;overflow:hidden;position:relative;z-index:1;background:rgba(255,255,255,0.02)}
+.marquee{display:flex;gap:3rem;animation:marquee 20s linear infinite;white-space:nowrap}
+.marquee span{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.marquee span em{color:var(--teal-light);font-style:normal}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* STEPS */
+.steps-section{padding:7rem 2rem;position:relative;z-index:1}
+.container{max-width:1100px;margin:0 auto}
+.sec-eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-light);margin-bottom:1rem}
+.sec-title{font-family:'Outfit',sans-serif;font-size:clamp(28px,4vw,50px);font-weight:700;letter-spacing:-.02em;margin-bottom:1.5rem;line-height:1.1}
+.sec-sub{font-size:17px;color:rgba(255,255,255,0.45);line-height:1.7;max-width:520px}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;margin-top:3.5rem;background:rgba(255,255,255,0.06);border-radius:20px;overflow:hidden}
+.step{background:#050D1A;padding:2rem 1.75rem;transition:background .2s}
+.step:hover{background:rgba(13,148,136,0.06)}
+.step-n{font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;color:var(--teal-light);opacity:.5;margin-bottom:1.25rem;letter-spacing:.04em}
+.step-icon{font-size:28px;margin-bottom:1rem}
+.step h3{font-size:16px;font-weight:700;margin-bottom:.5rem}
+.step p{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.65}
+
+/* PLATFORMS */
+.plats-section{padding:7rem 2rem;position:relative;z-index:1;background:rgba(255,255,255,0.015)}
+.plats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:3rem}
+.plat-card{border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:1.75rem 1.5rem;background:rgba(255,255,255,0.02);transition:all .25s;cursor:default}
+.plat-card:hover{border-color:rgba(45,212,191,0.25);background:rgba(13,148,136,0.06);transform:translateY(-3px)}
+.plat-em{font-size:30px;margin-bottom:.875rem}
+.plat-card h3{font-size:15px;font-weight:700;margin-bottom:.35rem}
+.plat-card p{font-size:12px;color:rgba(255,255,255,0.35);line-height:1.5}
+
+/* FEATURES */
+.feat-section{padding:7rem 2rem;position:relative;z-index:1}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:1.25rem;margin-top:3rem}
+.feat-card{border:1px solid rgba(255,255,255,0.07);border-radius:18px;padding:1.75rem;background:rgba(255,255,255,0.02);transition:all .25s;position:relative;overflow:hidden}
+.feat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--violet));opacity:0;transition:opacity .25s}
+.feat-card:hover{border-color:rgba(45,212,191,0.15);transform:translateY(-3px)}
+.feat-card:hover::after{opacity:1}
+.feat-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(13,148,136,.15),rgba(124,58,237,.15));display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1.25rem;border:1px solid rgba(255,255,255,0.07)}
+.feat-card h3{font-size:16px;font-weight:700;margin-bottom:.5rem}
+.feat-card p{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.65}
+
+/* STYLES */
+.styles-section{padding:7rem 2rem;position:relative;z-index:1;background:rgba(255,255,255,0.015)}
+.styles-scroll{display:flex;gap:10px;flex-wrap:wrap;margin-top:2rem}
+.sty{padding:10px 20px;border-radius:100px;font-size:13px;font-weight:700;cursor:default;border:2px solid transparent;transition:transform .2s}
+.sty:hover{transform:scale(1.05)}
+.s-v{background:linear-gradient(135deg,#FF6B6B,#FF8E53,#FFE66D);color:#1A1917}
+.s-p{background:linear-gradient(135deg,#1A1A1A,#2C2C2A,#C9A96E);color:#C9A96E;border-color:rgba(201,169,110,0.3)}
+.s-s{background:linear-gradient(135deg,#880E4F,#E91E8C,#F8BBD0);color:#1A1917}
+.s-b{background:linear-gradient(135deg,#8B0000,#CC2200,#FF6B00);color:#fff}
+.s-o{background:linear-gradient(135deg,#001F3F,#0A3D62,#48CAE4);color:#fff}
+
+/* PRICING */
+.price-section{padding:7rem 2rem;position:relative;z-index:1}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:rgba(255,255,255,0.06);border-radius:24px;overflow:hidden;margin-top:3rem}
+.pc{background:#050D1A;padding:2rem 1.75rem;position:relative;transition:background .2s}
+.pc.hot{background:linear-gradient(180deg,rgba(13,148,136,0.08) 0%,rgba(124,58,237,0.06) 100%)}
+.pc-badge{position:absolute;top:1.5rem;right:1.5rem;font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;background:linear-gradient(135deg,var(--teal),var(--violet));color:#fff;letter-spacing:.04em}
+.pc-name{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:1rem}
+.pc-price{font-family:'Outfit',sans-serif;font-size:44px;font-weight:700;letter-spacing:-.02em;margin-bottom:.2rem}
+.pc-period{font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:1.25rem}
+.pc-limit{font-size:12px;font-weight:700;color:var(--teal-light);margin-bottom:1.5rem;padding:5px 12px;background:rgba(13,148,136,0.1);border-radius:8px;display:inline-block;border:1px solid rgba(13,148,136,0.2)}
+.pc-feats{list-style:none;margin-bottom:1.75rem}
+.pc-feat{font-size:13px;color:rgba(255,255,255,0.45);padding:4px 0;display:flex;align-items:center;gap:8px}
+.pc-feat::before{content:'→';color:var(--teal-light);font-size:11px;flex-shrink:0}
+.pc.hot .pc-feat{color:rgba(255,255,255,0.65)}
+.btn-buy{width:100%;padding:12px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:all .2s}
+.btn-buy-outline{background:transparent;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5)}
+.btn-buy-outline:hover{border-color:rgba(45,212,191,0.4);color:var(--teal-light)}
+.btn-buy-grad{background:linear-gradient(135deg,var(--teal),var(--violet-mid));border:none;color:#fff;box-shadow:0 0 30px rgba(13,148,136,0.25)}
+.btn-buy-grad:hover{transform:translateY(-1px);box-shadow:0 4px 40px rgba(13,148,136,0.4)}
+
+/* DEMO */
+.demo-section{padding:7rem 2rem;position:relative;z-index:1;background:rgba(255,255,255,0.015)}
+.demo-box{max-width:680px;margin:3rem auto 0;border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden;background:rgba(255,255,255,0.02)}
+.demo-top{padding:2rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+.demo-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px}
+.demo-input-fake{padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:1rem}
+.demo-gen-btn{width:100%;padding:14px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet-mid));border:none;color:#fff;cursor:pointer;transition:all .25s;box-shadow:0 0 30px rgba(13,148,136,0.2)}
+.demo-gen-btn:hover{box-shadow:0 0 50px rgba(13,148,136,0.35);transform:translateY(-1px)}
+.demo-gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.demo-result{padding:0}
+.demo-pin{padding:1.75rem;border-top:1px solid rgba(255,255,255,0.06);animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.demo-pin-header{display:flex;align-items:center;gap:10px;margin-bottom:.875rem}
+.demo-pin-emoji{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.demo-pin-n{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.demo-pin-title{font-size:15px;font-weight:700;margin-bottom:.5rem;line-height:1.3}
+.demo-pin-desc{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:.75rem}
+.demo-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem}
+.demo-tag{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:600}
+.demo-copy{padding:6px 14px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:100px;color:rgba(255,255,255,0.4);font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
+.demo-copy:hover{border-color:rgba(45,212,191,0.4);color:var(--teal-light)}
+.demo-upgrade{padding:2rem;text-align:center;background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(124,58,237,0.08));border-top:1px solid rgba(255,255,255,0.06)}
+.loading-dots{display:flex;gap:6px;justify-content:center;padding:2rem}
+.dot{width:8px;height:8px;background:var(--teal-light);border-radius:50%;animation:bounce .8s ease infinite}
+.dot:nth-child(2){animation-delay:.15s;background:color-mix(in srgb,var(--teal-light),var(--violet-light) 50%)}
+.dot:nth-child(3){animation-delay:.3s;background:var(--violet-light)}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.3}50%{transform:translateY(-6px);opacity:1}}
+
+/* FAQ */
+.faq-section{padding:7rem 2rem;position:relative;z-index:1}
+.faq-list{max-width:680px;margin:3rem auto 0}
+.faq-item{border-bottom:1px solid rgba(255,255,255,0.06);padding:1.5rem 0}
+.faq-q{font-size:15px;font-weight:700;margin-bottom:.5rem}
+.faq-a{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7}
+
+/* CTA */
+.cta-section{padding:8rem 2rem;position:relative;z-index:1;text-align:center;overflow:hidden}
+.cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(13,148,136,0.15) 0%,rgba(124,58,237,0.1) 50%,transparent 70%);pointer-events:none}
+.cta-section h2{font-family:'Outfit',sans-serif;font-size:clamp(30px,5vw,58px);font-weight:700;letter-spacing:-.02em;margin-bottom:1rem;position:relative}
+.cta-section p{font-size:17px;color:rgba(255,255,255,0.4);margin-bottom:2.5rem;position:relative}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+
+/* FOOTER */
+footer{border-top:1px solid rgba(255,255,255,0.06);padding:2rem;text-align:center;position:relative;z-index:1}
+footer p{font-size:12px;color:rgba(255,255,255,0.2)}
+footer a{color:rgba(255,255,255,0.25);text-decoration:none;margin:0 8px;transition:color .2s}
+footer a:hover{color:var(--teal-light)}
+
+@media(max-width:640px){
+  nav{padding:1rem}
+  .hero{padding:6rem 1.25rem 4rem}
+  .steps-section,.plats-section,.feat-section,.styles-section,.price-section,.demo-section,.faq-section,.cta-section{padding:5rem 1.25rem}
+  .btn-hero-main,.btn-hero-sec{padding:14px 24px;font-size:15px}
+  .price-grid,.steps-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="mesh"></div>
+
+<nav>
+  <div class="nav-logo">BoostYourPins</div>
+  <div class="nav-right">
+    <a href="https://boostyourpins.de/app" class="btn-ghost">Einloggen</a>
+    <a href="https://gumroad.com/l/oktubc" target="_blank" class="btn-pill"><span>Jetzt starten</span></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-chip"><div class="hero-chip-dot"></div>KI-gestützt · Pinterest · Instagram · Stories · Reels</div>
+    <h1>Social Media Content,<br>der <span class="grad">wirklich konvertiert</span></h1>
+    <p class="hero-sub">Von Pinterest Pins bis Reels-Storyboards – KI erstellt professionellen Content für alle Plattformen in Sekunden. Kein Design-Skill nötig.</p>
+    <div class="hero-btns">
+      <a href="#demo" class="btn-hero-main">Demo ansehen →</a>
+      <a href="https://boostyourpins.de/app" class="btn-hero-sec">Bereits Kunde? Einloggen</a>
+    </div>
+    <div class="platform-row">
+      <div class="plat">📌 Pinterest</div>
+      <div class="plat">📷 Instagram</div>
+      <div class="plat">📱 Stories</div>
+      <div class="plat">🃏 Karussell</div>
+      <div class="plat">🎬 Reels</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span>📌 Pinterest Pins</span><span>·</span>
+    <span>📷 Instagram Posts</span><span>·</span>
+    <span>📱 Stories</span><span>·</span>
+    <span>🃏 Karussell</span><span>·</span>
+    <span>🎬 Reels Storyboard</span><span>·</span>
+    <span><em>28 Farbverläufe</em></span><span>·</span>
+    <span>5 Style-Presets</span><span>·</span>
+    <span>SEO-optimiert</span><span>·</span>
+    <span><em>DE & EN</em></span><span>·</span>
+    <span>📌 Pinterest Pins</span><span>·</span>
+    <span>📷 Instagram Posts</span><span>·</span>
+    <span>📱 Stories</span><span>·</span>
+    <span>🃏 Karussell</span><span>·</span>
+    <span>🎬 Reels Storyboard</span><span>·</span>
+    <span><em>28 Farbverläufe</em></span><span>·</span>
+    <span>5 Style-Presets</span><span>·</span>
+    <span>SEO-optimiert</span><span>·</span>
+    <span><em>DE & EN</em></span><span>·</span>
+  </div>
+</div>
+
+<!-- STEPS -->
+<section class="steps-section">
+  <div class="container">
+    <div class="sec-eyebrow">So einfach geht's</div>
+    <h2 class="sec-title">Von Idee zu fertigem Post<br>in unter 60 Sekunden</h2>
+    <div class="steps-grid">
+      <div class="step"><div class="step-n">01</div><div class="step-icon">✍️</div><h3>Thema eingeben</h3><p>Schreib dein Thema, deine Nische oder dein Produkt. Die KI versteht den Kontext sofort.</p></div>
+      <div class="step"><div class="step-n">02</div><div class="step-icon">🎨</div><h3>Style wählen</h3><p>5 Presets, 28 Farbverläufe. Ein Klick und alle Einstellungen sind perfekt aufeinander abgestimmt.</p></div>
+      <div class="step"><div class="step-n">03</div><div class="step-icon">⚡</div><h3>KI generiert</h3><p>Bild, Titel, Beschreibung, Hashtags und SEO-Keywords – alles fertig in Sekunden.</p></div>
+      <div class="step"><div class="step-n">04</div><div class="step-icon">🚀</div><h3>Hochladen & fertig</h3><p>Direkt herunterladen und auf Pinterest, Instagram, Stories oder Reels hochladen.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORMS -->
+<section class="plats-section">
+  <div class="container">
+    <div class="sec-eyebrow">Alle Plattformen</div>
+    <h2 class="sec-title">Ein Tool.<br>Fünf Plattformen.</h2>
+    <div class="plats-grid">
+      <div class="plat-card"><div class="plat-em">📌</div><h3>Pinterest Pins</h3><p>2:3 · SEO-optimiert · Traffic für Monate</p></div>
+      <div class="plat-card"><div class="plat-em">📷</div><h3>Instagram Posts</h3><p>1:1 · Feed-optimiert · 20 Hashtags</p></div>
+      <div class="plat-card"><div class="plat-em">📱</div><h3>Stories</h3><p>9:16 · Täglich · Community aufbauen</p></div>
+      <div class="plat-card"><div class="plat-em">🃏</div><h3>Karussell</h3><p>6 Slides · Höchste organische Reichweite</p></div>
+      <div class="plat-card"><div class="plat-em">🎬</div><h3>Reels Storyboard</h3><p>Hook · Szenen · Text-Overlay · Musik-Tipp</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="feat-section">
+  <div class="container">
+    <div class="sec-eyebrow">Features</div>
+    <h2 class="sec-title">Alles was du brauchst.<br>Nichts was du nicht brauchst.</h2>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">🎨</div><h3>28 Premium-Farbverläufe</h3><p>Von Mitternacht bis Vaporwave. Oder erstelle deinen eigenen mit 3 Farben.</p></div>
+      <div class="feat-card"><div class="feat-icon">✨</div><h3>5 Style-Presets</h3><p>Vibrant, Premium, Soft, Bold, Ocean – ein Klick und alles stimmt.</p></div>
+      <div class="feat-card"><div class="feat-icon">🔤</div><h3>SEO-Keywords inklusive</h3><p>Optimierte Keywords, Hashtags und Beschreibungen – fertig zum Kopieren.</p></div>
+      <div class="feat-card"><div class="feat-icon">🌍</div><h3>Deutsch & Englisch</h3><p>Erstelle Posts in beiden Sprachen und verdopple deine Reichweite.</p></div>
+      <div class="feat-card"><div class="feat-icon">⚡</div><h3>Bis zu 5 Posts gleichzeitig</h3><p>5 Variationen auf einmal – wähle die beste aus und spare Zeit.</p></div>
+      <div class="feat-card"><div class="feat-icon">📊</div><h3>Pin-Limit Übersicht</h3><p>Behalte dein monatliches Kontingent im Blick. Warnung bei 80%.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STYLES -->
+<section class="styles-section">
+  <div class="container" style="text-align:center">
+    <div class="sec-eyebrow">Style Presets</div>
+    <h2 class="sec-title">Dein Look. Ein Klick.</h2>
+    <p style="font-size:16px;color:rgba(255,255,255,0.4);max-width:480px;margin:0 auto">Alle Design-Einstellungen werden automatisch perfekt aufeinander abgestimmt.</p>
+    <div class="styles-scroll" style="justify-content:center;margin-top:2rem">
+      <div class="sty s-v">✨ Vibrant</div>
+      <div class="sty s-p">🖤 Premium</div>
+      <div class="sty s-s">🌸 Soft</div>
+      <div class="sty s-b">🔥 Bold</div>
+      <div class="sty s-o">🌊 Ocean</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo-section" id="demo">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="sec-eyebrow">Live Demo</div>
+      <h2 class="sec-title">Sieh wie die KI<br>in Sekunden arbeitet</h2>
+    </div>
+    <div class="demo-box">
+      <div class="demo-top">
+        <div class="demo-label">Thema</div>
+        <div class="demo-input-fake" id="demoTopic">passives Einkommen aufbauen mit Pinterest</div>
+        <button class="demo-gen-btn" id="demoBtn" onclick="startDemo()">✦ Pins generieren</button>
+      </div>
+      <div id="demoBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="price-section">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="sec-eyebrow">Preise</div>
+      <h2 class="sec-title">Wähle deinen Plan</h2>
+      <p style="font-size:16px;color:rgba(255,255,255,0.4)">Jederzeit kündbar · Sofortiger Zugang · Kein Design nötig</p>
+    </div>
+    <div class="price-grid">
+      <div class="pc">
+        <div class="pc-name">Starter</div>
+        <div class="pc-price">9€</div>
+        <div class="pc-period">/Monat</div>
+        <div class="pc-limit">500 Posts/Monat</div>
+        <ul class="pc-feats">
+          <li class="pc-feat">📌 Pinterest Pins</li>
+          <li class="pc-feat">28 Farbverläufe</li>
+          <li class="pc-feat">5 Style-Presets</li>
+          <li class="pc-feat">SEO & Hashtags</li>
+          <li class="pc-feat">DE & EN</li>
+        </ul>
+        <a href="https://gumroad.com/l/oktubc" target="_blank" class="btn-buy btn-buy-outline">Starter wählen</a>
+      </div>
+      <div class="pc hot">
+        <div class="pc-badge">⭐ Beliebt</div>
+        <div class="pc-name">Creator</div>
+        <div class="pc-price">19€</div>
+        <div class="pc-period">/Monat</div>
+        <div class="pc-limit">1.000 Posts/Monat</div>
+        <ul class="pc-feats">
+          <li class="pc-feat">📌 Pinterest + 📷 Instagram</li>
+          <li class="pc-feat">📱 Stories</li>
+          <li class="pc-feat">Auto Stockfotos</li>
+          <li class="pc-feat">20 Hashtags</li>
+          <li class="pc-feat">Alles aus Starter</li>
+        </ul>
+        <a href="https://gumroad.com/l/oktubc" target="_blank" class="btn-buy btn-buy-grad">Creator wählen</a>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Pro</div>
+        <div class="pc-price">29€</div>
+        <div class="pc-period">/Monat</div>
+        <div class="pc-limit">3.000 Posts/Monat</div>
+        <ul class="pc-feats">
+          <li class="pc-feat">🃏 Karussell (6 Slides)</li>
+          <li class="pc-feat">🎬 Reels Storyboard</li>
+          <li class="pc-feat">Alle 5 Plattformen</li>
+          <li class="pc-feat">Alles aus Creator</li>
+        </ul>
+        <a href="https://gumroad.com/l/oktubc" target="_blank" class="btn-buy btn-buy-outline">Pro wählen</a>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Unlimited</div>
+        <div class="pc-price">39€</div>
+        <div class="pc-period">/Monat</div>
+        <div class="pc-limit">∞ Unbegrenzt</div>
+        <ul class="pc-feats">
+          <li class="pc-feat">Alle Formate</li>
+          <li class="pc-feat">Unbegrenzte Posts</li>
+          <li class="pc-feat">Für Agenturen</li>
+          <li class="pc-feat">Alles aus Pro</li>
+        </ul>
+        <a href="https://gumroad.com/l/oktubc" target="_blank" class="btn-buy btn-buy-outline">Unlimited wählen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div style="text-align:center">
+      <div class="sec-eyebrow">FAQ</div>
+      <h2 class="sec-title">Häufige Fragen</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item"><div class="faq-q">Brauche ich Design-Kenntnisse?</div><div class="faq-a">Nein. Die KI übernimmt alles – Bild, Text, Design, Keywords. Du gibst nur das Thema ein.</div></div>
+      <div class="faq-item"><div class="faq-q">Kann ich jederzeit kündigen?</div><div class="faq-a">Ja, jederzeit zum Ende des Abrechnungszeitraums über Gumroad. Keine Mindestlaufzeit.</div></div>
+      <div class="faq-item"><div class="faq-q">Darf ich die Posts kommerziell nutzen?</div><div class="faq-a">Ja. Alle generierten Posts gehören dir und dürfen kommerziell genutzt werden.</div></div>
+      <div class="faq-item"><div class="faq-q">Gibt es ein Affiliate-Programm?</div><div class="faq-a">Ja! Empfehle BoostYourPins und verdiene 30% Provision monatlich – solange dein Kunde zahlt.</div></div>
+      <div class="faq-item"><div class="faq-q">Was ist der Unterschied zu Canva?</div><div class="faq-a">Canva erstellt nur das Design – du schreibst alles selbst. BoostYourPins erstellt Bild UND kompletten Text mit SEO-Keywords in Sekunden.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="container">
+    <h2>Bereit loszulegen?</h2>
+    <p>Starte heute. Erste Posts in unter 5 Minuten.</p>
+    <div class="cta-btns">
+      <a href="https://gumroad.com/l/oktubc" target="_blank" class="btn-hero-main">✦ Abonnement starten – ab 9€/Monat</a>
+      <a href="https://boostyourpins.de/app" class="btn-hero-sec">Bereits Kunde? Einloggen</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Anne Claus · BoostYourPins · Herzberg &nbsp;|&nbsp;
+    <a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">AGB</a><a href="mailto:hallo@boostyourpins.de">Kontakt</a>
+  </p>
+</footer>
+
+<script>
+const PINS=[
+  {emoji:'💰',title:'Passives Einkommen 2026: So startest du heute',desc:'Du musst nicht mehr tauschen – Zeit gegen Geld. Mit Pinterest und Instagram baust du einen Einkommensstrom auf der auch arbeitet wenn du es nicht tust. Schritt für Schritt – auch ohne Vorkenntnisse.',tags:['passivesEinkommen','PinterestMarketing','OnlineBusiness','GeldVerdienen','FinanzielleFreiheit'],seo:'passives Einkommen, Pinterest Marketing, online Geld verdienen',cta:'Jetzt starten →',bg:'linear-gradient(135deg,#0D9488,#7C3AED)'},
+  {emoji:'📌',title:'Pinterest SEO: 5 Tipps die sofort mehr Traffic bringen',desc:'Die meisten Pinterest-Nutzer machen diese Fehler täglich – und verlieren hunderte potenzielle Klicks. Keywords nicht nur im Titel, sondern auch in der Beschreibung und den Board-Namen.',tags:['PinterestSEO','PinterestTipps','ContentMarketing','TrafficTipps','OnlineMarketing'],seo:'Pinterest SEO Tipps, Pinterest Traffic, Pinterest Marketing',cta:'Mehr Traffic →',bg:'linear-gradient(135deg,#5B21B6,#0D9488)'},
+  {emoji:'🚀',title:'In 30 Tagen von 0 auf dein erstes Online-Einkommen',desc:'30 Tage. Ein Plan. Dein erstes passives Einkommen. Dieser Plan zeigt dir wie du Pinterest und Instagram nutzt um monatlich wiederkehrende Einnahmen aufzubauen.',tags:['30TageChallenge','OnlineBusiness','PinterestMarketing','Anfänger','passivesEinkommen'],seo:'online Einkommen, Pinterest Anfänger, 30 Tage Plan',cta:'Plan holen →',bg:'linear-gradient(135deg,#2DD4BF,#7C3AED)'}
+];
+const TOPICS=['passives Einkommen aufbauen mit Pinterest','Instagram Marketing für Anfänger','Online Geld verdienen 2026','Social Media Business starten'];
+let topicIdx=0,started=false,loadTxt;
+const LOADS=['KI analysiert dein Thema…','SEO-Keywords werden optimiert…','Design wird generiert…','Hashtags werden ausgewählt…','Posts werden fertiggestellt…'];
+
+function startDemo(){
+  if(started)return;started=true;
+  const btn=document.getElementById('demoBtn');
+  btn.disabled=true;
+  const body=document.getElementById('demoBody');
+  body.innerHTML=`<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><p style="text-align:center;font-size:13px;color:rgba(255,255,255,0.3);padding-bottom:1.5rem" id="lt">${LOADS[0]}</p>`;
+  let li=0;
+  const ti=setInterval(()=>{li=(li+1)%LOADS.length;const el=document.getElementById('lt');if(el)el.textContent=LOADS[li];},800);
+  setTimeout(()=>{clearInterval(ti);showPins();},3800);
+}
+
+function showPins(){
+  const body=document.getElementById('demoBody');
+  let html='';
+  PINS.forEach((p,i)=>{
+    const tagColors=['rgba(13,148,136,0.15)','rgba(124,58,237,0.15)','rgba(45,212,191,0.12)'];
+    const tagTextColors=['#2DD4BF','#A78BFA','#2DD4BF'];
+    const tc=i%3;
+    html+=`<div class="demo-pin" style="animation-delay:${i*.15}s">
+      <div class="demo-pin-header">
+        <div class="demo-pin-emoji" style="background:${p.bg}">${p.emoji}</div>
+        <div class="demo-pin-n">Pin ${i+1}</div>
+      </div>
+      <div class="demo-pin-title" style="background:${p.bg};-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${p.title}</div>
+      <div class="demo-pin-desc">${p.desc}</div>
+      <div class="demo-tags">${p.tags.map(t=>`<span class="demo-tag" style="background:${tagColors[tc]};color:${tagTextColors[tc]}">#${t}</span>`).join('')}</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.2);margin-bottom:.75rem">SEO: ${p.seo}</div>
+      <button class="demo-copy" onclick="copyPin(${i},this)" data-pin='${JSON.stringify({title:p.title,desc:p.desc,tags:p.tags,seo:p.seo})}'>📋 Kopieren</button>
+    </div>`;
+  });
+  html+=`<div class="demo-upgrade">
+    <div style="font-size:22px;margin-bottom:.75rem">🎉</div>
+    <h3 style="font-family:Outfit,sans-serif;font-size:20px;font-weight:700;margin-bottom:.5rem;background:linear-gradient(135deg,#2DD4BF,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Das kannst du täglich haben</h3>
+    <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:.5rem">Pinterest, Instagram, Stories, Karussell & Reels.</p>
+    <p style="font-size:12px;color:rgba(255,255,255,0.25);margin-bottom:1.5rem">Ab 9€/Monat · Jederzeit kündbar</p>
+    <a href="https://gumroad.com/l/oktubc" target="_blank" style="display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#0D9488,#7C3AED);border-radius:100px;color:#fff;font-family:Cabinet Grotesk,sans-serif;font-size:14px;font-weight:700;text-decoration:none">✦ Abonnement starten</a>
+  </div>`;
+  document.getElementById('demoBody').innerHTML=html;
+  const btn=document.getElementById('demoBtn');
+  setTimeout(()=>{btn.innerHTML='🔄 Neue Beispiele';btn.disabled=false;btn.onclick=resetDemo;},600);
+}
+
+function copyPin(i,btn){
+  const p=JSON.parse(btn.dataset.pin);
+  navigator.clipboard.writeText(`📌 ${p.title}\n\n${p.desc}\n\n${p.tags.map(t=>'#'+t).join(' ')}\n\nSEO: ${p.seo}`).then(()=>{
+    btn.textContent='✓ Kopiert!';btn.style.borderColor='#2DD4BF';btn.style.color='#2DD4BF';
+    setTimeout(()=>{btn.innerHTML='📋 Kopieren';btn.style.borderColor='rgba(255,255,255,0.1)';btn.style.color='rgba(255,255,255,0.4)';},2000);
+  });
+}
+
+function resetDemo(){
+  started=false;topicIdx=(topicIdx+1)%TOPICS.length;
+  document.getElementById('demoTopic').textContent=TOPICS[topicIdx];
+  document.getElementById('demoBody').innerHTML='';
+  document.getElementById('demoBtn').innerHTML='✦ Pins generieren';
+  document.getElementById('demoBtn').onclick=startDemo;
+}
+</script>
+</body>
+</html>
