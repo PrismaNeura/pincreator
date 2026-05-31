@@ -944,7 +944,7 @@ async function generatePins(){
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();if(d.error)throw new Error(d.error.message||d.error);
-    generatedPins=JSON.parse(d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());
+    generatedPins=(()=>{try{return JSON.parse(d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());}catch(e){const m=d.content.map(i=>i.text||'').join('').match(/\[[\s\S]*\]/);if(m)return JSON.parse(m[0]);throw e;}})();
     if(!Array.isArray(generatedPins))generatedPins=[generatedPins];
 
     if(!isAdmin){
@@ -989,7 +989,21 @@ ONLY JSON:
 
       const cr=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:carouselPrompt}]})});
       const cd=await cr.json();if(cd.error)throw new Error(cd.error.message||cd.error);
-      const carousel=JSON.parse(cd.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());
+      let carousel;
+      try{
+        const rawCarousel=cd.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+        carousel=JSON.parse(rawCarousel);
+      }catch(pe){
+        // Fix common JSON issues from AI responses
+        try{
+          const raw=cd.content.map(i=>i.text||'').join('');
+          const jsonMatch=raw.match(/\{[\s\S]*\}/);
+          if(jsonMatch)carousel=JSON.parse(jsonMatch[0]);
+          else throw new Error('no json');
+        }catch(e2){
+          throw new Error('Das Thema hat einen JSON-Fehler verursacht. Bitte versuche ein kürzeres Thema ohne Sonderzeichen.');
+        }
+      }
 
       if(!isAdmin){
         const countRes=await fetch('/api/count-pins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,count:1})});
