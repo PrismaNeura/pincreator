@@ -5,6 +5,8 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(express.json());
+app.get('/', (req, res) => res.sendFile('landingpage.html', { root: 'public' }));
+app.get('/app', (req, res) => res.sendFile('index.html', { root: 'public' }));
 app.use(express.static('public'));
 
 const SUPABASE_URL = 'https://hinhbgfvgffjrdguetgv.supabase.co';
