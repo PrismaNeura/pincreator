@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BoostYourPins – KI Social Media Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Cabinet+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -21,7 +21,7 @@
   --text3:#94A3B8;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Cabinet Grotesk',sans-serif;background:#050D1A;color:var(--white);overflow-x:hidden}
+body{font-family:'Outfit',sans-serif;background:#050D1A;color:var(--white);overflow-x:hidden}
 
 /* MESH BACKGROUND */
 .mesh{position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -33,11 +33,11 @@ body{font-family:'Cabinet Grotesk',sans-serif;background:#050D1A;color:var(--whi
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(24px);background:rgba(5,13,26,0.7)}
-.nav-logo{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,var(--teal-light),var(--violet-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-logo{font-family:'Outfit',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em;background:linear-gradient(135deg,var(--teal-light),var(--violet-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .nav-right{display:flex;gap:10px;align-items:center}
-.btn-ghost{padding:8px 18px;border:1px solid rgba(255,255,255,0.12);border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);background:transparent;cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-ghost{padding:8px 18px;border:1px solid rgba(255,255,255,0.12);border-radius:100px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;color:rgba(255,255,255,0.6);background:transparent;cursor:pointer;text-decoration:none;transition:all .2s}
 .btn-ghost:hover{border-color:rgba(45,212,191,0.4);color:var(--teal-light)}
-.btn-pill{padding:9px 20px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet));border:none;color:#fff;cursor:pointer;text-decoration:none;transition:all .2s;position:relative;overflow:hidden}
+.btn-pill{padding:9px 20px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet));border:none;color:#fff;cursor:pointer;text-decoration:none;transition:all .2s;position:relative;overflow:hidden}
 .btn-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--teal-light),var(--violet-light));opacity:0;transition:opacity .2s}
 .btn-pill:hover::before{opacity:1}
 .btn-pill span{position:relative;z-index:1}
@@ -48,13 +48,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display
 .hero-chip{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 8px;background:rgba(13,148,136,0.12);border:1px solid rgba(45,212,191,0.2);border-radius:100px;font-size:12px;font-weight:600;color:var(--teal-light);letter-spacing:.04em;margin-bottom:2rem}
 .hero-chip-dot{width:6px;height:6px;background:var(--teal-light);border-radius:50%;animation:pulse 2s ease infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(38px,6vw,78px);font-weight:800;line-height:1.05;letter-spacing:-.03em;margin-bottom:1.5rem}
+.hero h1{font-family:'Outfit',sans-serif;font-size:clamp(34px,5.5vw,68px);font-weight:700;line-height:1.1;letter-spacing:-.02em;margin-bottom:1.5rem}
 .hero h1 .grad{background:linear-gradient(135deg,var(--teal-light) 0%,var(--violet-light) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero-sub{font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,0.5);line-height:1.7;max-width:540px;margin:0 auto 2.5rem}
 .hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:3rem}
-.btn-hero-main{padding:16px 36px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet-mid));border:none;color:#fff;cursor:pointer;text-decoration:none;transition:all .3s;box-shadow:0 0 40px rgba(13,148,136,0.3)}
+.btn-hero-main{padding:16px 36px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet-mid));border:none;color:#fff;cursor:pointer;text-decoration:none;transition:all .3s;box-shadow:0 0 40px rgba(13,148,136,0.3)}
 .btn-hero-main:hover{transform:translateY(-2px);box-shadow:0 8px 50px rgba(13,148,136,0.45)}
-.btn-hero-sec{padding:16px 36px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:16px;font-weight:600;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);cursor:pointer;text-decoration:none;transition:all .2s}
+.btn-hero-sec{padding:16px 36px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:16px;font-weight:600;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);cursor:pointer;text-decoration:none;transition:all .2s}
 .btn-hero-sec:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2)}
 .platform-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .plat{padding:6px 14px;border-radius:100px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.03);transition:all .2s}
@@ -71,12 +71,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display
 .steps-section{padding:7rem 2rem;position:relative;z-index:1}
 .container{max-width:1100px;margin:0 auto}
 .sec-eyebrow{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal-light);margin-bottom:1rem}
-.sec-title{font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,50px);font-weight:800;letter-spacing:-.03em;margin-bottom:1.5rem;line-height:1.1}
+.sec-title{font-family:'Outfit',sans-serif;font-size:clamp(28px,4vw,50px);font-weight:700;letter-spacing:-.02em;margin-bottom:1.5rem;line-height:1.1}
 .sec-sub{font-size:17px;color:rgba(255,255,255,0.45);line-height:1.7;max-width:520px}
 .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;margin-top:3.5rem;background:rgba(255,255,255,0.06);border-radius:20px;overflow:hidden}
 .step{background:#050D1A;padding:2rem 1.75rem;transition:background .2s}
 .step:hover{background:rgba(13,148,136,0.06)}
-.step-n{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--teal-light);opacity:.5;margin-bottom:1.25rem;letter-spacing:.04em}
+.step-n{font-family:'Outfit',sans-serif;font-size:13px;font-weight:800;color:var(--teal-light);opacity:.5;margin-bottom:1.25rem;letter-spacing:.04em}
 .step-icon{font-size:28px;margin-bottom:1rem}
 .step h3{font-size:16px;font-weight:700;margin-bottom:.5rem}
 .step p{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.65}
@@ -119,14 +119,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display
 .pc.hot{background:linear-gradient(180deg,rgba(13,148,136,0.08) 0%,rgba(124,58,237,0.06) 100%)}
 .pc-badge{position:absolute;top:1.5rem;right:1.5rem;font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;background:linear-gradient(135deg,var(--teal),var(--violet));color:#fff;letter-spacing:.04em}
 .pc-name{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:1rem}
-.pc-price{font-family:'Syne',sans-serif;font-size:44px;font-weight:800;letter-spacing:-.03em;margin-bottom:.2rem}
+.pc-price{font-family:'Outfit',sans-serif;font-size:44px;font-weight:700;letter-spacing:-.02em;margin-bottom:.2rem}
 .pc-period{font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:1.25rem}
 .pc-limit{font-size:12px;font-weight:700;color:var(--teal-light);margin-bottom:1.5rem;padding:5px 12px;background:rgba(13,148,136,0.1);border-radius:8px;display:inline-block;border:1px solid rgba(13,148,136,0.2)}
 .pc-feats{list-style:none;margin-bottom:1.75rem}
 .pc-feat{font-size:13px;color:rgba(255,255,255,0.45);padding:4px 0;display:flex;align-items:center;gap:8px}
 .pc-feat::before{content:'→';color:var(--teal-light);font-size:11px;flex-shrink:0}
 .pc.hot .pc-feat{color:rgba(255,255,255,0.65)}
-.btn-buy{width:100%;padding:12px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:all .2s}
+.btn-buy{width:100%;padding:12px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;display:block;transition:all .2s}
 .btn-buy-outline{background:transparent;border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5)}
 .btn-buy-outline:hover{border-color:rgba(45,212,191,0.4);color:var(--teal-light)}
 .btn-buy-grad{background:linear-gradient(135deg,var(--teal),var(--violet-mid));border:none;color:#fff;box-shadow:0 0 30px rgba(13,148,136,0.25)}
@@ -138,7 +138,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display
 .demo-top{padding:2rem;border-bottom:1px solid rgba(255,255,255,0.06)}
 .demo-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px}
 .demo-input-fake{padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:1rem}
-.demo-gen-btn{width:100%;padding:14px;border-radius:100px;font-family:'Cabinet Grotesk',sans-serif;font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet-mid));border:none;color:#fff;cursor:pointer;transition:all .25s;box-shadow:0 0 30px rgba(13,148,136,0.2)}
+.demo-gen-btn{width:100%;padding:14px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--violet-mid));border:none;color:#fff;cursor:pointer;transition:all .25s;box-shadow:0 0 30px rgba(13,148,136,0.2)}
 .demo-gen-btn:hover{box-shadow:0 0 50px rgba(13,148,136,0.35);transform:translateY(-1px)}
 .demo-gen-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 .demo-result{padding:0}
@@ -151,7 +151,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display
 .demo-pin-desc{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:.75rem}
 .demo-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem}
 .demo-tag{font-size:10px;padding:2px 8px;border-radius:100px;font-weight:600}
-.demo-copy{padding:6px 14px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:100px;color:rgba(255,255,255,0.4);font-family:'Cabinet Grotesk',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
+.demo-copy{padding:6px 14px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:100px;color:rgba(255,255,255,0.4);font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
 .demo-copy:hover{border-color:rgba(45,212,191,0.4);color:var(--teal-light)}
 .demo-upgrade{padding:2rem;text-align:center;background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(124,58,237,0.08));border-top:1px solid rgba(255,255,255,0.06)}
 .loading-dots{display:flex;gap:6px;justify-content:center;padding:2rem}
@@ -170,7 +170,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.25rem 2rem;display
 /* CTA */
 .cta-section{padding:8rem 2rem;position:relative;z-index:1;text-align:center;overflow:hidden}
 .cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(13,148,136,0.15) 0%,rgba(124,58,237,0.1) 50%,transparent 70%);pointer-events:none}
-.cta-section h2{font-family:'Syne',sans-serif;font-size:clamp(30px,5vw,58px);font-weight:800;letter-spacing:-.03em;margin-bottom:1rem;position:relative}
+.cta-section h2{font-family:'Outfit',sans-serif;font-size:clamp(30px,5vw,58px);font-weight:700;letter-spacing:-.02em;margin-bottom:1rem;position:relative}
 .cta-section p{font-size:17px;color:rgba(255,255,255,0.4);margin-bottom:2.5rem;position:relative}
 .cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
 
@@ -470,7 +470,7 @@ function showPins(){
   });
   html+=`<div class="demo-upgrade">
     <div style="font-size:22px;margin-bottom:.75rem">🎉</div>
-    <h3 style="font-family:Syne,sans-serif;font-size:20px;font-weight:800;margin-bottom:.5rem;background:linear-gradient(135deg,#2DD4BF,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Das kannst du täglich haben</h3>
+    <h3 style="font-family:Outfit,sans-serif;font-size:20px;font-weight:700;margin-bottom:.5rem;background:linear-gradient(135deg,#2DD4BF,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Das kannst du täglich haben</h3>
     <p style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:.5rem">Pinterest, Instagram, Stories, Karussell & Reels.</p>
     <p style="font-size:12px;color:rgba(255,255,255,0.25);margin-bottom:1.5rem">Ab 9€/Monat · Jederzeit kündbar</p>
     <a href="https://gumroad.com/l/oktubc" target="_blank" style="display:inline-block;padding:13px 28px;background:linear-gradient(135deg,#0D9488,#7C3AED);border-radius:100px;color:#fff;font-family:Cabinet Grotesk,sans-serif;font-size:14px;font-weight:700;text-decoration:none">✦ Abonnement starten</a>
