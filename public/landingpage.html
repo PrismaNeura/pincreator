@@ -291,6 +291,27 @@ footer a:hover{color:var(--teal-light)}
   .price-grid,.steps-grid{grid-template-columns:1fr}
 }
 </style>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-09V6D11NED"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-09V6D11NED');
+
+  // Track CTA clicks
+  document.addEventListener('click', function(e){
+    const a = e.target.closest('a');
+    if(!a) return;
+    if(a.href.includes('gumroad')){
+      gtag('event', 'purchase_click', {event_category:'CTA', event_label: a.textContent.trim()});
+    }
+    if(a.href.includes('/app')){
+      gtag('event', 'login_click', {event_category:'CTA'});
+    }
+  });
+</script>
 </head>
 <body>
 
