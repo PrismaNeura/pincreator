@@ -1612,12 +1612,13 @@ NUR JSON-Array mit ${calPeriod} Einträgen:
 
 function copyCalendar(){
   if(!window._calendarData)return;
-  const text=window._calendarData.map(d=>`Tag ${d.tag} (${d.wochentag||''}): ${d.thema}
-Format: ${d.format} | Ziel: ${d.ziel}
-Hook: "${d.hook}"
-Tipp: ${d.tipp}`).join('
+  const text=window._calendarData.map(d=>`Tag ${d.tag} (${d.wochentag||''}): ${d.thema}\nFormat: ${d.format} | Ziel: ${d.ziel}\nHook: "${d.hook}"\nTipp: ${d.tipp}`).join('\n\n');
 
-');
+
+
+
+
+
   navigator.clipboard.writeText(text).then(()=>{
     const btn=document.querySelector('[onclick="copyCalendar()"]');
     if(btn){btn.textContent='✓ Kopiert!';setTimeout(()=>btn.textContent='📋 Alle kopieren',2000);}
