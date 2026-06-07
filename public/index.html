@@ -548,6 +548,20 @@ function setPlatform(p){
   if(p==='carousel'){countSel.style.display='none';carInfo.style.display='block';}
   else{countSel.style.display='block';carInfo.style.display='none';}
   document.getElementById('resultArea').innerHTML=`<div class="placeholder"><i class="ti ti-wand" style="font-size:40px;opacity:.3"></i><span>${PLATFORM_CONFIG[p].label} generieren – Formular ausfüllen und klicken</span></div>`;
+
+  // Show/hide reels mode selector
+  const rms=document.getElementById('reelsModeSection');
+  if(rms) rms.style.display=p==='reels'?'block':'none';
+
+  // Show/hide tool sections
+  const toolPlatforms=['viral','calendar','hooks'];
+  const isToolPlatform=toolPlatforms.includes(p);
+  const vs=document.getElementById('viralSection');
+  const cs=document.getElementById('calendarSection');
+  const hs=document.getElementById('hooksSection');
+  if(vs) vs.style.display=p==='viral'?'block':'none';
+  if(cs) cs.style.display=p==='calendar'?'block':'none';
+  if(hs) hs.style.display=p==='hooks'?'block':'none';
 }
 
 function updateCounter(){
