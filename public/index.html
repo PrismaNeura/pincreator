@@ -1099,6 +1099,7 @@ ONLY JSON array:
       prompt=lang==='de'
       ?`Erstelle ${count} verschiedene Instagram Reels Scripts auf DEUTSCH.\nThema: ${topic}\nZielgruppe: ${audience||'Allgemein'}\nZiel: ${gm[goal]}\nHinweise: ${notes||'keine'}\n\nNUR JSON-Array:\n[{"title":"Script-Titel","hook":"Aufmerksamkeits-Hook für die ersten 3 Sekunden","content":"Hauptinhalt des Reels (3-5 Punkte)","cta":"Call-to-Action am Ende","caption":"Instagram Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10"]}]`
       :`Create ${count} different Instagram Reels Scripts in ENGLISH.\nTopic: ${topic}\nAudience: ${audience||'General'}\nGoal: ${gm[goal]}\nNotes: ${notes||'none'}\n\nONLY JSON array:\n[{"title":"Script title","hook":"Attention hook for first 3 seconds","content":"Main content (3-5 points)","cta":"Call-to-action","caption":"Instagram caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10"]}]`;
+    } // end full storyboard
   } else {
     const hashtagCount=currentPlatform==='instagram'||currentPlatform==='stories'||currentPlatform==='carousel'?20:5;
     prompt=lang==='de'
