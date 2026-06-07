@@ -126,6 +126,25 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 .modal p,.modal li{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:.5rem;} .modal ul{padding-left:1.25rem;margin-bottom:.5rem;}
 .modal-close{position:absolute;top:1rem;right:1rem;font-size:20px;cursor:pointer;color:var(--text3);background:none;border:none;line-height:1;}
 @media(max-width:600px){.site-header{padding:.875rem 1rem;}.container{padding:1rem 1rem 2rem;}.form-grid,.options-row{grid-template-columns:1fr;}.gen-section{flex-direction:column;}.gen-btn,.count-select{width:100%;}.ptab span{display:none;}.gradient-grid{grid-template-columns:repeat(auto-fill,minmax(28px,1fr));}}
+
+/* BRAND KIT */
+.bk-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem}
+.bk-modal.open{display:flex}
+.bk-box{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:1.5rem;width:100%;max-width:440px;max-height:90vh;overflow-y:auto}
+.bk-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between}
+.bk-section{margin-bottom:1.25rem}
+.bk-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px}
+.bk-colors{display:flex;gap:8px;align-items:center}
+.bk-color{width:36px;height:36px;border-radius:8px;border:2px solid var(--border);cursor:pointer;position:relative;overflow:hidden}
+.bk-color input[type=color]{position:absolute;inset:-4px;opacity:0;cursor:pointer;width:calc(100%+8px);height:calc(100%+8px)}
+.bk-toggle-bar{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border-radius:10px;margin-bottom:1rem;border:1px solid var(--border)}
+.bk-toggle{position:relative;width:40px;height:22px;flex-shrink:0}
+.bk-toggle input{opacity:0;width:0;height:0}
+.bk-toggle-slider{position:absolute;inset:0;background:#ccc;border-radius:22px;cursor:pointer;transition:.3s}
+.bk-toggle-slider::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.bk-toggle input:checked+.bk-toggle-slider{background:var(--red)}
+.bk-toggle input:checked+.bk-toggle-slider::before{transform:translateX(18px)}
+.bk-active-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(231,35,45,0.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -161,6 +180,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
   <header class="site-header">
     <div class="logo">📌 PinCreator</div>
     <div class="header-right">
+    <button onclick="toggleBrandKit()" id="bkBtn" style="display:flex;align-items:center;gap:5px;padding:5px 12px;background:var(--s2);border:1px solid var(--border);border-radius:20px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s" title="Brand Kit">
+      🎨 <span id="bkBtnText">Brand Kit</span>
+    </button>
       <span class="badge">KI-powered</span>
       <span class="plan-badge" id="planBadge"></span>
       <span class="pin-counter" id="pinCounter"></span>
@@ -191,6 +213,15 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
       </button>
       <button class="ptab" data-platform="reels" onclick="setPlatform('reels')">
         <i class="ti ti-video"></i><span>Reels</span>
+      </button>
+      <button class="ptab" data-platform="viral" onclick="setPlatform('viral')">
+        <i class="ti ti-flame"></i><span>Viral-Score</span>
+      </button>
+      <button class="ptab" data-platform="calendar" onclick="setPlatform('calendar')">
+        <i class="ti ti-calendar"></i><span>Kalender</span>
+      </button>
+      <button class="ptab" data-platform="hooks" onclick="setPlatform('hooks')">
+        <i class="ti ti-bolt"></i><span>Hooks</span>
       </button>
     </div>
     <div id="lockedHint" style="display:none" class="locked-hint"></div>
@@ -310,6 +341,18 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         <button class="style-preset" data-preset="bold" onclick="applyPreset('bold')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:linear-gradient(135deg,#8B0000,#CC2200,#FF6B00);border:2px solid transparent;border-radius:8px;color:#FFFFFF;cursor:pointer">🔥 Bold</button>
         <button class="style-preset" data-preset="ocean" onclick="applyPreset('ocean')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:linear-gradient(135deg,#001F3F,#0A3D62,#48CAE4);border:2px solid transparent;border-radius:8px;color:#FFFFFF;cursor:pointer">🌊 Ocean</button>
         <button class="style-preset" data-preset="random" onclick="applyPreset('random')" style="flex:1;min-width:80px;padding:8px 6px;font-size:12px;font-weight:500;background:var(--s2);border:2px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer">🎲 Zufall</button>
+      </div>
+
+      <div id="reelsModeSection" style="display:none;margin-bottom:1rem">
+        <div class="lbl">Reels Format</div>
+        <div class="tog-group">
+          <button class="tog active" data-reelsmode="quick" onclick="setReelsMode('quick')">⚡ Quick Script</button>
+          <button class="tog" data-reelsmode="full" onclick="setReelsMode('full')">🎬 Storyboard</button>
+          <button class="tog" data-reelsmode="canva" onclick="setReelsMode('canva')">🎨 Canva-Links</button>
+        </div>
+        <div id="reelsModeHint" style="font-size:11px;color:var(--text3);margin-top:6px;padding:6px 10px;background:var(--s2);border-radius:6px">
+          ⚡ Hook + 3 Punkte + CTA – fertig in 30 Sekunden
+        </div>
       </div>
 
       <div class="gen-section">
@@ -844,7 +887,88 @@ async function fetchAutoImage(query,orientation){
   }catch(e){console.log('Image fetch error:',e);return null;}
 }
 
-const SZENEN_COLORS={'Hook':'#E7232D','Problem':'#FF8E53','Lösung':'#2D7A3A','Solution':'#2D7A3A','Beweis':'#185FA5','Proof':'#185FA5','CTA':'#534AB7'};
+const SZENEN_COLORS={'Hook':'#E7232D','Problem':'#FF8E53','Lösung':'#2D7A3A','Solution':'#2D7A3A','Beweis':'#185FA5','Proof':'#185FA5','CTA':'#534AB7','Punkt':'#0D9488','Point':'#0D9488'};
+
+function buildQuickReelHtml(s,i){
+  return `<div class="reels-card" style="grid-column:1/-1">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="pin-num">⚡ Quick Script ${i+1}</div>
+        <div class="reels-title">${s.title}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;padding:4px 10px;background:var(--s2);border:0.5px solid var(--border);border-radius:20px">⏱ Max 15 Sek</span>
+        <span style="font-size:11px;padding:4px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px">🎵 ${s.musik}</span>
+      </div>
+    </div>
+    <div style="display:grid;gap:8px;margin-bottom:14px">
+      <div style="background:#E7232D15;border-left:3px solid #E7232D;border-radius:0 8px 8px 0;padding:10px 12px">
+        <div style="font-size:10px;font-weight:600;color:#E7232D;text-transform:uppercase;margin-bottom:4px">🎯 HOOK (0-3 Sek)</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text)">"${s.hook}"</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+        ${[s.punkt1,s.punkt2,s.punkt3].map((p,j)=>`<div style="background:var(--s2);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text2)"><span style="font-size:10px;font-weight:600;color:var(--teal);display:block;margin-bottom:3px">${j+1}.</span>${p||''}</div>`).join('')}
+      </div>
+      <div style="background:#534AB715;border-left:3px solid #534AB7;border-radius:0 8px 8px 0;padding:10px 12px">
+        <div style="font-size:10px;font-weight:600;color:#534AB7;text-transform:uppercase;margin-bottom:4px">📢 CTA</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${s.cta}</div>
+      </div>
+      <div style="background:var(--s2);border-radius:8px;padding:8px 12px">
+        <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:3px">💬 Text-Overlay</div>
+        <div style="font-size:13px;font-weight:700;color:var(--text)">${s.textoverlay}</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)">
+      <div style="font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:8px;white-space:pre-line">${s.caption}</div>
+      <div class="pin-tags">${(s.hashtags||[]).map(t=>`<span class="tag">#${t}</span>`).join('')}</div>
+    </div>
+    <div class="pin-actions" style="margin-top:10px">
+      <button class="act-btn" id="rab${i}" onclick="copyQuickReel(${i})"><i class="ti ti-copy"></i> Kopieren</button>
+    </div>
+  </div>`;
+}
+
+function buildCanvaReelHtml(s,i){
+  const szHtml=(s.szenen||[]).map(sz=>{
+    const col=SZENEN_COLORS[sz.typ]||'#0D9488';
+    const canvaUrl=`https://www.canva.com/design/create?category=tACFau6iqIY`;
+    return `<div style="border:0.5px solid ${col}33;border-radius:8px;padding:10px;margin-bottom:8px;background:${col}08">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="background:${col};color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">${sz.typ}</span>
+          <span style="font-size:11px;color:var(--text3)">Szene ${sz.nr}</span>
+        </div>
+        <a href="${canvaUrl}" target="_blank" style="font-size:10px;padding:3px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none;font-weight:600">🎨 In Canva öffnen</a>
+      </div>
+      <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">"${sz.text}"</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+        <div style="font-size:11px;color:var(--text3)">🎨 ${sz.hintergrund}</div>
+        <div style="font-size:11px;color:var(--text3)">✨ ${sz.animation}</div>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="reels-card" style="grid-column:1/-1">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="pin-num">🎨 Canva Reel ${i+1}</div>
+        <div class="reels-title">${s.title}</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <span style="font-size:11px;padding:4px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px">🎵 ${s.musik}</span>
+        <a href="https://www.canva.com/design/create?category=tACFau6iqIY" target="_blank" style="font-size:11px;padding:4px 12px;background:var(--purple);color:#fff;border-radius:20px;text-decoration:none;font-weight:600">Canva öffnen →</a>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:6px 10px;background:var(--s2);border-radius:6px">💡 Öffne Canva → Neues Design → Instagram Reel (9:16) → Füge jede Szene als neue Seite ein</div>
+    ${szHtml}
+    <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)">
+      <div style="font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:8px">${s.caption}</div>
+      <div class="pin-tags">${(s.hashtags||[]).map(t=>`<span class="tag">#${t}</span>`).join('')}</div>
+    </div>
+    <div class="pin-actions" style="margin-top:10px">
+      <button class="act-btn" id="rab${i}" onclick="copyReels(${i})"><i class="ti ti-copy"></i> Kopieren</button>
+    </div>
+  </div>`;
+}
 function buildReelsHtml(script,i){
   const szenenHtml=(script.szenen||[]).map(s=>{
     const col=SZENEN_COLORS[s.typ]||'#6B6862';
@@ -929,7 +1053,50 @@ async function generatePins(){
 
   let prompt;
   if(currentPlatform==='reels'){
-    prompt=lang==='de'
+    // CANVA MODE
+    const canvaTemplates={
+      hook:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+hook',
+      content:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+tips',
+      cta:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+call+to+action'
+    };
+
+    if(reelsMode==='quick'){
+      // QUICK SCRIPT - simple, fast
+      prompt=lang==='de'
+        ?`Du bist Instagram Reels Experte. Erstelle ${count} kurze Quick Scripts auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${gm[goal]}
+
+Jedes Script ist maximal 15 Sekunden lang. NUR JSON-Array:
+[{"title":"Titel","hook":"Hook Sekunde 1-3 (max 8 Wörter, provokant)","punkt1":"Punkt 1 (max 10 Wörter)","punkt2":"Punkt 2 (max 10 Wörter)","punkt3":"Punkt 3 (max 10 Wörter)","cta":"CTA (max 6 Wörter)","textoverlay":"Text der über das Reel eingeblendet wird (max 5 Wörter)","musik":"Musikstil-Empfehlung","caption":"Instagram Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}]`
+        :`You are an Instagram Reels expert. Create ${count} quick scripts in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${gm[goal]}
+
+Each script is max 15 seconds. ONLY JSON array:
+[{"title":"Title","hook":"Hook second 1-3 (max 8 words, provocative)","punkt1":"Point 1 (max 10 words)","punkt2":"Point 2 (max 10 words)","punkt3":"Point 3 (max 10 words)","cta":"CTA (max 6 words)","textoverlay":"Text overlay (max 5 words)","musik":"Music style","caption":"Instagram caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}]`;
+    } else if(reelsMode==='canva'){
+      // CANVA MODE - scripts with canva links
+      prompt=lang==='de'
+        ?`Du bist Instagram Reels Experte. Erstelle ${count} Reels Scripts mit Canva-Anweisungen auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${gm[goal]}
+
+NUR JSON-Array:
+[{"title":"Titel","hook":"Hook Sekunde 1-3","szenen":[{"nr":1,"typ":"Hook","text":"Text für Canva Slide (max 6 Wörter)","hintergrund":"Hintergrundfarbe oder -stil","animation":"Canva Animations-Empfehlung (z.B. Fade, Rise, Pop)"},{"nr":2,"typ":"Punkt","text":"...","hintergrund":"...","animation":"..."},{"nr":3,"typ":"Punkt","text":"...","hintergrund":"...","animation":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","animation":"..."}],"musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}]`
+        :`You are an Instagram Reels expert. Create ${count} Reels scripts with Canva instructions in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${gm[goal]}
+
+ONLY JSON array:
+[{"title":"Title","hook":"Hook second 1-3","szenen":[{"nr":1,"typ":"Hook","text":"Canva slide text (max 6 words)","hintergrund":"Background color or style","animation":"Canva animation (e.g. Fade, Rise, Pop)"},{"nr":2,"typ":"Point","text":"...","hintergrund":"...","animation":"..."},{"nr":3,"typ":"Point","text":"...","hintergrund":"...","animation":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","animation":"..."}],"musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}]`;
+    } else {
+      // FULL STORYBOARD (existing)
+      prompt=lang==='de'
       ?`Erstelle ${count} verschiedene Instagram Reels Scripts auf DEUTSCH.\nThema: ${topic}\nZielgruppe: ${audience||'Allgemein'}\nZiel: ${gm[goal]}\nHinweise: ${notes||'keine'}\n\nNUR JSON-Array:\n[{"title":"Script-Titel","hook":"Aufmerksamkeits-Hook für die ersten 3 Sekunden","content":"Hauptinhalt des Reels (3-5 Punkte)","cta":"Call-to-Action am Ende","caption":"Instagram Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10"]}]`
       :`Create ${count} different Instagram Reels Scripts in ENGLISH.\nTopic: ${topic}\nAudience: ${audience||'General'}\nGoal: ${gm[goal]}\nNotes: ${notes||'none'}\n\nONLY JSON array:\n[{"title":"Script title","hook":"Attention hook for first 3 seconds","content":"Main content (3-5 points)","cta":"Call-to-action","caption":"Instagram caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10"]}]`;
   } else {
@@ -954,8 +1121,14 @@ async function generatePins(){
     }
 
     if(currentPlatform==='reels'){
-      let html=`<div class="pins-header"><h2>${generatedPins.length} Produktions-Storyboard${generatedPins.length>1?'s':''}</h2><button class="copy-all-btn" onclick="copyAllReels()"><i class="ti ti-copy"></i> Alle kopieren</button></div><div class="pins-grid" style="grid-template-columns:1fr">`;
-      generatedPins.forEach((s,i)=>html+=buildReelsHtml(s,i));
+      const reelsTitles={quick:'⚡ Quick Script',full:'🎬 Storyboard',canva:'🎨 Canva Reel'};
+      const reelsTitle=reelsTitles[reelsMode]||'Storyboard';
+      let html=`<div class="pins-header"><h2>${generatedPins.length} ${reelsTitle}${generatedPins.length>1?'s':''}</h2><button class="copy-all-btn" onclick="copyAllReels()"><i class="ti ti-copy"></i> Alle kopieren</button></div><div class="pins-grid" style="grid-template-columns:1fr">`;
+      generatedPins.forEach((s,i)=>{
+        if(reelsMode==='quick') html+=buildQuickReelHtml(s,i);
+        else if(reelsMode==='canva') html+=buildCanvaReelHtml(s,i);
+        else html+=buildReelsHtml(s,i);
+      });
       html+='</div>';
       document.getElementById('resultArea').innerHTML=html;
     } else {
@@ -1054,10 +1227,475 @@ ONLY JSON:
 
 function copyPin(i){const p=generatedPins[i];navigator.clipboard.writeText(`📌 ${p.title}\n\n${p.description}\n\n${(p.tags||[]).map(t=>'#'+t).join(' ')}\n\nSEO: ${p.seoKeywords}`).then(()=>{const b=document.getElementById(`ab${i}`);b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Text';},2500);});}
 function copyAll(){const text=generatedPins.map((p,i)=>`── Post ${i+1} ──\n${p.title}\n\n${p.description}\n\n${(p.tags||[]).map(t=>'#'+t).join(' ')}`).join('\n\n');navigator.clipboard.writeText(text).then(()=>{const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';b.style.background='var(--green-bg)';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle Texte';b.style.background='';b.style.color='';},2500);});}
+function copyQuickReel(i){
+  const s=generatedPins[i];
+  const text=`⚡ QUICK SCRIPT: ${s.title}
+
+🎯 HOOK (0-3 Sek):
+"${s.hook}"
+
+📝 PUNKTE:
+1. ${s.punkt1}
+2. ${s.punkt2}
+3. ${s.punkt3}
+
+📢 CTA: ${s.cta}
+💬 Text-Overlay: ${s.textoverlay}
+🎵 Musik: ${s.musik}
+
+📱 CAPTION:
+${s.caption}
+
+${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  navigator.clipboard.writeText(text).then(()=>{const b=document.getElementById(`rab${i}`);b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Kopieren';},2500);});
+}
+
 function copyReels(i){const s=generatedPins[i];navigator.clipboard.writeText(`${s.title}\n\nHOOK: ${s.hook}\n\nINHALT:\n${s.content}\n\nCTA: ${s.cta}\n\nCAPTION:\n${s.caption}\n\n${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`).then(()=>{const b=document.getElementById(`rab${i}`);b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Kopieren';},2500);});}
 function copyAllReels(){const text=generatedPins.map((s,i)=>`── Script ${i+1}: ${s.title} ──\nHOOK: ${s.hook}\n\n${s.content}\n\nCTA: ${s.cta}\n\nCAPTION: ${s.caption}\n\n${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`).join('\n\n');navigator.clipboard.writeText(text).then(()=>{const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';b.style.background='var(--green-bg)';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle kopieren';b.style.background='';b.style.color='';},2500);});}
 function dlPin(i){const c=document.getElementById(`cv${i}`);const a=document.createElement('a');a.download=`${currentPlatform}-post-${i+1}.png`;a.href=c.toDataURL('image/png');a.click();}
 function dlAll(){generatedPins.forEach((_,i)=>{setTimeout(()=>dlPin(i),i*200);});}
 </script>
+
+<!-- BRAND KIT MODAL -->
+<div class="bk-modal" id="bkModal">
+  <div class="bk-box">
+    <div class="bk-title">
+      🎨 Brand Kit
+      <button onclick="closeBrandKit()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text3)">✕</button>
+    </div>
+
+    <div class="bk-section">
+      <div class="bk-label">Meine 3 Markenfarben</div>
+      <div class="bk-colors">
+        <div class="bk-color" id="bkC1Preview" style="background:#0A2540">
+          <input type="color" id="bkColor1" value="#0A2540" oninput="updateColorPreview(1)">
+        </div>
+        <div class="bk-color" id="bkC2Preview" style="background:#C9A96E">
+          <input type="color" id="bkColor2" value="#C9A96E" oninput="updateColorPreview(2)">
+        </div>
+        <div class="bk-color" id="bkC3Preview" style="background:#F5F0E8">
+          <input type="color" id="bkColor3" value="#F5F0E8" oninput="updateColorPreview(3)">
+        </div>
+        <span style="font-size:12px;color:var(--text3)">Klicke zum Ändern</span>
+      </div>
+    </div>
+
+    <div class="bk-section">
+      <div class="bk-label">Schriftstil</div>
+      <div class="tog-group" style="flex-wrap:wrap">
+        <button class="tog active" data-bkfont="sans" onclick="setBkFont('sans')">Modern</button>
+        <button class="tog" data-bkfont="serif" onclick="setBkFont('serif')">Klassisch</button>
+        <button class="tog" data-bkfont="bold" onclick="setBkFont('bold')">Heavy</button>
+        <button class="tog" data-bkfont="script" onclick="setBkFont('script')">Kursiv</button>
+      </div>
+    </div>
+
+    <div class="bk-section">
+      <div class="bk-label">Lieblingsmuster</div>
+      <div class="tog-group" style="flex-wrap:wrap">
+        <button class="tog active" data-bkpattern="none" onclick="setBkPattern('none')">Keins</button>
+        <button class="tog" data-bkpattern="dots" onclick="setBkPattern('dots')">Punkte</button>
+        <button class="tog" data-bkpattern="grid" onclick="setBkPattern('grid')">Gitter</button>
+        <button class="tog" data-bkpattern="waves" onclick="setBkPattern('waves')">Wellen</button>
+        <button class="tog" data-bkpattern="circles" onclick="setBkPattern('circles')">Kreise</button>
+        <button class="tog" data-bkpattern="diagonal" onclick="setBkPattern('diagonal')">Streifen</button>
+      </div>
+    </div>
+
+    <div class="bk-section">
+      <div class="bk-label">Lieblingsrahmen</div>
+      <div class="tog-group" style="flex-wrap:wrap">
+        <button class="tog active" data-bkborder="none" onclick="setBkBorder('none')">Keiner</button>
+        <button class="tog" data-bkborder="single" onclick="setBkBorder('single')">Einfach</button>
+        <button class="tog" data-bkborder="double" onclick="setBkBorder('double')">Doppelt</button>
+        <button class="tog" data-bkborder="corner" onclick="setBkBorder('corner')">Ecken</button>
+        <button class="tog" data-bkborder="thick" onclick="setBkBorder('thick')">Breit</button>
+      </div>
+    </div>
+
+    <div class="bk-section">
+      <div class="bk-label">Standard-Zielgruppe</div>
+      <input type="text" id="bkAudience" placeholder="z.B. Selbstständige Frauen 25-45" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--s2);color:var(--text);font-family:inherit;font-size:13px">
+    </div>
+
+    <div class="bk-section">
+      <div class="bk-label">Standard-Nische</div>
+      <input type="text" id="bkNiche" placeholder="z.B. Online Business, Pinterest Marketing" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;background:var(--s2);color:var(--text);font-family:inherit;font-size:13px">
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:1rem">
+      <button onclick="saveBrandKit()" style="flex:1;padding:11px;background:var(--red);border:none;border-radius:8px;color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer">💾 Speichern</button>
+      <button onclick="clearBrandKit()" style="padding:11px 16px;background:var(--s2);border:1px solid var(--border);border-radius:8px;color:var(--text3);font-family:inherit;font-size:13px;cursor:pointer">Zurücksetzen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// BRAND KIT
+let brandKit = JSON.parse(localStorage.getItem('byp_brandkit') || 'null');
+
+function toggleBrandKit(){
+  document.getElementById('bkModal').classList.add('open');
+  loadBrandKitUI();
+}
+function closeBrandKit(){
+  document.getElementById('bkModal').classList.remove('open');
+}
+
+function loadBrandKitUI(){
+  if(!brandKit) return;
+  if(brandKit.color1){document.getElementById('bkColor1').value=brandKit.color1;document.getElementById('bkC1Preview').style.background=brandKit.color1;}
+  if(brandKit.color2){document.getElementById('bkColor2').value=brandKit.color2;document.getElementById('bkC2Preview').style.background=brandKit.color2;}
+  if(brandKit.color3){document.getElementById('bkColor3').value=brandKit.color3;document.getElementById('bkC3Preview').style.background=brandKit.color3;}
+  if(brandKit.font) setBkFont(brandKit.font);
+  if(brandKit.pattern) setBkPattern(brandKit.pattern);
+  if(brandKit.border) setBkBorder(brandKit.border);
+  if(brandKit.audience) document.getElementById('bkAudience').value=brandKit.audience;
+  if(brandKit.niche) document.getElementById('bkNiche').value=brandKit.niche;
+}
+
+function updateColorPreview(n){
+  const val=document.getElementById(`bkColor${n}`).value;
+  document.getElementById(`bkC${n}Preview`).style.background=val;
+}
+
+let bkFont='sans', bkPattern='none', bkBorder='none';
+
+function setBkFont(f){
+  bkFont=f;
+  document.querySelectorAll('[data-bkfont]').forEach(b=>b.classList.toggle('active',b.dataset.bkfont===f));
+}
+function setBkPattern(p){
+  bkPattern=p;
+  document.querySelectorAll('[data-bkpattern]').forEach(b=>b.classList.toggle('active',b.dataset.bkpattern===p));
+}
+function setBkBorder(b){
+  bkBorder=b;
+  document.querySelectorAll('[data-bkborder]').forEach(btn=>btn.classList.toggle('active',btn.dataset.bkborder===b));
+}
+
+function saveBrandKit(){
+  brandKit={
+    color1:document.getElementById('bkColor1').value,
+    color2:document.getElementById('bkColor2').value,
+    color3:document.getElementById('bkColor3').value,
+    font:bkFont,
+    pattern:bkPattern,
+    border:bkBorder,
+    audience:document.getElementById('bkAudience').value,
+    niche:document.getElementById('bkNiche').value
+  };
+  localStorage.setItem('byp_brandkit', JSON.stringify(brandKit));
+  
+  // Show toggle bar
+  document.getElementById('bkToggleBar').style.display='flex';
+  document.getElementById('bkActive').checked=true;
+  updateBkPreview();
+  updateBkBtn();
+  applyBrandKit();
+  closeBrandKit();
+  
+  // Show success
+  const btn=document.querySelector('[onclick="saveBrandKit()"]');
+  btn.innerHTML='✓ Gespeichert!';
+  setTimeout(()=>btn.innerHTML='💾 Speichern',1500);
+}
+
+function clearBrandKit(){
+  localStorage.removeItem('byp_brandkit');
+  brandKit=null;
+  document.getElementById('bkToggleBar').style.display='none';
+  updateBkBtn();
+}
+
+function updateBkPreview(){
+  if(!brandKit) return;
+  const parts=[];
+  if(brandKit.niche) parts.push(brandKit.niche);
+  if(brandKit.audience) parts.push(brandKit.audience);
+  if(parts.length) document.getElementById('bkPreview').textContent=parts.join(' · ');
+}
+
+function updateBkBtn(){
+  const btn=document.getElementById('bkBtn');
+  const txt=document.getElementById('bkBtnText');
+  if(brandKit && document.getElementById('bkActive')?.checked){
+    btn.style.background='rgba(231,35,45,0.08)';
+    btn.style.borderColor='rgba(231,35,45,0.3)';
+    btn.style.color='var(--red)';
+    txt.textContent='Brand Kit ✓';
+  } else {
+    btn.style.background='';btn.style.borderColor='';btn.style.color='';
+    txt.textContent='Brand Kit';
+  }
+}
+
+function applyBrandKit(){
+  if(!brandKit || !document.getElementById('bkActive')?.checked){
+    updateBkBtn();
+    return;
+  }
+  // Apply colors as custom gradient
+  currentGradient={l:'Brand Kit',s:[brandKit.color1,brandKit.color2,brandKit.color3]};
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('active'));
+  
+  // Apply font
+  pinFont=brandKit.font||'sans';
+  document.querySelectorAll('[data-font]').forEach(b=>b.classList.toggle('active',b.dataset.font===pinFont));
+  
+  // Apply pattern
+  pinPattern=brandKit.pattern||'none';
+  document.querySelectorAll('[data-pattern]').forEach(b=>b.classList.toggle('active',b.dataset.pattern===pinPattern));
+  
+  // Apply border
+  pinBorder=brandKit.border||'none';
+  document.querySelectorAll('[data-border]').forEach(b=>b.classList.toggle('active',b.dataset.border===pinBorder));
+  
+  // Apply audience if empty
+  const audEl=document.getElementById('audience');
+  if(audEl && !audEl.value && brandKit.audience) audEl.value=brandKit.audience;
+  
+  updateBkBtn();
+}
+
+// Init on load
+window.addEventListener('DOMContentLoaded', ()=>{
+  if(brandKit){
+    document.getElementById('bkToggleBar').style.display='flex';
+    updateBkPreview();
+    updateBkBtn();
+    applyBrandKit();
+  }
+});
+</script>
+
+
+<script>
+// ============ VIRAL SCORE ============
+let viralPlatform='pinterest';
+document.querySelectorAll('[data-viralplat]').forEach(b=>b.addEventListener('click',()=>{
+  viralPlatform=b.dataset.viralplat;
+  document.querySelectorAll('[data-viralplat]').forEach(x=>x.classList.toggle('active',x.dataset.viralplat===viralPlatform));
+}));
+
+async function analyzeViral(){
+  const text=document.getElementById('viralInput').value.trim();
+  if(!text){document.getElementById('viralInput').style.borderColor='var(--red)';return;}
+  document.getElementById('viralInput').style.borderColor='';
+  
+  const btn=document.getElementById('viralBtn');
+  btn.disabled=true;btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> Analysiere…';
+  
+  const platNames={pinterest:'Pinterest Pin',instagram:'Instagram Post',reels:'Instagram Reel'};
+  const prompt=`Du bist Social Media Experte. Analysiere diesen ${platNames[viralPlatform]} Text und gib einen Viral-Score.
+
+Text: "${text}"
+
+NUR JSON:
+{"score":7,"label":"Gut","farbe":"#F59E0B","staerken":["Stärke 1","Stärke 2","Stärke 3"],"schwaechen":["Schwäche 1","Schwäche 2"],"verbesserung":"Konkret verbesserte Version des Textes","hook_score":8,"seo_score":6,"emotion_score":7,"erklaerung":"2-3 Sätze warum dieser Score"}`;
+  
+  try{
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const result=JSON.parse(raw);
+    
+    const scoreColor=result.score>=8?'#2D7A3A':result.score>=6?'#F59E0B':'#E7232D';
+    document.getElementById('viralResult').innerHTML=`
+      <div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+          <div>
+            <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:4px">Viral-Score</div>
+            <div style="font-size:48px;font-weight:800;color:${scoreColor};line-height:1">${result.score}<span style="font-size:20px;color:var(--text3)">/10</span></div>
+            <div style="font-size:14px;font-weight:600;color:${scoreColor}">${result.label}</div>
+          </div>
+          <div style="display:grid;gap:6px;text-align:right">
+            <div style="font-size:11px;color:var(--text3)">Hook <span style="color:var(--text);font-weight:600">${result.hook_score}/10</span></div>
+            <div style="font-size:11px;color:var(--text3)">SEO <span style="color:var(--text);font-weight:600">${result.seo_score}/10</span></div>
+            <div style="font-size:11px;color:var(--text3)">Emotion <span style="color:var(--text);font-weight:600">${result.emotion_score}/10</span></div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1rem;padding:10px;background:var(--bg);border-radius:8px">${result.erklaerung}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem">
+          <div>
+            <div style="font-size:11px;font-weight:600;color:#2D7A3A;margin-bottom:6px">✓ Stärken</div>
+            ${result.staerken.map(s=>`<div style="font-size:12px;color:var(--text2);padding:3px 0">• ${s}</div>`).join('')}
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;color:#E7232D;margin-bottom:6px">✗ Schwächen</div>
+            ${result.schwaechen.map(s=>`<div style="font-size:12px;color:var(--text2);padding:3px 0">• ${s}</div>`).join('')}
+          </div>
+        </div>
+        <div style="border-top:1px solid var(--border);padding-top:10px">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:6px">✨ Verbesserte Version</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.6;background:var(--bg);padding:10px;border-radius:8px;border-left:3px solid ${scoreColor}">${result.verbesserung}</div>
+          <button onclick="navigator.clipboard.writeText('${result.verbesserung.replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+        </div>
+      </div>`;
+  }catch(e){
+    document.getElementById('viralResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${e.message}</div>`;
+  }
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-flame"></i> Erneut analysieren';
+}
+
+// ============ CONTENT KALENDER ============
+let calPeriod='7', calPlat='both';
+document.querySelectorAll('[data-calperiod]').forEach(b=>b.addEventListener('click',()=>{
+  calPeriod=b.dataset.calperiod;
+  document.querySelectorAll('[data-calperiod]').forEach(x=>x.classList.toggle('active',x.dataset.calperiod===calPeriod));
+}));
+document.querySelectorAll('[data-calplat]').forEach(b=>b.addEventListener('click',()=>{
+  calPlat=b.dataset.calplat;
+  document.querySelectorAll('[data-calplat]').forEach(x=>x.classList.toggle('active',x.dataset.calplat===calPlat));
+}));
+
+async function generateCalendar(){
+  const niche=document.getElementById('calNiche').value.trim();
+  if(!niche){document.getElementById('calNiche').style.borderColor='var(--red)';return;}
+  document.getElementById('calNiche').style.borderColor='';
+  
+  const btn=document.getElementById('calBtn');
+  btn.disabled=true;btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> Generiere…';
+  
+  const platText={both:'Pinterest UND Instagram',pinterest:'Pinterest',instagram:'Instagram'};
+  const prompt=`Du bist Social Media Stratege. Erstelle einen ${calPeriod}-Tage Content-Kalender für ${platText[calPlat]}.
+
+Nische: ${niche}
+
+NUR JSON-Array mit ${calPeriod} Einträgen:
+[{"tag":1,"wochentag":"Montag","thema":"Konkretes Thema","format":"Pin/Reel/Karussell/Story/Feed","hook":"Hook für diesen Post (max 8 Wörter)","ziel":"Traffic/Sales/Engagement/Awareness","tipp":"Kurzer Profi-Tipp für diesen Tag"}]`;
+  
+  try{
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const days=JSON.parse(raw);
+    
+    const formatColors={Pin:'#E7232D',Reel:'#7C3AED',Karussell:'#0D9488',Story:'#F59E0B',Feed:'#2D7A3A'};
+    const zielColors={Traffic:'#0D9488',Sales:'#E7232D',Engagement:'#7C3AED',Awareness:'#F59E0B'};
+    
+    let html=`<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:14px;font-weight:700;color:var(--text)">${calPeriod}-Tage Kalender · ${niche}</div>
+        <button onclick="copyCalendar()" style="padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Alle kopieren</button>
+      </div>`;
+    
+    days.forEach(d=>{
+      const fc=formatColors[d.format]||'#6B6862';
+      const zc=zielColors[d.ziel]||'#6B6862';
+      html+=`<div style="padding:12px 16px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start">
+        <div style="text-align:center">
+          <div style="font-size:18px;font-weight:800;color:var(--text);line-height:1">${d.tag}</div>
+          <div style="font-size:9px;color:var(--text3)">${d.wochentag||''}</div>
+        </div>
+        <div>
+          <div style="display:flex;gap:5px;margin-bottom:5px;flex-wrap:wrap">
+            <span style="font-size:10px;padding:2px 8px;background:${fc}20;color:${fc};border-radius:20px;font-weight:600">${d.format}</span>
+            <span style="font-size:10px;padding:2px 8px;background:${zc}20;color:${zc};border-radius:20px;font-weight:600">${d.ziel}</span>
+          </div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">${d.thema}</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:3px">Hook: "${d.hook}"</div>
+          <div style="font-size:11px;color:var(--text2);font-style:italic">💡 ${d.tipp}</div>
+        </div>
+      </div>`;
+    });
+    html+='</div>';
+    
+    // Store for copy
+    window._calendarData=days;
+    document.getElementById('calendarResult').innerHTML=html;
+  }catch(e){
+    document.getElementById('calendarResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${e.message}</div>`;
+  }
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-calendar"></i> Neu generieren';
+}
+
+function copyCalendar(){
+  if(!window._calendarData)return;
+  const text=window._calendarData.map(d=>`Tag ${d.tag} (${d.wochentag||''}): ${d.thema}
+Format: ${d.format} | Ziel: ${d.ziel}
+Hook: "${d.hook}"
+Tipp: ${d.tipp}`).join('
+
+');
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector('[onclick="copyCalendar()"]');
+    if(btn){btn.textContent='✓ Kopiert!';setTimeout(()=>btn.textContent='📋 Alle kopieren',2000);}
+  });
+}
+
+// ============ HOOK GENERATOR ============
+let hookStyle='all', hookPlatform='pinterest';
+document.querySelectorAll('[data-hookstyle]').forEach(b=>b.addEventListener('click',()=>{
+  hookStyle=b.dataset.hookstyle;
+  document.querySelectorAll('[data-hookstyle]').forEach(x=>x.classList.toggle('active',x.dataset.hookstyle===hookStyle));
+}));
+document.querySelectorAll('[data-hookplat]').forEach(b=>b.addEventListener('click',()=>{
+  hookPlatform=b.dataset.hookplat;
+  document.querySelectorAll('[data-hookplat]').forEach(x=>x.classList.toggle('active',x.dataset.hookplat===hookPlatform));
+}));
+
+async function generateHooks(){
+  const topic=document.getElementById('hooksInput').value.trim();
+  if(!topic){document.getElementById('hooksInput').style.borderColor='var(--red)';return;}
+  document.getElementById('hooksInput').style.borderColor='';
+  
+  const btn=document.getElementById('hooksBtn');
+  btn.disabled=true;btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> Generiere…';
+  
+  const styleText={all:'alle Stile (Frage, Aussage, Zahl, POV, Schmerz, Neugier)',question:'nur Fragen',statement:'nur provokante Aussagen',number:'nur Zahlen/Listen',pov:'nur POV-Format',pain:'nur Schmerz-Hooks'};
+  const platText={pinterest:'Pinterest Pin Titel',instagram:'Instagram Post erste Zeile',reels:'Reels Hook erste 3 Sekunden'};
+  
+  const prompt=`Du bist Hook-Experte für Social Media. Erstelle 10 verschiedene Hooks für ${platText[hookPlatform]}.
+
+Thema: ${topic}
+Stil: ${styleText[hookStyle]}
+Sprache: Deutsch
+
+Jeder Hook max 10 Wörter, provokant und scroll-stoppend.
+
+NUR JSON-Array:
+[{"hook":"Hook Text","stil":"Frage/Aussage/Zahl/POV/Schmerz/Neugier","staerke":8,"erklaerung":"Kurz warum dieser Hook funktioniert"}]`;
+  
+  try{
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const hooks=JSON.parse(raw);
+    
+    const stilColors={Frage:'#0D9488',Aussage:'#E7232D',Zahl:'#7C3AED',POV:'#F59E0B',Schmerz:'#DC2626',Neugier:'#2D7A3A'};
+    
+    let html=`<div style="display:grid;gap:8px">`;
+    hooks.forEach((h,i)=>{
+      const sc=stilColors[h.stil]||'#6B6862';
+      const stars='⭐'.repeat(Math.round((h.staerke||7)/2));
+      html+=`<div style="background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:12px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+            <span style="font-size:10px;padding:2px 8px;background:${sc}20;color:${sc};border-radius:20px;font-weight:600">${h.stil}</span>
+            <span style="font-size:11px;color:var(--text3)">${stars} ${h.staerke}/10</span>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">"${h.hook}"</div>
+          <div style="font-size:11px;color:var(--text3);font-style:italic">${h.erklaerung}</div>
+        </div>
+        <button onclick="copyHook('${h.hook.replace(/'/g,"\'")}',this)" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer;white-space:nowrap">📋</button>
+      </div>`;
+    });
+    html+='</div>';
+    document.getElementById('hooksResult').innerHTML=html;
+  }catch(e){
+    document.getElementById('hooksResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${e.message}</div>`;
+  }
+  btn.disabled=false;btn.innerHTML='<i class="ti ti-bolt"></i> Neu generieren';
+}
+
+function copyHook(text,btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✓';btn.style.color='var(--green)';btn.style.borderColor='var(--green)';
+    setTimeout(()=>{btn.textContent='📋';btn.style.color='';btn.style.borderColor='';},2000);
+  });
+}
+</script>
+
 </body>
 </html>
