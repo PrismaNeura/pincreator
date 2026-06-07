@@ -513,6 +513,21 @@ function updatePlatformTabs(){
   });
 }
 
+let reelsMode='quick';
+
+const REELS_MODE_HINTS={
+  quick:'⚡ Hook + 3 Punkte + CTA – in 30 Sekunden fertig',
+  full:'🎬 Komplettes Storyboard mit Szenen und Bildideen',
+  canva:'🎨 Jede Szene als Canva-Anleitung'
+};
+
+function setReelsMode(mode){
+  reelsMode=mode;
+  document.querySelectorAll('[data-reelsmode]').forEach(b=>b.classList.toggle('active',b.dataset.reelsmode===mode));
+  const hint=document.getElementById('reelsModeHint');
+  if(hint)hint.textContent=REELS_MODE_HINTS[mode];
+}
+
 function setPlatform(p){
   const tab=document.querySelector(`[data-platform="${p}"]`);
   if(tab&&tab.classList.contains('locked')){
