@@ -1310,7 +1310,7 @@ function setPkgReels(mode){
 
 function switchPkgTab(tab){
   document.querySelectorAll('.pkg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===`pkg-${tab}`));
+  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===('pkg-'+tab)));
 }
 
 async function generatePackage(){
@@ -2079,7 +2079,7 @@ function setPkgReels(mode){
 
 function switchPkgTab(tab){
   document.querySelectorAll('.pkg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===`pkg-${tab}`));
+  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===('pkg-'+tab)));
 }
 
 async function generatePackage(){
