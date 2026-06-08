@@ -1356,8 +1356,7 @@ async function generatePackage(){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error)throw new Error(d.error.message||d.error);
-      var bt='`';
-      var raw=d.content.map(function(i){return i.text||'';}).join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
+      var raw=d.content.map(function(i){return i.text||'';}).join('').replace(/```json|```/g,'').trim();
       return JSON.parse(raw);
     });
   }
