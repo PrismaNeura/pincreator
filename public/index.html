@@ -127,6 +127,10 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 .modal-close{position:absolute;top:1rem;right:1rem;font-size:20px;cursor:pointer;color:var(--text3);background:none;border:none;line-height:1;}
 @media(max-width:600px){.site-header{padding:.875rem 1rem;}.container{padding:1rem 1rem 2rem;}.form-grid,.options-row{grid-template-columns:1fr;}.gen-section{flex-direction:column;}.gen-btn,.count-select{width:100%;}.ptab span{display:none;}.gradient-grid{grid-template-columns:repeat(auto-fill,minmax(28px,1fr));}}
 
+.pkg-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1rem;overflow-x:auto}
+.pkg-tab{padding:8px 16px;font-size:12px;font-weight:600;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit}
+.pkg-tab.active{color:var(--red);border-bottom-color:var(--red)}
+.pkg-panel{display:none}.pkg-panel.active{display:block}
 /* BRAND KIT */
 .bk-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem}
 .bk-modal.open{display:flex}
@@ -1295,7 +1299,238 @@ function dlPin(i){
   if(isIOS){
     // Open image in new tab - user can long-press to save
     const win=window.open('','_blank');
-    win.document.write(`<html><head><title>${filename}</title><meta name="viewport" content="width=device-width"><style>body{margin:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:90vh;object-fit:contain}p{color:#fff;font-family:sans-serif;font-size:14px;text-align:center;padding:10px;margin:0}button{margin-top:10px;padding:12px 24px;background:#0D9488;border:none;border-radius:8px;color:#fff;font-size:15px;cursor:pointer}</style></head><body><img src="${dataUrl}"><p>📥 Bild gedrückt halten → "Foto sichern"</p></body></html>`);
+    win.document.write(`<html><head><title>${filename}</title><meta name="viewport" content="width=device-width"><style>body{margin:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:90vh;object-fit:contain}p{color:#fff;font-family:sans-serif;font-size:14px;text-align:center;padding:10px;margin:0}button{margin-top:10px;padding:12px 24px;background:#0D9488;border:none;border-radius:8px;color:#fff;font-size:15px;cursor:pointer}</style></head><body><img src="${dataUrl}"><p>📥 Bild gedrückt halten → "Foto sichern"</p>
+<script>
+let pkgReelsMode='quick';
+
+function setPkgReels(mode){
+  pkgReelsMode=mode;
+  document.querySelectorAll('[data-pkgreels]').forEach(b=>b.classList.toggle('active',b.dataset.pkgreels===mode));
+}
+
+function switchPkgTab(tab){
+  document.querySelectorAll('.pkg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===`pkg-${tab}`));
+}
+
+async function generatePackage(){
+  const topic=document.getElementById('topic').value.trim();
+  if(!topic){document.getElementById('topic').style.borderColor='var(--red)';return;}
+  document.getElementById('topic').style.borderColor='';
+
+  const btn=document.getElementById('pkgBtn');
+  btn.disabled=true;
+  btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> KI generiert alles…';
+
+  const lang=document.querySelector('.lang-btn.active')?.dataset.lang||'de';
+  const audience=document.getElementById('audience')?.value||'';
+  const goal=document.getElementById('goal')?.value||'traffic';
+  const gm={traffic:lang==='de'?'Mehr Traffic':'More Traffic',sales:lang==='de'?'Produkt verkaufen':'Sell Product',leads:lang==='de'?'E-Mail Leads':'Email Leads',brand:lang==='de'?'Markenbekanntheit':'Brand Awareness',viral:lang==='de'?'Viral gehen':'Go Viral',saves:lang==='de'?'Mehr Saves':'More Saves'};
+  const goalText=gm[goal]||goal;
+
+  const resultArea=document.getElementById('resultArea');
+  resultArea.innerHTML=`<div style="text-align:center;padding:3rem"><div style="font-size:32px;margin-bottom:1rem;animation:spin 1s linear infinite;display:inline-block">⟳</div><p style="color:var(--text3);font-size:14px">KI erstellt dein komplettes Content-Paket…</p><p style="color:var(--text3);font-size:12px;margin-top:6px">Reel + Story + Karussell + 5 Pins</p></div>`;
+
+  // Prompts
+  const reelPrompt=pkgReelsMode==='quick'
+    ?(lang==='de'
+      ?`Erstelle 1 Quick Reel Script auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${goalText}
+NUR JSON (kein Array, direkt Objekt):
+{"title":"Titel","hook":"Hook max 8 Wörter","punkt1":"Punkt 1 max 10 Wörter","punkt2":"Punkt 2 max 10 Wörter","punkt3":"Punkt 3 max 10 Wörter","cta":"CTA max 6 Wörter","textoverlay":"Text-Overlay max 5 Wörter","musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+      :`Create 1 Quick Reel Script in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${goalText}
+ONLY JSON (no array, direct object):
+{"title":"Title","hook":"Hook max 8 words","punkt1":"Point 1 max 10 words","punkt2":"Point 2 max 10 words","punkt3":"Point 3 max 10 words","cta":"CTA max 6 words","textoverlay":"Text overlay max 5 words","musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`)
+    :(lang==='de'
+      ?`Erstelle 1 Canva Reel Script auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${goalText}
+NUR JSON (direkt Objekt):
+{"title":"Titel","hook":"Hook Sekunde 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 Wörter","hintergrund":"Hex Farbe","schrift":"Canva Schriftart","schriftfarbe":"Hex Farbe","animation":"Canva Animation","bild":"ja/nein + Motiv"},{"nr":2,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+      :`Create 1 Canva Reel Script in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${goalText}
+ONLY JSON (direct object):
+{"title":"Title","hook":"Hook second 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 words","hintergrund":"Hex color","schrift":"Canva font","schriftfarbe":"Hex color","animation":"Canva animation","bild":"yes/no + motif"},{"nr":2,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`);
+
+  const storyPrompt=lang==='de'
+    ?`Erstelle 1 Instagram Story Konzept auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+NUR JSON:
+{"hook":"Story Hook max 8 Wörter","slides":[{"nr":1,"text":"Slide Text","sticker":"Empfohlener Sticker z.B. Umfrage/Frage/Countdown/Emoji","tipp":"Canva Tipp"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Abschluss CTA","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+    :`Create 1 Instagram Story concept in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+ONLY JSON:
+{"hook":"Story hook max 8 words","slides":[{"nr":1,"text":"Slide text","sticker":"Recommended sticker e.g. Poll/Question/Countdown","tipp":"Canva tip"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Final CTA","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`;
+
+  const carouselPrompt=lang==='de'
+    ?`Erstelle 1 Instagram Karussell auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${goalText}
+NUR JSON:
+{"caption":"Caption mit Emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 Titel","subtitle":"Untertitel"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA Slide","subtitle":"..."}]}`
+    :`Create 1 Instagram Carousel in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${goalText}
+ONLY JSON:
+{"caption":"Caption with emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 title","subtitle":"Subtitle"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA slide","subtitle":"..."}]}`;
+
+  const pinsPrompt=lang==='de'
+    ?`Erstelle 5 Pinterest Pins auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${goalText}
+NUR JSON-Array:
+[{"title":"Pin Titel","description":"3-4 Sätze","imageTitle":"Bildtitel max 8 Wörter","imageSubtitle":"Untertitel","cta":"CTA max 4 Wörter","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 Keywords"}]`
+    :`Create 5 Pinterest Pins in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${goalText}
+ONLY JSON array:
+[{"title":"Pin title","description":"3-4 sentences","imageTitle":"Image title max 8 words","imageSubtitle":"Subtitle","cta":"CTA max 4 words","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 keywords"}]`;
+
+  async function callAPI(prompt){
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    if(d.error)throw new Error(d.error.message||d.error);
+    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    return JSON.parse(raw);
+  }
+
+  try{
+    // Run all 4 in parallel
+    const [reel,story,carousel,pins]=await Promise.all([
+      callAPI(reelPrompt),
+      callAPI(storyPrompt),
+      callAPI(carouselPrompt),
+      callAPI(pinsPrompt)
+    ]);
+
+    // Build result HTML with tabs
+    let html=`<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(124,58,237,0.06))">
+        <div style="font-size:14px;font-weight:700;color:var(--text)">✨ Content Paket: ${topic}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Reel + Story + Karussell + 5 Pins generiert</div>
+      </div>
+      <div class="pkg-tabs">
+        <button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab('reel')">${pkgReelsMode==='quick'?'⚡':'🎨'} Reel</button>
+        <button class="pkg-tab" data-tab="story" onclick="switchPkgTab('story')">📱 Story</button>
+        <button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab('carousel')">🃏 Karussell</button>
+        <button class="pkg-tab" data-tab="pins" onclick="switchPkgTab('pins')">📌 5 Pins</button>
+      </div>`;
+
+    // REEL TAB
+    html+=`<div class="pkg-panel active" id="pkg-reel" style="padding:1rem">`;
+    if(pkgReelsMode==='quick'){
+      html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">${reel.title||''}</div>
+        <div style="background:#E7232D15;border-left:3px solid #E7232D;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">🎯 HOOK</div>
+          <div style="font-size:14px;font-weight:600">"${reel.hook||''}"</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
+          ${[reel.punkt1,reel.punkt2,reel.punkt3].map((p,j)=>`<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><span style="font-size:10px;font-weight:600;color:var(--teal,#0D9488);display:block">${j+1}.</span>${p||''}</div>`).join('')}
+        </div>
+        <div style="background:#534AB715;border-left:3px solid #534AB7;border-radius:0 8px 8px 0;padding:8px 12px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:600;color:#534AB7;margin-bottom:2px">📢 CTA</div>
+          <div style="font-size:13px;font-weight:600">${reel.cta||''}</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:6px">🎵 ${reel.musik||''} · 💬 ${reel.textoverlay||''}</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${reel.caption||''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${(reel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
+        <button onclick="navigator.clipboard.writeText('${((reel.hook||'')+'\n\n1. '+(reel.punkt1||'')+'\n2. '+(reel.punkt2||'')+'\n3. '+(reel.punkt3||'')+'\n\nCTA: '+(reel.cta||'')+'\n\n'+(reel.caption||'')+'\n\n'+(reel.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+      </div>`;
+    } else {
+      // Canva reel
+      html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:14px;font-weight:700;margin-bottom:10px">${reel.title||''}</div>
+        ${(reel.szenen||[]).map(sz=>{
+          const col={'Hook':'#E7232D','Punkt':'#0D9488','Point':'#0D9488','CTA':'#534AB7'}[sz.typ]||'#6B6862';
+          return `<div style="border:0.5px solid ${col}33;border-radius:8px;padding:10px;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <span style="background:${col};color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">${sz.typ}</span>
+              <a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:10px;padding:2px 8px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none">🎨 Canva</a>
+            </div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px">"${sz.text||''}"</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text3)">
+              <div>${sz.hintergrund&&sz.hintergrund.startsWith('#')?`<span style="display:inline-block;width:10px;height:10px;background:${sz.hintergrund};border-radius:2px;margin-right:4px;vertical-align:middle"></span>`:''} ${sz.hintergrund||''}</div>
+              <div>✨ ${sz.animation||''}</div>
+              <div>🔤 ${sz.schrift||''}</div>
+              <div>${sz.bild&&sz.bild.toLowerCase()!=='nein'&&sz.bild.toLowerCase()!=='no'?`📸 ${sz.bild}`:'Kein Bild'}</div>
+            </div>
+          </div>`;
+        }).join('')}
+        <div style="font-size:12px;color:var(--text2);margin-top:8px">${reel.caption||''}</div>
+      </div>`;
+    }
+    html+='</div>';
+
+    // STORY TAB
+    html+=`<div class="pkg-panel" id="pkg-story" style="padding:1rem">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Hook: "${story.hook||''}"</div>
+        ${(story.slides||[]).map(sl=>`<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:5px">Slide ${sl.nr}</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:5px">${sl.text||''}</div>
+          <div style="font-size:11px;color:#F59E0B">📌 Sticker: ${sl.sticker||''}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">💡 ${sl.tipp||''}</div>
+        </div>`).join('')}
+        <div style="font-size:12px;color:var(--text2);margin-top:8px">${story.caption||''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(story.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
+        <button onclick="navigator.clipboard.writeText('${((story.caption||'')+'\n\n'+(story.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
+      </div>
+    </div>`;
+
+    // CAROUSEL TAB
+    html+=`<div class="pkg-panel" id="pkg-carousel" style="padding:1rem">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        ${(carousel.slides||[]).map(sl=>`<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center">
+          <div style="font-size:16px;font-weight:800;color:var(--text3);text-align:center">${sl.nr}</div>
+          <div><div style="font-size:13px;font-weight:600">${sl.title||''}</div><div style="font-size:12px;color:var(--text3)">${sl.subtitle||''}</div></div>
+        </div>`).join('')}
+        <div style="font-size:12px;color:var(--text2);margin-top:8px">${carousel.caption||''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(carousel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
+        <button onclick="navigator.clipboard.writeText('${((carousel.caption||'')+'\n\n'+(carousel.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
+      </div>
+    </div>`;
+
+    // PINS TAB
+    html+=`<div class="pkg-panel" id="pkg-pins" style="padding:1rem">
+      <div style="display:grid;gap:10px">
+        ${(Array.isArray(pins)?pins:[pins]).map((p,i)=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:5px">Pin ${i+1}</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:5px">${p.title||''}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${p.description||''}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
+          <button onclick="navigator.clipboard.writeText('${((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+        </div>`).join('')}
+      </div>
+    </div>`;
+
+    html+='</div>';
+    resultArea.innerHTML=html;
+
+  }catch(e){
+    resultArea.innerHTML=`<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: ${e.message}</div>`;
+  }
+
+  btn.disabled=false;
+  btn.innerHTML='<i class="ti ti-package"></i> Erneut generieren';
+}
+</script>
+
+</body></html>`);
     win.document.close();
     return;
   }
@@ -1750,6 +1985,237 @@ function copyHook(text,btn){
     btn.textContent='✓';btn.style.color='var(--green)';btn.style.borderColor='var(--green)';
     setTimeout(()=>{btn.textContent='📋';btn.style.color='';btn.style.borderColor='';},2000);
   });
+}
+</script>
+
+
+<script>
+let pkgReelsMode='quick';
+
+function setPkgReels(mode){
+  pkgReelsMode=mode;
+  document.querySelectorAll('[data-pkgreels]').forEach(b=>b.classList.toggle('active',b.dataset.pkgreels===mode));
+}
+
+function switchPkgTab(tab){
+  document.querySelectorAll('.pkg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===`pkg-${tab}`));
+}
+
+async function generatePackage(){
+  const topic=document.getElementById('topic').value.trim();
+  if(!topic){document.getElementById('topic').style.borderColor='var(--red)';return;}
+  document.getElementById('topic').style.borderColor='';
+
+  const btn=document.getElementById('pkgBtn');
+  btn.disabled=true;
+  btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> KI generiert alles…';
+
+  const lang=document.querySelector('.lang-btn.active')?.dataset.lang||'de';
+  const audience=document.getElementById('audience')?.value||'';
+  const goal=document.getElementById('goal')?.value||'traffic';
+  const gm={traffic:lang==='de'?'Mehr Traffic':'More Traffic',sales:lang==='de'?'Produkt verkaufen':'Sell Product',leads:lang==='de'?'E-Mail Leads':'Email Leads',brand:lang==='de'?'Markenbekanntheit':'Brand Awareness',viral:lang==='de'?'Viral gehen':'Go Viral',saves:lang==='de'?'Mehr Saves':'More Saves'};
+  const goalText=gm[goal]||goal;
+
+  const resultArea=document.getElementById('resultArea');
+  resultArea.innerHTML=`<div style="text-align:center;padding:3rem"><div style="font-size:32px;margin-bottom:1rem;animation:spin 1s linear infinite;display:inline-block">⟳</div><p style="color:var(--text3);font-size:14px">KI erstellt dein komplettes Content-Paket…</p><p style="color:var(--text3);font-size:12px;margin-top:6px">Reel + Story + Karussell + 5 Pins</p></div>`;
+
+  // Prompts
+  const reelPrompt=pkgReelsMode==='quick'
+    ?(lang==='de'
+      ?`Erstelle 1 Quick Reel Script auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${goalText}
+NUR JSON (kein Array, direkt Objekt):
+{"title":"Titel","hook":"Hook max 8 Wörter","punkt1":"Punkt 1 max 10 Wörter","punkt2":"Punkt 2 max 10 Wörter","punkt3":"Punkt 3 max 10 Wörter","cta":"CTA max 6 Wörter","textoverlay":"Text-Overlay max 5 Wörter","musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+      :`Create 1 Quick Reel Script in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${goalText}
+ONLY JSON (no array, direct object):
+{"title":"Title","hook":"Hook max 8 words","punkt1":"Point 1 max 10 words","punkt2":"Point 2 max 10 words","punkt3":"Point 3 max 10 words","cta":"CTA max 6 words","textoverlay":"Text overlay max 5 words","musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`)
+    :(lang==='de'
+      ?`Erstelle 1 Canva Reel Script auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${goalText}
+NUR JSON (direkt Objekt):
+{"title":"Titel","hook":"Hook Sekunde 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 Wörter","hintergrund":"Hex Farbe","schrift":"Canva Schriftart","schriftfarbe":"Hex Farbe","animation":"Canva Animation","bild":"ja/nein + Motiv"},{"nr":2,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+      :`Create 1 Canva Reel Script in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${goalText}
+ONLY JSON (direct object):
+{"title":"Title","hook":"Hook second 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 words","hintergrund":"Hex color","schrift":"Canva font","schriftfarbe":"Hex color","animation":"Canva animation","bild":"yes/no + motif"},{"nr":2,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`);
+
+  const storyPrompt=lang==='de'
+    ?`Erstelle 1 Instagram Story Konzept auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+NUR JSON:
+{"hook":"Story Hook max 8 Wörter","slides":[{"nr":1,"text":"Slide Text","sticker":"Empfohlener Sticker z.B. Umfrage/Frage/Countdown/Emoji","tipp":"Canva Tipp"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Abschluss CTA","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+    :`Create 1 Instagram Story concept in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+ONLY JSON:
+{"hook":"Story hook max 8 words","slides":[{"nr":1,"text":"Slide text","sticker":"Recommended sticker e.g. Poll/Question/Countdown","tipp":"Canva tip"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Final CTA","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`;
+
+  const carouselPrompt=lang==='de'
+    ?`Erstelle 1 Instagram Karussell auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${goalText}
+NUR JSON:
+{"caption":"Caption mit Emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 Titel","subtitle":"Untertitel"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA Slide","subtitle":"..."}]}`
+    :`Create 1 Instagram Carousel in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${goalText}
+ONLY JSON:
+{"caption":"Caption with emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 title","subtitle":"Subtitle"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA slide","subtitle":"..."}]}`;
+
+  const pinsPrompt=lang==='de'
+    ?`Erstelle 5 Pinterest Pins auf DEUTSCH.
+Thema: ${topic}
+Zielgruppe: ${audience||'Allgemein'}
+Ziel: ${goalText}
+NUR JSON-Array:
+[{"title":"Pin Titel","description":"3-4 Sätze","imageTitle":"Bildtitel max 8 Wörter","imageSubtitle":"Untertitel","cta":"CTA max 4 Wörter","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 Keywords"}]`
+    :`Create 5 Pinterest Pins in ENGLISH.
+Topic: ${topic}
+Audience: ${audience||'General'}
+Goal: ${goalText}
+ONLY JSON array:
+[{"title":"Pin title","description":"3-4 sentences","imageTitle":"Image title max 8 words","imageSubtitle":"Subtitle","cta":"CTA max 4 words","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 keywords"}]`;
+
+  async function callAPI(prompt){
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    if(d.error)throw new Error(d.error.message||d.error);
+    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    return JSON.parse(raw);
+  }
+
+  try{
+    // Run all 4 in parallel
+    const [reel,story,carousel,pins]=await Promise.all([
+      callAPI(reelPrompt),
+      callAPI(storyPrompt),
+      callAPI(carouselPrompt),
+      callAPI(pinsPrompt)
+    ]);
+
+    // Build result HTML with tabs
+    let html=`<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(124,58,237,0.06))">
+        <div style="font-size:14px;font-weight:700;color:var(--text)">✨ Content Paket: ${topic}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Reel + Story + Karussell + 5 Pins generiert</div>
+      </div>
+      <div class="pkg-tabs">
+        <button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab('reel')">${pkgReelsMode==='quick'?'⚡':'🎨'} Reel</button>
+        <button class="pkg-tab" data-tab="story" onclick="switchPkgTab('story')">📱 Story</button>
+        <button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab('carousel')">🃏 Karussell</button>
+        <button class="pkg-tab" data-tab="pins" onclick="switchPkgTab('pins')">📌 5 Pins</button>
+      </div>`;
+
+    // REEL TAB
+    html+=`<div class="pkg-panel active" id="pkg-reel" style="padding:1rem">`;
+    if(pkgReelsMode==='quick'){
+      html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">${reel.title||''}</div>
+        <div style="background:#E7232D15;border-left:3px solid #E7232D;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">🎯 HOOK</div>
+          <div style="font-size:14px;font-weight:600">"${reel.hook||''}"</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
+          ${[reel.punkt1,reel.punkt2,reel.punkt3].map((p,j)=>`<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><span style="font-size:10px;font-weight:600;color:var(--teal,#0D9488);display:block">${j+1}.</span>${p||''}</div>`).join('')}
+        </div>
+        <div style="background:#534AB715;border-left:3px solid #534AB7;border-radius:0 8px 8px 0;padding:8px 12px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:600;color:#534AB7;margin-bottom:2px">📢 CTA</div>
+          <div style="font-size:13px;font-weight:600">${reel.cta||''}</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:6px">🎵 ${reel.musik||''} · 💬 ${reel.textoverlay||''}</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${reel.caption||''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${(reel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
+        <button onclick="navigator.clipboard.writeText('${((reel.hook||'')+'\n\n1. '+(reel.punkt1||'')+'\n2. '+(reel.punkt2||'')+'\n3. '+(reel.punkt3||'')+'\n\nCTA: '+(reel.cta||'')+'\n\n'+(reel.caption||'')+'\n\n'+(reel.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+      </div>`;
+    } else {
+      // Canva reel
+      html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:14px;font-weight:700;margin-bottom:10px">${reel.title||''}</div>
+        ${(reel.szenen||[]).map(sz=>{
+          const col={'Hook':'#E7232D','Punkt':'#0D9488','Point':'#0D9488','CTA':'#534AB7'}[sz.typ]||'#6B6862';
+          return `<div style="border:0.5px solid ${col}33;border-radius:8px;padding:10px;margin-bottom:8px">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <span style="background:${col};color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">${sz.typ}</span>
+              <a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:10px;padding:2px 8px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none">🎨 Canva</a>
+            </div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:6px">"${sz.text||''}"</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text3)">
+              <div>${sz.hintergrund&&sz.hintergrund.startsWith('#')?`<span style="display:inline-block;width:10px;height:10px;background:${sz.hintergrund};border-radius:2px;margin-right:4px;vertical-align:middle"></span>`:''} ${sz.hintergrund||''}</div>
+              <div>✨ ${sz.animation||''}</div>
+              <div>🔤 ${sz.schrift||''}</div>
+              <div>${sz.bild&&sz.bild.toLowerCase()!=='nein'&&sz.bild.toLowerCase()!=='no'?`📸 ${sz.bild}`:'Kein Bild'}</div>
+            </div>
+          </div>`;
+        }).join('')}
+        <div style="font-size:12px;color:var(--text2);margin-top:8px">${reel.caption||''}</div>
+      </div>`;
+    }
+    html+='</div>';
+
+    // STORY TAB
+    html+=`<div class="pkg-panel" id="pkg-story" style="padding:1rem">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Hook: "${story.hook||''}"</div>
+        ${(story.slides||[]).map(sl=>`<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:5px">Slide ${sl.nr}</div>
+          <div style="font-size:14px;font-weight:600;margin-bottom:5px">${sl.text||''}</div>
+          <div style="font-size:11px;color:#F59E0B">📌 Sticker: ${sl.sticker||''}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">💡 ${sl.tipp||''}</div>
+        </div>`).join('')}
+        <div style="font-size:12px;color:var(--text2);margin-top:8px">${story.caption||''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(story.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
+        <button onclick="navigator.clipboard.writeText('${((story.caption||'')+'\n\n'+(story.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
+      </div>
+    </div>`;
+
+    // CAROUSEL TAB
+    html+=`<div class="pkg-panel" id="pkg-carousel" style="padding:1rem">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        ${(carousel.slides||[]).map(sl=>`<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center">
+          <div style="font-size:16px;font-weight:800;color:var(--text3);text-align:center">${sl.nr}</div>
+          <div><div style="font-size:13px;font-weight:600">${sl.title||''}</div><div style="font-size:12px;color:var(--text3)">${sl.subtitle||''}</div></div>
+        </div>`).join('')}
+        <div style="font-size:12px;color:var(--text2);margin-top:8px">${carousel.caption||''}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(carousel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
+        <button onclick="navigator.clipboard.writeText('${((carousel.caption||'')+'\n\n'+(carousel.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
+      </div>
+    </div>`;
+
+    // PINS TAB
+    html+=`<div class="pkg-panel" id="pkg-pins" style="padding:1rem">
+      <div style="display:grid;gap:10px">
+        ${(Array.isArray(pins)?pins:[pins]).map((p,i)=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
+          <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:5px">Pin ${i+1}</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:5px">${p.title||''}</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${p.description||''}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
+          <button onclick="navigator.clipboard.writeText('${((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+        </div>`).join('')}
+      </div>
+    </div>`;
+
+    html+='</div>';
+    resultArea.innerHTML=html;
+
+  }catch(e){
+    resultArea.innerHTML=`<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: ${e.message}</div>`;
+  }
+
+  btn.disabled=false;
+  btn.innerHTML='<i class="ti ti-package"></i> Erneut generieren';
 }
 </script>
 
