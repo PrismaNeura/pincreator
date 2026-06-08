@@ -960,14 +960,14 @@ function buildQuickReelHtml(s,i){
 function buildCanvaReelHtml(s,i){
   const szHtml=(s.szenen||[]).map(sz=>{
     const col=SZENEN_COLORS[sz.typ]||'#0D9488';
-    const canvaUrl=`https://www.canva.com/design/create?category=tACFau6iqIY`;
+    const canvaUrl=`https://www.canva.com/create/instagram-reels/`;
     return `<div style="border:0.5px solid ${col}33;border-radius:8px;padding:10px;margin-bottom:8px;background:${col}08">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
         <div style="display:flex;align-items:center;gap:6px">
           <span style="background:${col};color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">${sz.typ}</span>
           <span style="font-size:11px;color:var(--text3)">Szene ${sz.nr}</span>
         </div>
-        <a href="${canvaUrl}" target="_blank" style="font-size:10px;padding:3px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none;font-weight:600">🎨 In Canva öffnen</a>
+        <a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:10px;padding:3px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none;font-weight:600">🎨 Canva öffnen</a>
       </div>
       <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">"${sz.text}"</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
@@ -984,10 +984,10 @@ function buildCanvaReelHtml(s,i){
       </div>
       <div style="display:flex;gap:6px">
         <span style="font-size:11px;padding:4px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px">🎵 ${s.musik}</span>
-        <a href="https://www.canva.com/design/create?category=tACFau6iqIY" target="_blank" style="font-size:11px;padding:4px 12px;background:var(--purple);color:#fff;border-radius:20px;text-decoration:none;font-weight:600">Canva öffnen →</a>
+        <a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:11px;padding:4px 12px;background:var(--purple);color:#fff;border-radius:20px;text-decoration:none;font-weight:600">Canva öffnen →</a>
       </div>
     </div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:6px 10px;background:var(--s2);border-radius:6px">💡 Öffne Canva → Neues Design → Instagram Reel (9:16) → Füge jede Szene als neue Seite ein</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:6px 10px;background:var(--s2);border-radius:6px">💡 Canva öffnen → Neues Design → Instagram Reel (9:16) → Für jede Szene eine neue Seite → Text & Animation einfügen</div>
     ${szHtml}
     <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)">
       <div style="font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:8px">${s.caption}</div>
@@ -1084,9 +1084,9 @@ async function generatePins(){
   if(currentPlatform==='reels'){
     // CANVA MODE
     const canvaTemplates={
-      hook:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+hook',
-      content:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+tips',
-      cta:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+call+to+action'
+      hook:'https://www.canva.com/create/instagram-reels/',
+      content:'https://www.canva.com/create/instagram-reels/',
+      cta:'https://www.canva.com/create/instagram-reels/'
     };
 
     if(reelsMode==='quick'){
