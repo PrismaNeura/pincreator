@@ -1449,7 +1449,7 @@ ONLY JSON array:
         <div style="font-size:12px;color:var(--text2);margin-bottom:6px">🎵 ${reel.musik||''} · 💬 ${reel.textoverlay||''}</div>
         <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${reel.caption||''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:4px">${(reel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="navigator.clipboard.writeText('${((reel.hook||'')+'\n\n1. '+(reel.punkt1||'')+'\n2. '+(reel.punkt2||'')+'\n3. '+(reel.punkt3||'')+'\n\nCTA: '+(reel.cta||'')+'\n\n'+(reel.caption||'')+'\n\n'+(reel.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+        <button onclick="copyPkgReel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
       </div>`;
     } else {
       // Canva reel
@@ -1488,7 +1488,7 @@ ONLY JSON array:
         </div>`).join('')}
         <div style="font-size:12px;color:var(--text2);margin-top:8px">${story.caption||''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(story.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="navigator.clipboard.writeText('${((story.caption||'')+'\n\n'+(story.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
+        <button onclick="copyPkgStory()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
       </div>
     </div>`;
 
@@ -1501,7 +1501,7 @@ ONLY JSON array:
         </div>`).join('')}
         <div style="font-size:12px;color:var(--text2);margin-top:8px">${carousel.caption||''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(carousel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="navigator.clipboard.writeText('${((carousel.caption||'')+'\n\n'+(carousel.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
+        <button onclick="copyPkgCarousel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
       </div>
     </div>`;
 
@@ -1513,7 +1513,7 @@ ONLY JSON array:
           <div style="font-size:14px;font-weight:700;margin-bottom:5px">${p.title||''}</div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${p.description||''}</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-          <button onclick="navigator.clipboard.writeText('${((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+          <button onclick="copyPkgPin(${i})" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
         </div>`).join('')}
       </div>
     </div>`;
@@ -1521,12 +1521,92 @@ ONLY JSON array:
     html+='</div>';
     resultArea.innerHTML=html;
 
+    // Store data for copy functions
+    window._pkgData={reel,story,carousel,pins:Array.isArray(pins)?pins:[pins],reelMode:pkgReelsMode};
+
   }catch(e){
     resultArea.innerHTML=`<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: ${e.message}</div>`;
   }
 
   btn.disabled=false;
   btn.innerHTML='<i class="ti ti-package"></i> Erneut generieren';
+}
+
+function copyPkgReel(){
+  if(!window._pkgData)return;
+  const r=window._pkgData.reel;
+  let text='';
+  if(window._pkgData.reelMode==='quick'){
+    text=`HOOK: "${r.hook||''}"
+
+1. ${r.punkt1||''}
+2. ${r.punkt2||''}
+3. ${r.punkt3||''}
+
+CTA: ${r.cta||''}
+Text-Overlay: ${r.textoverlay||''}
+Musik: ${r.musik||''}
+
+${r.caption||''}
+
+${(r.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  } else {
+    text=`${r.title||''}
+Hook: ${r.hook||''}
+
+${(r.szenen||[]).map(s=>`[${s.typ}] "${s.text||''}"
+Hintergrund: ${s.hintergrund||''} | Schrift: ${s.schrift||''}
+Animation: ${s.animation||''} | Bild: ${s.bild||''}`).join('
+
+')}
+
+${r.caption||''}
+
+${(r.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  }
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.querySelector('#pkg-reel button');
+    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Kopieren',2000);}
+  });
+}
+
+function copyPkgStory(){
+  if(!window._pkgData)return;
+  const s=window._pkgData.story;
+  const text=`${s.caption||''}
+
+${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.querySelector('#pkg-story button');
+    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
+  });
+}
+
+function copyPkgCarousel(){
+  if(!window._pkgData)return;
+  const c=window._pkgData.carousel;
+  const text=`${c.caption||''}
+
+${(c.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.querySelector('#pkg-carousel button');
+    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
+  });
+}
+
+function copyPkgPin(i){
+  if(!window._pkgData)return;
+  const p=window._pkgData.pins[i];
+  if(!p)return;
+  const text=`${p.title||''}
+
+${p.description||''}
+
+${(p.tags||[]).map(t=>'#'+t).join(' ')}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btns=document.querySelectorAll('#pkg-pins button');
+    if(btns[i]){btns[i].textContent='✓ Kopiert!';setTimeout(()=>btns[i].textContent='📋 Kopieren',2000);}
+  });
 }
 </script>
 
@@ -2138,7 +2218,7 @@ ONLY JSON array:
         <div style="font-size:12px;color:var(--text2);margin-bottom:6px">🎵 ${reel.musik||''} · 💬 ${reel.textoverlay||''}</div>
         <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${reel.caption||''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:4px">${(reel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="navigator.clipboard.writeText('${((reel.hook||'')+'\n\n1. '+(reel.punkt1||'')+'\n2. '+(reel.punkt2||'')+'\n3. '+(reel.punkt3||'')+'\n\nCTA: '+(reel.cta||'')+'\n\n'+(reel.caption||'')+'\n\n'+(reel.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+        <button onclick="copyPkgReel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
       </div>`;
     } else {
       // Canva reel
@@ -2177,7 +2257,7 @@ ONLY JSON array:
         </div>`).join('')}
         <div style="font-size:12px;color:var(--text2);margin-top:8px">${story.caption||''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(story.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="navigator.clipboard.writeText('${((story.caption||'')+'\n\n'+(story.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
+        <button onclick="copyPkgStory()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
       </div>
     </div>`;
 
@@ -2190,7 +2270,7 @@ ONLY JSON array:
         </div>`).join('')}
         <div style="font-size:12px;color:var(--text2);margin-top:8px">${carousel.caption||''}</div>
         <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(carousel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="navigator.clipboard.writeText('${((carousel.caption||'')+'\n\n'+(carousel.hashtags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
+        <button onclick="copyPkgCarousel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
       </div>
     </div>`;
 
@@ -2202,7 +2282,7 @@ ONLY JSON array:
           <div style="font-size:14px;font-weight:700;margin-bottom:5px">${p.title||''}</div>
           <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${p.description||''}</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-          <button onclick="navigator.clipboard.writeText('${((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ')).replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+          <button onclick="copyPkgPin(${i})" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
         </div>`).join('')}
       </div>
     </div>`;
@@ -2210,12 +2290,92 @@ ONLY JSON array:
     html+='</div>';
     resultArea.innerHTML=html;
 
+    // Store data for copy functions
+    window._pkgData={reel,story,carousel,pins:Array.isArray(pins)?pins:[pins],reelMode:pkgReelsMode};
+
   }catch(e){
     resultArea.innerHTML=`<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: ${e.message}</div>`;
   }
 
   btn.disabled=false;
   btn.innerHTML='<i class="ti ti-package"></i> Erneut generieren';
+}
+
+function copyPkgReel(){
+  if(!window._pkgData)return;
+  const r=window._pkgData.reel;
+  let text='';
+  if(window._pkgData.reelMode==='quick'){
+    text=`HOOK: "${r.hook||''}"
+
+1. ${r.punkt1||''}
+2. ${r.punkt2||''}
+3. ${r.punkt3||''}
+
+CTA: ${r.cta||''}
+Text-Overlay: ${r.textoverlay||''}
+Musik: ${r.musik||''}
+
+${r.caption||''}
+
+${(r.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  } else {
+    text=`${r.title||''}
+Hook: ${r.hook||''}
+
+${(r.szenen||[]).map(s=>`[${s.typ}] "${s.text||''}"
+Hintergrund: ${s.hintergrund||''} | Schrift: ${s.schrift||''}
+Animation: ${s.animation||''} | Bild: ${s.bild||''}`).join('
+
+')}
+
+${r.caption||''}
+
+${(r.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  }
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.querySelector('#pkg-reel button');
+    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Kopieren',2000);}
+  });
+}
+
+function copyPkgStory(){
+  if(!window._pkgData)return;
+  const s=window._pkgData.story;
+  const text=`${s.caption||''}
+
+${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.querySelector('#pkg-story button');
+    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
+  });
+}
+
+function copyPkgCarousel(){
+  if(!window._pkgData)return;
+  const c=window._pkgData.carousel;
+  const text=`${c.caption||''}
+
+${(c.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.querySelector('#pkg-carousel button');
+    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
+  });
+}
+
+function copyPkgPin(i){
+  if(!window._pkgData)return;
+  const p=window._pkgData.pins[i];
+  if(!p)return;
+  const text=`${p.title||''}
+
+${p.description||''}
+
+${(p.tags||[]).map(t=>'#'+t).join(' ')}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btns=document.querySelectorAll('#pkg-pins button');
+    if(btns[i]){btns[i].textContent='✓ Kopiert!';setTimeout(()=>btns[i].textContent='📋 Kopieren',2000);}
+  });
 }
 </script>
 
