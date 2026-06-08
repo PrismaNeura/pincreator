@@ -1148,7 +1148,7 @@ ONLY JSON array:
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
     clearTimeout(timeout);
     const d=await r.json();if(d.error)throw new Error(d.error.message||d.error);
-    generatedPins=(()=>{try{return JSON.parse(d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim());}catch(e){const m=d.content.map(i=>i.text||'').join('').match(/\[[\s\S]*\]/);if(m)return JSON.parse(m[0]);throw e;}})();
+    generatedPins=(()=>{try{return JSON.parse(d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim());}catch(e){const m=d.content.map(i=>i.text||'').join('').match(/\[[\s\S]*\]/);if(m)return JSON.parse(m[0]);throw e;}})();
     if(!Array.isArray(generatedPins))generatedPins=[generatedPins];
 
     if(!isAdmin){
@@ -1201,7 +1201,7 @@ ONLY JSON:
       const cd=await cr.json();if(cd.error)throw new Error(cd.error.message||cd.error);
       let carousel;
       try{
-        const rawCarousel=cd.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+        const rawCarousel=cd.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim();
         carousel=JSON.parse(rawCarousel);
       }catch(pe){
         // Fix common JSON issues from AI responses
@@ -1356,7 +1356,7 @@ async function generatePackage(){
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error)throw new Error(d.error.message||d.error);
-      var raw=d.content.map(function(i){return i.text||'';}).join('').replace(/```json|```/g,'').trim();
+      var raw=d.content.map(function(i){return i.text||'';}).join('');raw=raw.replace(/^[^\[\{]*/,'').replace(/[^\]\}]*$/,'').trim();
       return JSON.parse(raw);
     });
   }
