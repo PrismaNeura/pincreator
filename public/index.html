@@ -1334,71 +1334,23 @@ async function generatePackage(){
   // Prompts
   const reelPrompt=pkgReelsMode==='quick'
     ?(lang==='de'
-      ?`Erstelle 1 Quick Reel Script auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-Ziel: ${goalText}
-NUR JSON (kein Array, direkt Objekt):
-{"title":"Titel","hook":"Hook max 8 Wörter","punkt1":"Punkt 1 max 10 Wörter","punkt2":"Punkt 2 max 10 Wörter","punkt3":"Punkt 3 max 10 Wörter","cta":"CTA max 6 Wörter","textoverlay":"Text-Overlay max 5 Wörter","musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
-      :`Create 1 Quick Reel Script in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-Goal: ${goalText}
-ONLY JSON (no array, direct object):
-{"title":"Title","hook":"Hook max 8 words","punkt1":"Point 1 max 10 words","punkt2":"Point 2 max 10 words","punkt3":"Point 3 max 10 words","cta":"CTA max 6 words","textoverlay":"Text overlay max 5 words","musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`)
+      ?`Erstelle 1 Quick Reel Script auf DEUTSCH.Thema: ${topic}Zielgruppe: ${audience||'Allgemein'}Ziel: ${goalText}NUR JSON (kein Array, direkt Objekt):{"title":"Titel","hook":"Hook max 8 Wörter","punkt1":"Punkt 1 max 10 Wörter","punkt2":"Punkt 2 max 10 Wörter","punkt3":"Punkt 3 max 10 Wörter","cta":"CTA max 6 Wörter","textoverlay":"Text-Overlay max 5 Wörter","musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+      :`Create 1 Quick Reel Script in ENGLISH.Topic: ${topic}Audience: ${audience||'General'}Goal: ${goalText}ONLY JSON (no array, direct object):{"title":"Title","hook":"Hook max 8 words","punkt1":"Point 1 max 10 words","punkt2":"Point 2 max 10 words","punkt3":"Point 3 max 10 words","cta":"CTA max 6 words","textoverlay":"Text overlay max 5 words","musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`)
     :(lang==='de'
-      ?`Erstelle 1 Canva Reel Script auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-Ziel: ${goalText}
-NUR JSON (direkt Objekt):
-{"title":"Titel","hook":"Hook Sekunde 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 Wörter","hintergrund":"Hex Farbe","schrift":"Canva Schriftart","schriftfarbe":"Hex Farbe","animation":"Canva Animation","bild":"ja/nein + Motiv"},{"nr":2,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
-      :`Create 1 Canva Reel Script in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-Goal: ${goalText}
-ONLY JSON (direct object):
-{"title":"Title","hook":"Hook second 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 words","hintergrund":"Hex color","schrift":"Canva font","schriftfarbe":"Hex color","animation":"Canva animation","bild":"yes/no + motif"},{"nr":2,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`);
+      ?`Erstelle 1 Canva Reel Script auf DEUTSCH.Thema: ${topic}Zielgruppe: ${audience||'Allgemein'}Ziel: ${goalText}NUR JSON (direkt Objekt):{"title":"Titel","hook":"Hook Sekunde 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 Wörter","hintergrund":"Hex Farbe","schrift":"Canva Schriftart","schriftfarbe":"Hex Farbe","animation":"Canva Animation","bild":"ja/nein + Motiv"},{"nr":2,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+      :`Create 1 Canva Reel Script in ENGLISH.Topic: ${topic}Audience: ${audience||'General'}Goal: ${goalText}ONLY JSON (direct object):{"title":"Title","hook":"Hook second 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 words","hintergrund":"Hex color","schrift":"Canva font","schriftfarbe":"Hex color","animation":"Canva animation","bild":"yes/no + motif"},{"nr":2,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`);
 
   const storyPrompt=lang==='de'
-    ?`Erstelle 1 Instagram Story Konzept auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-NUR JSON:
-{"hook":"Story Hook max 8 Wörter","slides":[{"nr":1,"text":"Slide Text","sticker":"Empfohlener Sticker z.B. Umfrage/Frage/Countdown/Emoji","tipp":"Canva Tipp"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Abschluss CTA","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
-    :`Create 1 Instagram Story concept in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-ONLY JSON:
-{"hook":"Story hook max 8 words","slides":[{"nr":1,"text":"Slide text","sticker":"Recommended sticker e.g. Poll/Question/Countdown","tipp":"Canva tip"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Final CTA","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`;
+    ?`Erstelle 1 Instagram Story Konzept auf DEUTSCH.Thema: ${topic}Zielgruppe: ${audience||'Allgemein'}NUR JSON:{"hook":"Story Hook max 8 Wörter","slides":[{"nr":1,"text":"Slide Text","sticker":"Empfohlener Sticker z.B. Umfrage/Frage/Countdown/Emoji","tipp":"Canva Tipp"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Abschluss CTA","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
+    :`Create 1 Instagram Story concept in ENGLISH.Topic: ${topic}Audience: ${audience||'General'}ONLY JSON:{"hook":"Story hook max 8 words","slides":[{"nr":1,"text":"Slide text","sticker":"Recommended sticker e.g. Poll/Question/Countdown","tipp":"Canva tip"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Final CTA","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`;
 
   const carouselPrompt=lang==='de'
-    ?`Erstelle 1 Instagram Karussell auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-Ziel: ${goalText}
-NUR JSON:
-{"caption":"Caption mit Emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 Titel","subtitle":"Untertitel"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA Slide","subtitle":"..."}]}`
-    :`Create 1 Instagram Carousel in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-Goal: ${goalText}
-ONLY JSON:
-{"caption":"Caption with emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 title","subtitle":"Subtitle"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA slide","subtitle":"..."}]}`;
+    ?`Erstelle 1 Instagram Karussell auf DEUTSCH.Thema: ${topic}Zielgruppe: ${audience||'Allgemein'}Ziel: ${goalText}NUR JSON:{"caption":"Caption mit Emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 Titel","subtitle":"Untertitel"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA Slide","subtitle":"..."}]}`
+    :`Create 1 Instagram Carousel in ENGLISH.Topic: ${topic}Audience: ${audience||'General'}Goal: ${goalText}ONLY JSON:{"caption":"Caption with emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 title","subtitle":"Subtitle"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA slide","subtitle":"..."}]}`;
 
   const pinsPrompt=lang==='de'
-    ?`Erstelle 5 Pinterest Pins auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-Ziel: ${goalText}
-NUR JSON-Array:
-[{"title":"Pin Titel","description":"3-4 Sätze","imageTitle":"Bildtitel max 8 Wörter","imageSubtitle":"Untertitel","cta":"CTA max 4 Wörter","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 Keywords"}]`
-    :`Create 5 Pinterest Pins in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-Goal: ${goalText}
-ONLY JSON array:
-[{"title":"Pin title","description":"3-4 sentences","imageTitle":"Image title max 8 words","imageSubtitle":"Subtitle","cta":"CTA max 4 words","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 keywords"}]`;
+    ?`Erstelle 5 Pinterest Pins auf DEUTSCH.Thema: ${topic}Zielgruppe: ${audience||'Allgemein'}Ziel: ${goalText}NUR JSON-Array:[{"title":"Pin Titel","description":"3-4 Sätze","imageTitle":"Bildtitel max 8 Wörter","imageSubtitle":"Untertitel","cta":"CTA max 4 Wörter","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 Keywords"}]`
+    :`Create 5 Pinterest Pins in ENGLISH.Topic: ${topic}Audience: ${audience||'General'}Goal: ${goalText}ONLY JSON array:[{"title":"Pin title","description":"3-4 sentences","imageTitle":"Image title max 8 words","imageSubtitle":"Subtitle","cta":"CTA max 4 words","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 keywords"}]`;
 
   async function callAPI(prompt){
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
