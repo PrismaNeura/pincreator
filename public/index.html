@@ -1329,7 +1329,7 @@ async function generatePackage(){
   const goalText=gm[goal]||goal;
 
   const resultArea=document.getElementById('resultArea');
-  resultArea.innerHTML=`<div style="text-align:center;padding:3rem"><div style="font-size:32px;margin-bottom:1rem;animation:spin 1s linear infinite;display:inline-block">⟳</div><p style="color:var(--text3);font-size:14px">KI erstellt dein komplettes Content-Paket…</p><p style="color:var(--text3);font-size:12px;margin-top:6px">Reel + Story + Karussell + 5 Pins</p></div>`;
+  resultArea.innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:32px;margin-bottom:1rem">⏳</div><p style="color:#6B6862;font-size:14px">KI erstellt dein Content-Paket...</p><p style="color:#6B6862;font-size:12px;margin-top:6px">Reel + Story + Karussell + 5 Pins</p></div>';
 
   // Prompts
   const reelPrompt=pkgReelsMode==='quick'
@@ -1356,7 +1356,7 @@ async function generatePackage(){
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
     if(d.error)throw new Error(d.error.message||d.error);
-    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
     return JSON.parse(raw);
   }
 
@@ -1370,106 +1370,99 @@ async function generatePackage(){
     ]);
 
     // Build result HTML with tabs
-    let html=`<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem">
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(124,58,237,0.06))">
-        <div style="font-size:14px;font-weight:700;color:var(--text)">✨ Content Paket: ${topic}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Reel + Story + Karussell + 5 Pins generiert</div>
-      </div>
-      <div class="pkg-tabs">
-        <button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab('reel')">${pkgReelsMode==='quick'?'⚡':'🎨'} Reel</button>
-        <button class="pkg-tab" data-tab="story" onclick="switchPkgTab('story')">📱 Story</button>
-        <button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab('carousel')">🃏 Karussell</button>
-        <button class="pkg-tab" data-tab="pins" onclick="switchPkgTab('pins')">📌 5 Pins</button>
-      </div>`;
-
-    // REEL TAB
-    html+=`<div class="pkg-panel active" id="pkg-reel" style="padding:1rem">`;
-    if(pkgReelsMode==='quick'){
-      html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">${reel.title||''}</div>
-        <div style="background:#E7232D15;border-left:3px solid #E7232D;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px">
-          <div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">🎯 HOOK</div>
-          <div style="font-size:14px;font-weight:600">"${reel.hook||''}"</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
-          ${[reel.punkt1,reel.punkt2,reel.punkt3].map((p,j)=>`<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><span style="font-size:10px;font-weight:600;color:var(--teal,#0D9488);display:block">${j+1}.</span>${p||''}</div>`).join('')}
-        </div>
-        <div style="background:#534AB715;border-left:3px solid #534AB7;border-radius:0 8px 8px 0;padding:8px 12px;margin-bottom:8px">
-          <div style="font-size:10px;font-weight:600;color:#534AB7;margin-bottom:2px">📢 CTA</div>
-          <div style="font-size:13px;font-weight:600">${reel.cta||''}</div>
-        </div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:6px">🎵 ${reel.musik||''} · 💬 ${reel.textoverlay||''}</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${reel.caption||''}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px">${(reel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="copyPkgReel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
-      </div>`;
-    } else {
-      // Canva reel
-      html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <div style="font-size:14px;font-weight:700;margin-bottom:10px">${reel.title||''}</div>
-        ${(reel.szenen||[]).map(sz=>{
-          const col={'Hook':'#E7232D','Punkt':'#0D9488','Point':'#0D9488','CTA':'#534AB7'}[sz.typ]||'#6B6862';
-          return `<div style="border:0.5px solid ${col}33;border-radius:8px;padding:10px;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-              <span style="background:${col};color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">${sz.typ}</span>
-              <a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:10px;padding:2px 8px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none">🎨 Canva</a>
-            </div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px">"${sz.text||''}"</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text3)">
-              <div>${sz.hintergrund&&sz.hintergrund.startsWith('#')?`<span style="display:inline-block;width:10px;height:10px;background:${sz.hintergrund};border-radius:2px;margin-right:4px;vertical-align:middle"></span>`:''} ${sz.hintergrund||''}</div>
-              <div>✨ ${sz.animation||''}</div>
-              <div>🔤 ${sz.schrift||''}</div>
-              <div>${sz.bild&&sz.bild.toLowerCase()!=='nein'&&sz.bild.toLowerCase()!=='no'?`📸 ${sz.bild}`:'Kein Bild'}</div>
-            </div>
-          </div>`;
-        }).join('')}
-        <div style="font-size:12px;color:var(--text2);margin-top:8px">${reel.caption||''}</div>
-      </div>`;
-    }
+    const pkgReelLabel=pkgReelsMode==='quick'?'⚡ Reel':'🎨 Reel';
+    let html='<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem">';
+    html+='<div style="padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(124,58,237,0.06))">';
+    html+='<div style="font-size:14px;font-weight:700;color:var(--text)">✨ Content Paket: '+topic+'</div>';
+    html+='<div style="font-size:11px;color:var(--text3);margin-top:2px">Reel + Story + Karussell + 5 Pins generiert</div>';
+    html+='</div>';
+    html+='<div class="pkg-tabs">';
+    html+='<button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab(\'reel\')">'+pkgReelLabel+'</button>';
+    html+='<button class="pkg-tab" data-tab="story" onclick="switchPkgTab(\'story\')">📱 Story</button>';
+    html+='<button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab(\'carousel\')">🃏 Karussell</button>';
+    html+='<button class="pkg-tab" data-tab="pins" onclick="switchPkgTab(\'pins\')">📌 5 Pins</button>';
     html+='</div>';
 
+    // REEL TAB
+    let reelHtml='<div class="pkg-panel active" id="pkg-reel" style="padding:1rem">';
+    if(pkgReelsMode==='quick'){
+      reelHtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
+      reelHtml+='<div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">'+(reel.title||'')+'</div>';
+      reelHtml+='<div style="background:#E7232D15;border-left:3px solid #E7232D;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px">';
+      reelHtml+='<div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">🎯 HOOK</div>';
+      reelHtml+='<div style="font-size:14px;font-weight:600">"'+(reel.hook||'')+'"</div></div>';
+      reelHtml+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
+      [reel.punkt1,reel.punkt2,reel.punkt3].forEach(function(p,j){
+        reelHtml+='<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><span style="font-size:10px;font-weight:600;color:#0D9488;display:block">'+(j+1)+'.</span>'+(p||'')+'</div>';
+      });
+      reelHtml+='</div>';
+      reelHtml+='<div style="background:#534AB715;border-left:3px solid #534AB7;border-radius:0 8px 8px 0;padding:8px 12px;margin-bottom:8px">';
+      reelHtml+='<div style="font-size:10px;font-weight:600;color:#534AB7;margin-bottom:2px">📢 CTA</div>';
+      reelHtml+='<div style="font-size:13px;font-weight:600">'+(reel.cta||'')+'</div></div>';
+      reelHtml+='<div style="font-size:12px;color:var(--text2);margin-bottom:6px">🎵 '+(reel.musik||'')+' · 💬 '+(reel.textoverlay||'')+'</div>';
+      reelHtml+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+(reel.caption||'')+'</div>';
+      const reelTagsHtml=(reel.hashtags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
+      reelHtml+='<div style="display:flex;flex-wrap:wrap;gap:4px">'+reelTagsHtml+'</div>';
+      reelHtml+='<button onclick="copyPkgReel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>';
+      reelHtml+='</div>';
+    } else {
+      reelHtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
+      reelHtml+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
+      (reel.szenen||[]).forEach(function(sz){
+        var col={'Hook':'#E7232D','Punkt':'#0D9488','Point':'#0D9488','CTA':'#534AB7'}[sz.typ]||'#6B6862';
+        reelHtml+='<div style="border:0.5px solid '+col+'33;border-radius:8px;padding:10px;margin-bottom:8px">';
+        reelHtml+='<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">';
+        reelHtml+='<span style="background:'+col+';color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">'+sz.typ+'</span>';
+        reelHtml+='<a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:10px;padding:2px 8px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none">🎨 Canva</a>';
+        reelHtml+='</div>';
+        reelHtml+='<div style="font-size:13px;font-weight:700;margin-bottom:6px">"'+(sz.text||'')+'"</div>';
+        reelHtml+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text3)">';
+        reelHtml+='<div>'+(sz.hintergrund||'')+'</div>';
+        reelHtml+='<div>✨ '+(sz.animation||'')+'</div>';
+        reelHtml+='<div>🔤 '+(sz.schrift||'')+'</div>';
+        reelHtml+='<div>'+(sz.bild&&sz.bild.toLowerCase()!=='nein'&&sz.bild.toLowerCase()!=='no'?'📸 '+sz.bild:'Kein Bild')+'</div>';
+        reelHtml+='</div></div>';
+      });
+      reelHtml+='<div style="font-size:12px;color:var(--text2);margin-top:8px">'+(reel.caption||'')+'</div>';
+      reelHtml+='<button onclick="copyPkgReel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>';
+      reelHtml+='</div>';
+    }
+    reelHtml+='</div>';
+    html+=reelHtml;
     // STORY TAB
-    html+=`<div class="pkg-panel" id="pkg-story" style="padding:1rem">
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Hook: "${story.hook||''}"</div>
-        ${(story.slides||[]).map(sl=>`<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
-          <div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:5px">Slide ${sl.nr}</div>
-          <div style="font-size:14px;font-weight:600;margin-bottom:5px">${sl.text||''}</div>
-          <div style="font-size:11px;color:#F59E0B">📌 Sticker: ${sl.sticker||''}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px">💡 ${sl.tipp||''}</div>
-        </div>`).join('')}
-        <div style="font-size:12px;color:var(--text2);margin-top:8px">${story.caption||''}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(story.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="copyPkgStory()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
-      </div>
-    </div>`;
-
+    let storyHtml='<div class="pkg-panel" id="pkg-story" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
+    storyHtml+='<div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Hook: "'+(story.hook||'')+'"</div>';
+    (story.slides||[]).forEach(function(sl){
+      storyHtml+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">';
+      storyHtml+='<div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:5px">Slide '+sl.nr+'</div>';
+      storyHtml+='<div style="font-size:14px;font-weight:600;margin-bottom:5px">'+(sl.text||'')+'</div>';
+      storyHtml+='<div style="font-size:11px;color:#F59E0B">📌 Sticker: '+(sl.sticker||'')+'</div>';
+      storyHtml+='<div style="font-size:11px;color:var(--text3);margin-top:3px">💡 '+(sl.tipp||'')+'</div>';
+      storyHtml+='</div>';
+    });
+    storyHtml+='<div style="font-size:12px;color:var(--text2);margin-top:8px">'+(story.caption||'')+'</div>';
+    const storyTagsHtml=(story.hashtags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
+    storyHtml+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">'+storyTagsHtml+'</div>';
+    storyHtml+='<button onclick="copyPkgStory()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>';
+    storyHtml+='</div></div>';
+    html+=storyHtml;
     // CAROUSEL TAB
-    html+=`<div class="pkg-panel" id="pkg-carousel" style="padding:1rem">
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        ${(carousel.slides||[]).map(sl=>`<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center">
-          <div style="font-size:16px;font-weight:800;color:var(--text3);text-align:center">${sl.nr}</div>
-          <div><div style="font-size:13px;font-weight:600">${sl.title||''}</div><div style="font-size:12px;color:var(--text3)">${sl.subtitle||''}</div></div>
-        </div>`).join('')}
-        <div style="font-size:12px;color:var(--text2);margin-top:8px">${carousel.caption||''}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(carousel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="copyPkgCarousel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
-      </div>
-    </div>`;
 
     // PINS TAB
-    html+=`<div class="pkg-panel" id="pkg-pins" style="padding:1rem">
-      <div style="display:grid;gap:10px">
-        ${(Array.isArray(pins)?pins:[pins]).map((p,i)=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-          <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:5px">Pin ${i+1}</div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:5px">${p.title||''}</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${p.description||''}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-          <button onclick="copyPkgPin(${i})" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
-        </div>`).join('')}
-      </div>
-    </div>`;
-
+    let pinsHtml='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div style="display:grid;gap:10px">';
+    const pinsArr=Array.isArray(pins)?pins:[pins];
+    pinsArr.forEach(function(p,i){
+      pinsHtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
+      pinsHtml+='<div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:5px">Pin '+(i+1)+'</div>';
+      pinsHtml+='<div style="font-size:14px;font-weight:700;margin-bottom:5px">'+(p.title||'')+'</div>';
+      pinsHtml+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+(p.description||'')+'</div>';
+      const tagsHtml=(p.tags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
+      pinsHtml+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">'+tagsHtml+'</div>';
+      pinsHtml+='<button onclick="copyPkgPin('+i+')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>';
+      pinsHtml+='</div>';
+    });
+    pinsHtml+='</div></div>';
+    html+=pinsHtml;
     html+='</div>';
     resultArea.innerHTML=html;
 
@@ -1477,7 +1470,7 @@ async function generatePackage(){
     window._pkgData={reel,story,carousel,pins:Array.isArray(pins)?pins:[pins],reelMode:pkgReelsMode};
 
   }catch(e){
-    resultArea.innerHTML=`<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: ${e.message}</div>`;
+    resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Unbekannter Fehler')+'</div>';
   }
 
   btn.disabled=false;
@@ -1489,45 +1482,20 @@ function copyPkgReel(){
   const r=window._pkgData.reel;
   let text='';
   if(window._pkgData.reelMode==='quick'){
-    text=`HOOK: "${r.hook||''}"
-
-1. ${r.punkt1||''}
-2. ${r.punkt2||''}
-3. ${r.punkt3||''}
-
-CTA: ${r.cta||''}
-Text-Overlay: ${r.textoverlay||''}
-Musik: ${r.musik||''}
-
-${r.caption||''}
-
-${(r.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+    text='HOOK: "'+( r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\nText-Overlay: '+(r.textoverlay||'')+'\nMusik: '+(r.musik||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');
   } else {
-    text=`${r.title||''}
-Hook: ${r.hook||''}
-
-${(r.szenen||[]).map(s=>`[${s.typ}] "${s.text||''}"
-Hintergrund: ${s.hintergrund||''} | Schrift: ${s.schrift||''}
-Animation: ${s.animation||''} | Bild: ${s.bild||''}`).join('
-
-')}
-
-${r.caption||''}
-
-${(r.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+    const szText=(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"\nHintergrund: '+s.hintergrund+' | Schrift: '+s.schrift+'\nAnimation: '+s.animation+' | Bild: '+s.bild;}).join('\n\n');
+    text=(r.title||'')+'\n\nHook: '+(r.hook||'')+'\n\n'+szText+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');
   }
-  navigator.clipboard.writeText(text).then(()=>{
+  navigator.clipboard.writeText(text).then(function(){
     const b=document.querySelector('#pkg-reel button');
-    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Kopieren',2000);}
+    if(b){b.textContent='✓ Kopiert!';setTimeout(function(){b.textContent='📋 Kopieren';},2000);}
   });
 }
-
 function copyPkgStory(){
   if(!window._pkgData)return;
   const s=window._pkgData.story;
-  const text=`${s.caption||''}
-
-${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  const text=(s.caption||'')+'\n\n'+(s.hashtags||[]).map(t=>'#'+t).join(' ');
   navigator.clipboard.writeText(text).then(()=>{
     const b=document.querySelector('#pkg-story button');
     if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
@@ -1537,9 +1505,7 @@ ${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
 function copyPkgCarousel(){
   if(!window._pkgData)return;
   const c=window._pkgData.carousel;
-  const text=`${c.caption||''}
-
-${(c.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  const text=(c.caption||'')+'\n\n'+(c.hashtags||[]).map(t=>'#'+t).join(' ');
   navigator.clipboard.writeText(text).then(()=>{
     const b=document.querySelector('#pkg-carousel button');
     if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
@@ -1550,11 +1516,7 @@ function copyPkgPin(i){
   if(!window._pkgData)return;
   const p=window._pkgData.pins[i];
   if(!p)return;
-  const text=`${p.title||''}
-
-${p.description||''}
-
-${(p.tags||[]).map(t=>'#'+t).join(' ')}`;
+  const text=(p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ');
   navigator.clipboard.writeText(text).then(()=>{
     const btns=document.querySelectorAll('#pkg-pins button');
     if(btns[i]){btns[i].textContent='✓ Kopiert!';setTimeout(()=>btns[i].textContent='📋 Kopieren',2000);}
@@ -1819,7 +1781,7 @@ NUR JSON:
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
-    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
     const result=JSON.parse(raw);
     
     const scoreColor=result.score>=8?'#2D7A3A':result.score>=6?'#F59E0B':'#E7232D';
@@ -1890,7 +1852,7 @@ NUR JSON-Array mit ${calPeriod} Einträgen:
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
-    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
     const days=JSON.parse(raw);
     
     const formatColors={Pin:'#E7232D',Reel:'#7C3AED',Karussell:'#0D9488',Story:'#F59E0B',Feed:'#2D7A3A'};
@@ -1983,7 +1945,7 @@ NUR JSON-Array:
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
-    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
     const hooks=JSON.parse(raw);
     
     const stilColors={Frage:'#0D9488',Aussage:'#E7232D',Zahl:'#7C3AED',POV:'#F59E0B',Schmerz:'#DC2626',Neugier:'#2D7A3A'};
@@ -2050,7 +2012,7 @@ async function generatePackage(){
   const goalText=gm[goal]||goal;
 
   const resultArea=document.getElementById('resultArea');
-  resultArea.innerHTML=`<div style="text-align:center;padding:3rem"><div style="font-size:32px;margin-bottom:1rem;animation:spin 1s linear infinite;display:inline-block">⟳</div><p style="color:var(--text3);font-size:14px">KI erstellt dein komplettes Content-Paket…</p><p style="color:var(--text3);font-size:12px;margin-top:6px">Reel + Story + Karussell + 5 Pins</p></div>`;
+  resultArea.innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:32px;margin-bottom:1rem">⏳</div><p style="color:#6B6862;font-size:14px">KI erstellt dein Content-Paket...</p><p style="color:#6B6862;font-size:12px;margin-top:6px">Reel + Story + Karussell + 5 Pins</p></div>';
 
   // Prompts
   const reelPrompt=pkgReelsMode==='quick'
@@ -2125,7 +2087,7 @@ ONLY JSON array:
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
     if(d.error)throw new Error(d.error.message||d.error);
-    const raw=d.content.map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
+    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
     return JSON.parse(raw);
   }
 
@@ -2246,7 +2208,7 @@ ONLY JSON array:
     window._pkgData={reel,story,carousel,pins:Array.isArray(pins)?pins:[pins],reelMode:pkgReelsMode};
 
   }catch(e){
-    resultArea.innerHTML=`<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: ${e.message}</div>`;
+    resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Unbekannter Fehler')+'</div>';
   }
 
   btn.disabled=false;
@@ -2271,9 +2233,7 @@ function copyPkgReel(){
 function copyPkgStory(){
   if(!window._pkgData)return;
   const s=window._pkgData.story;
-  const text=`${s.caption||''}
-
-${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  const text=(s.caption||'')+'\n\n'+(s.hashtags||[]).map(t=>'#'+t).join(' ');
   navigator.clipboard.writeText(text).then(()=>{
     const b=document.querySelector('#pkg-story button');
     if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
@@ -2283,9 +2243,7 @@ ${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
 function copyPkgCarousel(){
   if(!window._pkgData)return;
   const c=window._pkgData.carousel;
-  const text=`${c.caption||''}
-
-${(c.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+  const text=(c.caption||'')+'\n\n'+(c.hashtags||[]).map(t=>'#'+t).join(' ');
   navigator.clipboard.writeText(text).then(()=>{
     const b=document.querySelector('#pkg-carousel button');
     if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
@@ -2296,11 +2254,7 @@ function copyPkgPin(i){
   if(!window._pkgData)return;
   const p=window._pkgData.pins[i];
   if(!p)return;
-  const text=`${p.title||''}
-
-${p.description||''}
-
-${(p.tags||[]).map(t=>'#'+t).join(' ')}`;
+  const text=(p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ');
   navigator.clipboard.writeText(text).then(()=>{
     const btns=document.querySelectorAll('#pkg-pins button');
     if(btns[i]){btns[i].textContent='✓ Kopiert!';setTimeout(()=>btns[i].textContent='📋 Kopieren',2000);}
