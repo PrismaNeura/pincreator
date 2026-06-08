@@ -2306,32 +2306,9 @@ function copyPkgReel(){
   const r=window._pkgData.reel;
   let text='';
   if(window._pkgData.reelMode==='quick'){
-    text=`HOOK: "${r.hook||''}"
-
-1. ${r.punkt1||''}
-2. ${r.punkt2||''}
-3. ${r.punkt3||''}
-
-CTA: ${r.cta||''}
-Text-Overlay: ${r.textoverlay||''}
-Musik: ${r.musik||''}
-
-${r.caption||''}
-
-${(r.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+    text='HOOK: "'+(r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\nText-Overlay: '+(r.textoverlay||'')+'\nMusik: '+(r.musik||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');
   } else {
-    text=`${r.title||''}
-Hook: ${r.hook||''}
-
-${(r.szenen||[]).map(s=>`[${s.typ}] "${s.text||''}"
-Hintergrund: ${s.hintergrund||''} | Schrift: ${s.schrift||''}
-Animation: ${s.animation||''} | Bild: ${s.bild||''}`).join('
-
-')}
-
-${r.caption||''}
-
-${(r.hashtags||[]).map(t=>'#'+t).join(' ')}`;
+    text=r.title+'\n\nHook: '+r.hook+'\n\n'+(r.szenen||[]).map(s=>'['+s.typ+'] "'+s.text+'"\nHintergrund: '+s.hintergrund+' | Schrift: '+s.schrift+'\nAnimation: '+s.animation+' | Bild: '+s.bild).join('\n\n')+'\n\n'+r.caption+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');
   }
   navigator.clipboard.writeText(text).then(()=>{
     const b=document.querySelector('#pkg-reel button');
