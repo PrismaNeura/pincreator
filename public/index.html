@@ -127,10 +127,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
 .modal-close{position:absolute;top:1rem;right:1rem;font-size:20px;cursor:pointer;color:var(--text3);background:none;border:none;line-height:1;}
 @media(max-width:600px){.site-header{padding:.875rem 1rem;}.container{padding:1rem 1rem 2rem;}.form-grid,.options-row{grid-template-columns:1fr;}.gen-section{flex-direction:column;}.gen-btn,.count-select{width:100%;}.ptab span{display:none;}.gradient-grid{grid-template-columns:repeat(auto-fill,minmax(28px,1fr));}}
 
-.pkg-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1rem;overflow-x:auto}
-.pkg-tab{padding:8px 16px;font-size:12px;font-weight:600;color:var(--text3);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:inherit}
-.pkg-tab.active{color:var(--red);border-bottom-color:var(--red)}
-.pkg-panel{display:none}.pkg-panel.active{display:block}
 /* BRAND KIT */
 .bk-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem}
 .bk-modal.open{display:flex}
@@ -518,20 +514,8 @@ function updatePlatformTabs(){
 }
 
 let reelsMode='quick';
-
-const REELS_MODE_HINTS={
-  quick:'⚡ Hook + 3 Punkte + CTA – in 30 Sekunden fertig',
-  full:'🎬 Komplettes Storyboard mit Szenen und Bildideen',
-  canva:'🎨 Jede Szene als Canva-Anleitung'
-};
-
-function setReelsMode(mode){
-  reelsMode=mode;
-  document.querySelectorAll('[data-reelsmode]').forEach(b=>b.classList.toggle('active',b.dataset.reelsmode===mode));
-  const hint=document.getElementById('reelsModeHint');
-  if(hint)hint.textContent=REELS_MODE_HINTS[mode];
-}
-
+const REELS_MODE_HINTS={quick:'Quick Script',full:'Storyboard',canva:'Canva Reel'};
+function setReelsMode(mode){reelsMode=mode;document.querySelectorAll('[data-reelsmode]').forEach(b=>b.classList.toggle('active',b.dataset.reelsmode===mode));const h=document.getElementById('reelsModeHint');if(h)h.textContent=REELS_MODE_HINTS[mode];}
 function setPlatform(p){
   const tab=document.querySelector(`[data-platform="${p}"]`);
   if(tab&&tab.classList.contains('locked')){
@@ -552,20 +536,10 @@ function setPlatform(p){
   if(p==='carousel'){countSel.style.display='none';carInfo.style.display='block';}
   else{countSel.style.display='block';carInfo.style.display='none';}
   document.getElementById('resultArea').innerHTML=`<div class="placeholder"><i class="ti ti-wand" style="font-size:40px;opacity:.3"></i><span>${PLATFORM_CONFIG[p].label} generieren – Formular ausfüllen und klicken</span></div>`;
-
-  // Show/hide reels mode selector
-  const rms=document.getElementById('reelsModeSection');
-  if(rms) rms.style.display=p==='reels'?'block':'none';
-
-  // Show/hide tool sections
-  const toolPlatforms=['viral','calendar','hooks'];
-  const isToolPlatform=toolPlatforms.includes(p);
-  const vs=document.getElementById('viralSection');
-  const cs=document.getElementById('calendarSection');
-  const hs=document.getElementById('hooksSection');
-  if(vs) vs.style.display=p==='viral'?'block':'none';
-  if(cs) cs.style.display=p==='calendar'?'block':'none';
-  if(hs) hs.style.display=p==='hooks'?'block':'none';
+  const rms=document.getElementById('reelsModeSection');if(rms)rms.style.display=p==='reels'?'block':'none';
+  const toolPlatforms=['viral','calendar','hooks'];const isTool=toolPlatforms.includes(p);
+  const vs=document.getElementById('viralSection');const cs=document.getElementById('calendarSection');const hs=document.getElementById('hooksSection');
+  if(vs)vs.style.display=p==='viral'?'block':'none';if(cs)cs.style.display=p==='calendar'?'block':'none';if(hs)hs.style.display=p==='hooks'?'block':'none';
 }
 
 function updateCounter(){
@@ -964,14 +938,14 @@ function buildQuickReelHtml(s,i){
 function buildCanvaReelHtml(s,i){
   const szHtml=(s.szenen||[]).map(sz=>{
     const col=SZENEN_COLORS[sz.typ]||'#0D9488';
-    const canvaUrl=`https://www.canva.com/create/instagram-reels/`;
+    const canvaUrl=`https://www.canva.com/design/create?category=tACFau6iqIY`;
     return `<div style="border:0.5px solid ${col}33;border-radius:8px;padding:10px;margin-bottom:8px;background:${col}08">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
         <div style="display:flex;align-items:center;gap:6px">
           <span style="background:${col};color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">${sz.typ}</span>
           <span style="font-size:11px;color:var(--text3)">Szene ${sz.nr}</span>
         </div>
-        <a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:10px;padding:3px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none;font-weight:600">🎨 Canva öffnen</a>
+        <a href="${canvaUrl}" target="_blank" style="font-size:10px;padding:3px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none;font-weight:600">🎨 In Canva öffnen</a>
       </div>
       <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">"${sz.text}"</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
@@ -988,10 +962,10 @@ function buildCanvaReelHtml(s,i){
       </div>
       <div style="display:flex;gap:6px">
         <span style="font-size:11px;padding:4px 10px;background:var(--purple-bg);color:var(--purple);border-radius:20px">🎵 ${s.musik}</span>
-        <a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:11px;padding:4px 12px;background:var(--purple);color:#fff;border-radius:20px;text-decoration:none;font-weight:600">Canva öffnen →</a>
+        <a href="https://www.canva.com/design/create?category=tACFau6iqIY" target="_blank" style="font-size:11px;padding:4px 12px;background:var(--purple);color:#fff;border-radius:20px;text-decoration:none;font-weight:600">Canva öffnen →</a>
       </div>
     </div>
-    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:6px 10px;background:var(--s2);border-radius:6px">💡 Canva öffnen → Neues Design → Instagram Reel (9:16) → Für jede Szene eine neue Seite → Text & Animation einfügen</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;padding:6px 10px;background:var(--s2);border-radius:6px">💡 Öffne Canva → Neues Design → Instagram Reel (9:16) → Füge jede Szene als neue Seite ein</div>
     ${szHtml}
     <div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)">
       <div style="font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:8px">${s.caption}</div>
@@ -1088,9 +1062,9 @@ async function generatePins(){
   if(currentPlatform==='reels'){
     // CANVA MODE
     const canvaTemplates={
-      hook:'https://www.canva.com/create/instagram-reels/',
-      content:'https://www.canva.com/create/instagram-reels/',
-      cta:'https://www.canva.com/create/instagram-reels/'
+      hook:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+hook',
+      content:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+tips',
+      cta:'https://www.canva.com/design/create?category=tACFau6iqIY&templateQuery=instagram+reels+call+to+action'
     };
 
     if(reelsMode==='quick'){
@@ -1289,237 +1263,8 @@ ${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
 
 function copyReels(i){const s=generatedPins[i];navigator.clipboard.writeText(`${s.title}\n\nHOOK: ${s.hook}\n\nINHALT:\n${s.content}\n\nCTA: ${s.cta}\n\nCAPTION:\n${s.caption}\n\n${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`).then(()=>{const b=document.getElementById(`rab${i}`);b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Kopieren';},2500);});}
 function copyAllReels(){const text=generatedPins.map((s,i)=>`── Script ${i+1}: ${s.title} ──\nHOOK: ${s.hook}\n\n${s.content}\n\nCTA: ${s.cta}\n\nCAPTION: ${s.caption}\n\n${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`).join('\n\n');navigator.clipboard.writeText(text).then(()=>{const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';b.style.background='var(--green-bg)';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle kopieren';b.style.background='';b.style.color='';},2500);});}
-function dlPin(i){
-  const c=document.getElementById(`cv${i}`);
-  const dataUrl=c.toDataURL('image/png');
-  const filename=`${currentPlatform}-post-${i+1}.png`;
-  
-  // iOS Safari fix
-  const isIOS=/ipad|iphone|ipod/i.test(navigator.userAgent);
-  if(isIOS){
-    // Open image in new tab - user can long-press to save
-    const win=window.open('','_blank');
-    win.document.write(`<html><head><title>${filename}</title><meta name="viewport" content="width=device-width"><style>body{margin:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:90vh;object-fit:contain}p{color:#fff;font-family:sans-serif;font-size:14px;text-align:center;padding:10px;margin:0}button{margin-top:10px;padding:12px 24px;background:#0D9488;border:none;border-radius:8px;color:#fff;font-size:15px;cursor:pointer}</style></head><body><img src="${dataUrl}"><p>📥 Bild gedrückt halten → "Foto sichern"</p>
-<script>
-let pkgReelsMode='quick';
-
-function setPkgReels(mode){
-  pkgReelsMode=mode;
-  document.querySelectorAll('[data-pkgreels]').forEach(b=>b.classList.toggle('active',b.dataset.pkgreels===mode));
-}
-
-function switchPkgTab(tab){
-  document.querySelectorAll('.pkg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===('pkg-'+tab)));
-}
-
-async function generatePackage(){
-  const topic=document.getElementById('topic').value.trim();
-  if(!topic){document.getElementById('topic').style.borderColor='var(--red)';return;}
-  document.getElementById('topic').style.borderColor='';
-  const btn=document.getElementById('pkgBtn');
-  btn.disabled=true;
-  btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> KI generiert alles...';
-  const lang=document.querySelector('.lang-btn.active')?.dataset.lang||'de';
-  const audience=document.getElementById('audience')?.value||'';
-  const goal=document.getElementById('goal')?.value||'traffic';
-  const goalMap={traffic:lang==='de'?'Mehr Traffic':'More Traffic',sales:lang==='de'?'Produkt verkaufen':'Sell Product',leads:lang==='de'?'E-Mail Leads':'Email Leads',brand:lang==='de'?'Markenbekanntheit':'Brand Awareness',viral:lang==='de'?'Viral gehen':'Go Viral',saves:lang==='de'?'Mehr Saves':'More Saves'};
-  const goalText=goalMap[goal]||goal;
-  const resultArea=document.getElementById('resultArea');
-  resultArea.innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:32px">⏳</div><p style="color:#6B6862;font-size:14px">KI erstellt dein Content-Paket...</p></div>';
-
-  const de=lang==='de';
-  const reelQ=de
-    ?'Erstelle 1 Quick Reel Script auf DEUTSCH. Thema: '+topic+' Zielgruppe: '+(audience||'Allgemein')+' Ziel: '+goalText+' NUR JSON (kein Array, direkt Objekt): {"title":"Titel","hook":"Hook max 8 Woerter","punkt1":"Punkt 1","punkt2":"Punkt 2","punkt3":"Punkt 3","cta":"CTA max 6 Woerter","textoverlay":"Text-Overlay max 5 Woerter","musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}'
-    :'Create 1 Quick Reel Script in ENGLISH. Topic: '+topic+' Audience: '+(audience||'General')+' Goal: '+goalText+' ONLY JSON (no array, direct object): {"title":"Title","hook":"Hook max 8 words","punkt1":"Point 1","punkt2":"Point 2","punkt3":"Point 3","cta":"CTA max 6 words","textoverlay":"Text overlay","musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}';
-
-  const reelC=de
-    ?'Erstelle 1 Canva Reel Script auf DEUTSCH. Thema: '+topic+' Zielgruppe: '+(audience||'Allgemein')+' Ziel: '+goalText+' NUR JSON (direkt Objekt): {"title":"Titel","hook":"Hook","szenen":[{"nr":1,"typ":"Hook","text":"max 6 Woerter","hintergrund":"Hex Farbe","schrift":"Canva Schriftart","schriftfarbe":"Hex Farbe","animation":"Canva Animation","bild":"ja/nein + Motiv"},{"nr":2,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Musikstil","caption":"Caption","hashtags":["tag1","tag2","tag3","tag4","tag5"]}'
-    :'Create 1 Canva Reel Script in ENGLISH. Topic: '+topic+' Audience: '+(audience||'General')+' Goal: '+goalText+' ONLY JSON (direct object): {"title":"Title","hook":"Hook","szenen":[{"nr":1,"typ":"Hook","text":"max 6 words","hintergrund":"Hex color","schrift":"Font","schriftfarbe":"Hex color","animation":"Animation","bild":"yes/no + motif"},{"nr":2,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Music","caption":"Caption","hashtags":["tag1","tag2","tag3","tag4","tag5"]}';
-
-  const reelPrompt=pkgReelsMode==='quick'?reelQ:reelC;
-
-  const storyPrompt=de
-    ?'Erstelle 1 Instagram Story auf DEUTSCH. Thema: '+topic+' Zielgruppe: '+(audience||'Allgemein')+' NUR JSON: {"hook":"Story Hook","slides":[{"nr":1,"text":"Slide Text","sticker":"Sticker Empfehlung","tipp":"Canva Tipp"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"CTA","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}'
-    :'Create 1 Instagram Story in ENGLISH. Topic: '+topic+' Audience: '+(audience||'General')+' ONLY JSON: {"hook":"Story hook","slides":[{"nr":1,"text":"Slide text","sticker":"Sticker","tipp":"Canva tip"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"CTA","caption":"Caption","hashtags":["tag1","tag2","tag3","tag4","tag5"]}';
-
-  const carPrompt=de
-    ?'Erstelle 1 Instagram Karussell auf DEUTSCH. Thema: '+topic+' Ziel: '+goalText+' NUR JSON: {"caption":"Caption","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Titel","subtitle":"Untertitel"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA","subtitle":"..."}]}'
-    :'Create 1 Instagram Carousel in ENGLISH. Topic: '+topic+' Goal: '+goalText+' ONLY JSON: {"caption":"Caption","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Title","subtitle":"Subtitle"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA","subtitle":"..."}]}';
-
-  const pinsPrompt=de
-    ?'Erstelle 5 Pinterest Pins auf DEUTSCH. Thema: '+topic+' Ziel: '+goalText+' NUR JSON-Array: [{"title":"Titel","description":"3-4 Saetze","tags":["t1","t2","t3","t4","t5"]}]'
-    :'Create 5 Pinterest Pins in ENGLISH. Topic: '+topic+' Goal: '+goalText+' ONLY JSON array: [{"title":"Title","description":"3-4 sentences","tags":["t1","t2","t3","t4","t5"]}]';
-
-  function callAPI(prompt){
-    return fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1500,messages:[{role:'user',content:prompt}]})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.error)throw new Error(d.error.message||d.error);
-      var raw=d.content.map(function(i){return i.text||'';}).join('');raw=raw.replace(/^[^\[\{]*/,'').replace(/[^\]\}]*$/,'').trim();
-      return JSON.parse(raw);
-    });
-  }
-
-  Promise.all([callAPI(reelPrompt),callAPI(storyPrompt),callAPI(carPrompt),callAPI(pinsPrompt)])
-  .then(function(results){
-    var reel=results[0],story=results[1],carousel=results[2],pins=results[3];
-    var pkgReelLabel=pkgReelsMode==='quick'?'Quick Reel':'Canva Reel';
-    var html='<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem">';
-    html+='<div style="padding:12px 16px;border-bottom:1px solid var(--border)">';
-    html+='<div style="font-size:14px;font-weight:700;color:var(--text)">Content Paket: '+topic+'</div>';
-    html+='<div style="font-size:11px;color:var(--text3);margin-top:2px">Reel + Story + Karussell + 5 Pins</div></div>';
-    html+='<div class="pkg-tabs">';
-    html+='<button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab('reel')">'+pkgReelLabel+'</button>';
-    html+='<button class="pkg-tab" data-tab="story" onclick="switchPkgTab('story')">Story</button>';
-    html+='<button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab('carousel')">Karussell</button>';
-    html+='<button class="pkg-tab" data-tab="pins" onclick="switchPkgTab('pins')">5 Pins</button>';
-    html+='</div>';
-
-    // REEL
-    var reelHtml='<div class="pkg-panel active" id="pkg-reel" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-    if(pkgReelsMode==='quick'){
-      reelHtml+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
-      reelHtml+='<div style="background:#E7232D15;border-left:3px solid #E7232D;padding:10px;border-radius:0 8px 8px 0;margin-bottom:8px">';
-      reelHtml+='<div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">HOOK</div>';
-      reelHtml+='"'+(reel.hook||'')+'"</div>';
-      reelHtml+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
-      [reel.punkt1,reel.punkt2,reel.punkt3].forEach(function(p,j){reelHtml+='<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><b>'+(j+1)+'.</b> '+(p||'')+'</div>';});
-      reelHtml+='</div>';
-      reelHtml+='<div style="font-size:12px;margin-bottom:6px">CTA: '+(reel.cta||'')+'</div>';
-      reelHtml+='<div style="font-size:12px;margin-bottom:8px">'+(reel.caption||'')+'</div>';
-    } else {
-      reelHtml+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
-      (reel.szenen||[]).forEach(function(sz){
-        var col={Hook:'#E7232D',Punkt:'#0D9488',Point:'#0D9488',CTA:'#534AB7'}[sz.typ]||'#6B6862';
-        reelHtml+='<div style="border:0.5px solid '+col+'33;border-radius:8px;padding:10px;margin-bottom:8px">';
-        reelHtml+='<span style="background:'+col+';color:#fff;font-size:10px;padding:2px 8px;border-radius:20px">'+sz.typ+'</span>';
-        reelHtml+='<div style="font-size:13px;font-weight:700;margin:6px 0">"'+(sz.text||'')+'"</div>';
-        reelHtml+='<div style="font-size:11px;color:var(--text3)">'+( sz.hintergrund||'')+' | '+(sz.animation||'')+' | '+(sz.schrift||'')+'</div>';
-        reelHtml+='<div style="font-size:11px;color:var(--text3)">'+(sz.bild||'')+'</div></div>';
-      });
-    }
-    reelHtml+='<button onclick="copyPkgReel()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
-    reelHtml+='</div></div>';
-    html+=reelHtml;
-
-    // STORY
-    var storyHtml='<div class="pkg-panel" id="pkg-story" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-    storyHtml+='<div style="font-size:13px;font-weight:700;margin-bottom:10px">Hook: '+(story.hook||'')+'</div>';
-    (story.slides||[]).forEach(function(sl){
-      storyHtml+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">';
-      storyHtml+='<div style="font-size:10px;color:var(--text3)">Slide '+sl.nr+'</div>';
-      storyHtml+='<div style="font-size:14px;font-weight:600;margin:4px 0">'+(sl.text||'')+'</div>';
-      storyHtml+='<div style="font-size:11px;color:#F59E0B">Sticker: '+(sl.sticker||'')+'</div>';
-      storyHtml+='<div style="font-size:11px;color:var(--text3)">'+(sl.tipp||'')+'</div></div>';
-    });
-    storyHtml+='<div style="font-size:12px;margin-top:8px">'+(story.caption||'')+'</div>';
-    storyHtml+='<button onclick="copyPkgStory()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
-    storyHtml+='</div></div>';
-    html+=storyHtml;
-
-    // CAROUSEL
-    var carHtml='<div class="pkg-panel" id="pkg-carousel" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-    (carousel.slides||[]).forEach(function(sl){
-      carHtml+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px">';
-      carHtml+='<div style="font-size:16px;font-weight:800;color:var(--text3)">'+sl.nr+'</div>';
-      carHtml+='<div><div style="font-size:13px;font-weight:600">'+(sl.title||'')+'</div><div style="font-size:12px;color:var(--text3)">'+(sl.subtitle||'')+'</div></div></div>';
-    });
-    carHtml+='<div style="font-size:12px;margin-top:8px">'+(carousel.caption||'')+'</div>';
-    carHtml+='<button onclick="copyPkgCarousel()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
-    carHtml+='</div></div>';
-    html+=carHtml;
-
-    // PINS
-    var pinsHtml='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div style="display:grid;gap:10px">';
-    var pinsArr=Array.isArray(pins)?pins:[pins];
-    pinsArr.forEach(function(p,i){
-      pinsHtml+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-      pinsHtml+='<div style="font-size:10px;color:var(--text3);margin-bottom:5px">Pin '+(i+1)+'</div>';
-      pinsHtml+='<div style="font-size:14px;font-weight:700;margin-bottom:5px">'+(p.title||'')+'</div>';
-      pinsHtml+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+(p.description||'')+'</div>';
-      var tagHtml=(p.tags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
-      pinsHtml+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">'+tagHtml+'</div>';
-      pinsHtml+='<button onclick="copyPkgPin('+i+')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
-      pinsHtml+='</div>';
-    });
-    pinsHtml+='</div></div>';
-    html+=pinsHtml;
-
-    html+='</div>';
-    resultArea.innerHTML=html;
-    window._pkgData={reel:reel,story:story,carousel:carousel,pins:pinsArr,reelMode:pkgReelsMode};
-  })
-  .catch(function(e){
-    resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Bitte erneut versuchen')+'</div>';
-  })
-  .finally(function(){
-    btn.disabled=false;
-    btn.innerHTML='<i class="ti ti-package"></i> Erneut generieren';
-  });
-}
-
-function copyPkgReel(){
-  if(!window._pkgData)return;
-  const r=window._pkgData.reel;
-  let text='';
-  if(window._pkgData.reelMode==='quick'){
-    text='HOOK: "'+( r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\nText-Overlay: '+(r.textoverlay||'')+'\nMusik: '+(r.musik||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');
-  } else {
-    const szText=(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"\nHintergrund: '+s.hintergrund+' | Schrift: '+s.schrift+'\nAnimation: '+s.animation+' | Bild: '+s.bild;}).join('\n\n');
-    text=(r.title||'')+'\n\nHook: '+(r.hook||'')+'\n\n'+szText+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');
-  }
-  navigator.clipboard.writeText(text).then(function(){
-    const b=document.querySelector('#pkg-reel button');
-    if(b){b.textContent='✓ Kopiert!';setTimeout(function(){b.textContent='📋 Kopieren';},2000);}
-  });
-}
-function copyPkgStory(){
-  if(!window._pkgData)return;
-  const s=window._pkgData.story;
-  const text=(s.caption||'')+'\n\n'+(s.hashtags||[]).map(t=>'#'+t).join(' ');
-  navigator.clipboard.writeText(text).then(()=>{
-    const b=document.querySelector('#pkg-story button');
-    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
-  });
-}
-
-function copyPkgCarousel(){
-  if(!window._pkgData)return;
-  const c=window._pkgData.carousel;
-  const text=(c.caption||'')+'\n\n'+(c.hashtags||[]).map(t=>'#'+t).join(' ');
-  navigator.clipboard.writeText(text).then(()=>{
-    const b=document.querySelector('#pkg-carousel button');
-    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
-  });
-}
-
-function copyPkgPin(i){
-  if(!window._pkgData)return;
-  const p=window._pkgData.pins[i];
-  if(!p)return;
-  const text=(p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ');
-  navigator.clipboard.writeText(text).then(()=>{
-    const btns=document.querySelectorAll('#pkg-pins button');
-    if(btns[i]){btns[i].textContent='✓ Kopiert!';setTimeout(()=>btns[i].textContent='📋 Kopieren',2000);}
-  });
-}
-</script>
-
-</body></html>`);
-    win.document.close();
-    return;
-  }
-  
-  // Android + Desktop
-  const a=document.createElement('a');
-  a.download=filename;
-  a.href=dataUrl;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
-function dlAll(){generatedPins.forEach((_,i)=>{setTimeout(()=>dlPin(i),i*300);});}
+function dlPin(i){const c=document.getElementById('cv'+i);const dataUrl=c.toDataURL('image/png');const filename=currentPlatform+'-post-'+(i+1)+'.png';const isIOS=/ipad|iphone|ipod/i.test(navigator.userAgent);if(isIOS){const win=window.open('','_blank');win.document.write('<html><head><title>'+filename+'</title><meta name="viewport" content="width=device-width"><style>body{margin:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:90vh;object-fit:contain}p{color:#fff;font-family:sans-serif;font-size:14px;text-align:center;padding:10px}</style></head><body><img src="'+dataUrl+'"><p>Bild gedrückt halten → Foto sichern</p></body></html>');win.document.close();return;}const a=document.createElement('a');a.download=filename;a.href=dataUrl;document.body.appendChild(a);a.click();document.body.removeChild(a);}
+function dlAll(){generatedPins.forEach((_,i)=>{setTimeout(()=>dlPin(i),i*200);});}
 </script>
 
 <!-- BRAND KIT MODAL -->
@@ -1763,7 +1508,7 @@ NUR JSON:
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
-    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
+    const raw=d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim();
     const result=JSON.parse(raw);
     
     const scoreColor=result.score>=8?'#2D7A3A':result.score>=6?'#F59E0B':'#E7232D';
@@ -1834,7 +1579,7 @@ NUR JSON-Array mit ${calPeriod} Einträgen:
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
-    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
+    const raw=d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim();
     const days=JSON.parse(raw);
     
     const formatColors={Pin:'#E7232D',Reel:'#7C3AED',Karussell:'#0D9488',Story:'#F59E0B',Feed:'#2D7A3A'};
@@ -1913,21 +1658,14 @@ async function generateHooks(){
   const styleText={all:'alle Stile (Frage, Aussage, Zahl, POV, Schmerz, Neugier)',question:'nur Fragen',statement:'nur provokante Aussagen',number:'nur Zahlen/Listen',pov:'nur POV-Format',pain:'nur Schmerz-Hooks'};
   const platText={pinterest:'Pinterest Pin Titel',instagram:'Instagram Post erste Zeile',reels:'Reels Hook erste 3 Sekunden'};
   
-  const prompt=`Du bist Hook-Experte für Social Media. Erstelle 10 verschiedene Hooks für ${platText[hookPlatform]}.
-
-Thema: ${topic}
-Stil: ${styleText[hookStyle]}
-Sprache: Deutsch
-
-Jeder Hook max 10 Wörter, provokant und scroll-stoppend.
-
-NUR JSON-Array:
-[{"hook":"Hook Text","stil":"Frage/Aussage/Zahl/POV/Schmerz/Neugier","staerke":8,"erklaerung":"Kurz warum dieser Hook funktioniert"}]`;
+  const prompt=(lang==='de'
+    ?'Du bist Hook-Experte. Erstelle 10 Hooks fuer '+platText[hookPlatform]+'. Thema: '+topic+' Stil: '+styleText[hookStyle]+' Nur Deutsch. Max 10 Woerter. NUR JSON: [{"hook":"Text","stil":"Typ","staerke":8,"erklaerung":"Grund"}]'
+    :'You are a hook expert. Create 10 hooks for '+platText[hookPlatform]+'. Topic: '+topic+' Style: '+styleText[hookStyle]+' English only. Max 10 words. ONLY JSON: [{"hook":"Text","stil":"Type","staerke":8,"erklaerung":"Why"}]');
   
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
-    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
+    const raw=d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim();
     const hooks=JSON.parse(raw);
     
     const stilColors={Frage:'#0D9488',Aussage:'#E7232D',Zahl:'#7C3AED',POV:'#F59E0B',Schmerz:'#DC2626',Neugier:'#2D7A3A'};
@@ -1960,286 +1698,6 @@ function copyHook(text,btn){
   navigator.clipboard.writeText(text).then(()=>{
     btn.textContent='✓';btn.style.color='var(--green)';btn.style.borderColor='var(--green)';
     setTimeout(()=>{btn.textContent='📋';btn.style.color='';btn.style.borderColor='';},2000);
-  });
-}
-</script>
-
-
-<script>
-let pkgReelsMode='quick';
-
-function setPkgReels(mode){
-  pkgReelsMode=mode;
-  document.querySelectorAll('[data-pkgreels]').forEach(b=>b.classList.toggle('active',b.dataset.pkgreels===mode));
-}
-
-function switchPkgTab(tab){
-  document.querySelectorAll('.pkg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===('pkg-'+tab)));
-}
-
-async function generatePackage(){
-  const topic=document.getElementById('topic').value.trim();
-  if(!topic){document.getElementById('topic').style.borderColor='var(--red)';return;}
-  document.getElementById('topic').style.borderColor='';
-
-  const btn=document.getElementById('pkgBtn');
-  btn.disabled=true;
-  btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> KI generiert alles…';
-
-  const lang=document.querySelector('.lang-btn.active')?.dataset.lang||'de';
-  const audience=document.getElementById('audience')?.value||'';
-  const goal=document.getElementById('goal')?.value||'traffic';
-  const gm={traffic:lang==='de'?'Mehr Traffic':'More Traffic',sales:lang==='de'?'Produkt verkaufen':'Sell Product',leads:lang==='de'?'E-Mail Leads':'Email Leads',brand:lang==='de'?'Markenbekanntheit':'Brand Awareness',viral:lang==='de'?'Viral gehen':'Go Viral',saves:lang==='de'?'Mehr Saves':'More Saves'};
-  const goalText=gm[goal]||goal;
-
-  const resultArea=document.getElementById('resultArea');
-  resultArea.innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:32px;margin-bottom:1rem">⏳</div><p style="color:#6B6862;font-size:14px">KI erstellt dein Content-Paket...</p><p style="color:#6B6862;font-size:12px;margin-top:6px">Reel + Story + Karussell + 5 Pins</p></div>';
-
-  // Prompts
-  const reelPrompt=pkgReelsMode==='quick'
-    ?(lang==='de'
-      ?`Erstelle 1 Quick Reel Script auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-Ziel: ${goalText}
-NUR JSON (kein Array, direkt Objekt):
-{"title":"Titel","hook":"Hook max 8 Wörter","punkt1":"Punkt 1 max 10 Wörter","punkt2":"Punkt 2 max 10 Wörter","punkt3":"Punkt 3 max 10 Wörter","cta":"CTA max 6 Wörter","textoverlay":"Text-Overlay max 5 Wörter","musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
-      :`Create 1 Quick Reel Script in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-Goal: ${goalText}
-ONLY JSON (no array, direct object):
-{"title":"Title","hook":"Hook max 8 words","punkt1":"Point 1 max 10 words","punkt2":"Point 2 max 10 words","punkt3":"Point 3 max 10 words","cta":"CTA max 6 words","textoverlay":"Text overlay max 5 words","musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`)
-    :(lang==='de'
-      ?`Erstelle 1 Canva Reel Script auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-Ziel: ${goalText}
-NUR JSON (direkt Objekt):
-{"title":"Titel","hook":"Hook Sekunde 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 Wörter","hintergrund":"Hex Farbe","schrift":"Canva Schriftart","schriftfarbe":"Hex Farbe","animation":"Canva Animation","bild":"ja/nein + Motiv"},{"nr":2,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Musikstil","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
-      :`Create 1 Canva Reel Script in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-Goal: ${goalText}
-ONLY JSON (direct object):
-{"title":"Title","hook":"Hook second 1-3","szenen":[{"nr":1,"typ":"Hook","text":"max 6 words","hintergrund":"Hex color","schrift":"Canva font","schriftfarbe":"Hex color","animation":"Canva animation","bild":"yes/no + motif"},{"nr":2,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Music style","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`);
-
-  const storyPrompt=lang==='de'
-    ?`Erstelle 1 Instagram Story Konzept auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-NUR JSON:
-{"hook":"Story Hook max 8 Wörter","slides":[{"nr":1,"text":"Slide Text","sticker":"Empfohlener Sticker z.B. Umfrage/Frage/Countdown/Emoji","tipp":"Canva Tipp"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Abschluss CTA","caption":"Caption mit Emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`
-    :`Create 1 Instagram Story concept in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-ONLY JSON:
-{"hook":"Story hook max 8 words","slides":[{"nr":1,"text":"Slide text","sticker":"Recommended sticker e.g. Poll/Question/Countdown","tipp":"Canva tip"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"cta":"Final CTA","caption":"Caption with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5"]}`;
-
-  const carouselPrompt=lang==='de'
-    ?`Erstelle 1 Instagram Karussell auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-Ziel: ${goalText}
-NUR JSON:
-{"caption":"Caption mit Emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 Titel","subtitle":"Untertitel"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA Slide","subtitle":"..."}]}`
-    :`Create 1 Instagram Carousel in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-Goal: ${goalText}
-ONLY JSON:
-{"caption":"Caption with emojis","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Slide 1 title","subtitle":"Subtitle"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA slide","subtitle":"..."}]}`;
-
-  const pinsPrompt=lang==='de'
-    ?`Erstelle 5 Pinterest Pins auf DEUTSCH.
-Thema: ${topic}
-Zielgruppe: ${audience||'Allgemein'}
-Ziel: ${goalText}
-NUR JSON-Array:
-[{"title":"Pin Titel","description":"3-4 Sätze","imageTitle":"Bildtitel max 8 Wörter","imageSubtitle":"Untertitel","cta":"CTA max 4 Wörter","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 Keywords"}]`
-    :`Create 5 Pinterest Pins in ENGLISH.
-Topic: ${topic}
-Audience: ${audience||'General'}
-Goal: ${goalText}
-ONLY JSON array:
-[{"title":"Pin title","description":"3-4 sentences","imageTitle":"Image title max 8 words","imageSubtitle":"Subtitle","cta":"CTA max 4 words","tags":["t1","t2","t3","t4","t5"],"seoKeywords":"3-5 keywords"}]`;
-
-  async function callAPI(prompt){
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
-    const d=await r.json();
-    if(d.error)throw new Error(d.error.message||d.error);
-    const bt='`';const raw=d.content.map(i=>i.text||'').join('').replace(new RegExp(bt+bt+bt+'json|'+bt+bt+bt,'g'),'').trim();
-    return JSON.parse(raw);
-  }
-
-  try{
-    // Run all 4 in parallel
-    const [reel,story,carousel,pins]=await Promise.all([
-      callAPI(reelPrompt),
-      callAPI(storyPrompt),
-      callAPI(carouselPrompt),
-      callAPI(pinsPrompt)
-    ]);
-
-    // Build result HTML with tabs
-    let html=`<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem">
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(13,148,136,0.08),rgba(124,58,237,0.06))">
-        <div style="font-size:14px;font-weight:700;color:var(--text)">✨ Content Paket: ${topic}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px">Reel + Story + Karussell + 5 Pins generiert</div>
-      </div>
-      <div class="pkg-tabs">
-        <button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab('reel')">${pkgReelsMode==='quick'?'⚡':'🎨'} Reel</button>
-        <button class="pkg-tab" data-tab="story" onclick="switchPkgTab('story')">📱 Story</button>
-        <button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab('carousel')">🃏 Karussell</button>
-        <button class="pkg-tab" data-tab="pins" onclick="switchPkgTab('pins')">📌 5 Pins</button>
-      </div>`;
-
-    // REEL TAB
-    html+=`<div class="pkg-panel active" id="pkg-reel" style="padding:1rem">`;
-    if(pkgReelsMode==='quick'){
-      html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px">${reel.title||''}</div>
-        <div style="background:#E7232D15;border-left:3px solid #E7232D;border-radius:0 8px 8px 0;padding:10px 12px;margin-bottom:8px">
-          <div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">🎯 HOOK</div>
-          <div style="font-size:14px;font-weight:600">"${reel.hook||''}"</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
-          ${[reel.punkt1,reel.punkt2,reel.punkt3].map((p,j)=>`<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><span style="font-size:10px;font-weight:600;color:var(--teal,#0D9488);display:block">${j+1}.</span>${p||''}</div>`).join('')}
-        </div>
-        <div style="background:#534AB715;border-left:3px solid #534AB7;border-radius:0 8px 8px 0;padding:8px 12px;margin-bottom:8px">
-          <div style="font-size:10px;font-weight:600;color:#534AB7;margin-bottom:2px">📢 CTA</div>
-          <div style="font-size:13px;font-weight:600">${reel.cta||''}</div>
-        </div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:6px">🎵 ${reel.musik||''} · 💬 ${reel.textoverlay||''}</div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${reel.caption||''}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px">${(reel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="copyPkgReel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
-      </div>`;
-    } else {
-      // Canva reel
-      html+=`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <div style="font-size:14px;font-weight:700;margin-bottom:10px">${reel.title||''}</div>
-        ${(reel.szenen||[]).map(sz=>{
-          const col={'Hook':'#E7232D','Punkt':'#0D9488','Point':'#0D9488','CTA':'#534AB7'}[sz.typ]||'#6B6862';
-          return `<div style="border:0.5px solid ${col}33;border-radius:8px;padding:10px;margin-bottom:8px">
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-              <span style="background:${col};color:#fff;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px">${sz.typ}</span>
-              <a href="https://www.canva.com/create/instagram-reels/" target="_blank" style="font-size:10px;padding:2px 8px;background:var(--purple-bg);color:var(--purple);border-radius:20px;text-decoration:none">🎨 Canva</a>
-            </div>
-            <div style="font-size:13px;font-weight:700;margin-bottom:6px">"${sz.text||''}"</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:var(--text3)">
-              <div>${sz.hintergrund&&sz.hintergrund.startsWith('#')?`<span style="display:inline-block;width:10px;height:10px;background:${sz.hintergrund};border-radius:2px;margin-right:4px;vertical-align:middle"></span>`:''} ${sz.hintergrund||''}</div>
-              <div>✨ ${sz.animation||''}</div>
-              <div>🔤 ${sz.schrift||''}</div>
-              <div>${sz.bild&&sz.bild.toLowerCase()!=='nein'&&sz.bild.toLowerCase()!=='no'?`📸 ${sz.bild}`:'Kein Bild'}</div>
-            </div>
-          </div>`;
-        }).join('')}
-        <div style="font-size:12px;color:var(--text2);margin-top:8px">${reel.caption||''}</div>
-      </div>`;
-    }
-    html+='</div>';
-
-    // STORY TAB
-    html+=`<div class="pkg-panel" id="pkg-story" style="padding:1rem">
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">Hook: "${story.hook||''}"</div>
-        ${(story.slides||[]).map(sl=>`<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
-          <div style="font-size:10px;font-weight:600;color:var(--text3);margin-bottom:5px">Slide ${sl.nr}</div>
-          <div style="font-size:14px;font-weight:600;margin-bottom:5px">${sl.text||''}</div>
-          <div style="font-size:11px;color:#F59E0B">📌 Sticker: ${sl.sticker||''}</div>
-          <div style="font-size:11px;color:var(--text3);margin-top:3px">💡 ${sl.tipp||''}</div>
-        </div>`).join('')}
-        <div style="font-size:12px;color:var(--text2);margin-top:8px">${story.caption||''}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(story.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="copyPkgStory()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
-      </div>
-    </div>`;
-
-    // CAROUSEL TAB
-    html+=`<div class="pkg-panel" id="pkg-carousel" style="padding:1rem">
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-        ${(carousel.slides||[]).map(sl=>`<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px;align-items:center">
-          <div style="font-size:16px;font-weight:800;color:var(--text3);text-align:center">${sl.nr}</div>
-          <div><div style="font-size:13px;font-weight:600">${sl.title||''}</div><div style="font-size:12px;color:var(--text3)">${sl.subtitle||''}</div></div>
-        </div>`).join('')}
-        <div style="font-size:12px;color:var(--text2);margin-top:8px">${carousel.caption||''}</div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px">${(carousel.hashtags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-        <button onclick="copyPkgCarousel()" style="margin-top:10px;padding:7px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Caption kopieren</button>
-      </div>
-    </div>`;
-
-    // PINS TAB
-    html+=`<div class="pkg-panel" id="pkg-pins" style="padding:1rem">
-      <div style="display:grid;gap:10px">
-        ${(Array.isArray(pins)?pins:[pins]).map((p,i)=>`<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">
-          <div style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:5px">Pin ${i+1}</div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:5px">${p.title||''}</div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${p.description||''}</div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">${(p.tags||[]).map(t=>`<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#${t}</span>`).join('')}</div>
-          <button onclick="copyPkgPin(${i})" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
-        </div>`).join('')}
-      </div>
-    </div>`;
-
-    html+='</div>';
-    resultArea.innerHTML=html;
-
-    // Store data for copy functions
-    window._pkgData={reel,story,carousel,pins:Array.isArray(pins)?pins:[pins],reelMode:pkgReelsMode};
-
-  }catch(e){
-    resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Unbekannter Fehler')+'</div>';
-  }
-
-  btn.disabled=false;
-  btn.innerHTML='<i class="ti ti-package"></i> Erneut generieren';
-}
-
-function copyPkgReel(){
-  if(!window._pkgData)return;
-  const r=window._pkgData.reel;
-  let text='';
-  if(window._pkgData.reelMode==='quick'){
-    text='HOOK: "'+(r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\nText-Overlay: '+(r.textoverlay||'')+'\nMusik: '+(r.musik||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');
-  } else {
-    text=r.title+'\n\nHook: '+r.hook+'\n\n'+(r.szenen||[]).map(s=>'['+s.typ+'] "'+s.text+'"\nHintergrund: '+s.hintergrund+' | Schrift: '+s.schrift+'\nAnimation: '+s.animation+' | Bild: '+s.bild).join('\n\n')+'\n\n'+r.caption+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');
-  }
-  navigator.clipboard.writeText(text).then(()=>{
-    const b=document.querySelector('#pkg-reel button');
-    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Kopieren',2000);}
-  });
-}
-
-function copyPkgStory(){
-  if(!window._pkgData)return;
-  const s=window._pkgData.story;
-  const text=(s.caption||'')+'\n\n'+(s.hashtags||[]).map(t=>'#'+t).join(' ');
-  navigator.clipboard.writeText(text).then(()=>{
-    const b=document.querySelector('#pkg-story button');
-    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
-  });
-}
-
-function copyPkgCarousel(){
-  if(!window._pkgData)return;
-  const c=window._pkgData.carousel;
-  const text=(c.caption||'')+'\n\n'+(c.hashtags||[]).map(t=>'#'+t).join(' ');
-  navigator.clipboard.writeText(text).then(()=>{
-    const b=document.querySelector('#pkg-carousel button');
-    if(b){b.textContent='✓ Kopiert!';setTimeout(()=>b.textContent='📋 Caption kopieren',2000);}
-  });
-}
-
-function copyPkgPin(i){
-  if(!window._pkgData)return;
-  const p=window._pkgData.pins[i];
-  if(!p)return;
-  const text=(p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ');
-  navigator.clipboard.writeText(text).then(()=>{
-    const btns=document.querySelectorAll('#pkg-pins button');
-    if(btns[i]){btns[i].textContent='✓ Kopiert!';setTimeout(()=>btns[i].textContent='📋 Kopieren',2000);}
   });
 }
 </script>
