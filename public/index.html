@@ -1925,8 +1925,7 @@ function generatePackage(){
     var raw=d.content.map(i=>i.text||'').join('').replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
     var data;
     try{data=JSON.parse(raw);}catch(e){
-      var fix=raw.replace(/[ -	
--]/g,' ').replace(/,\s*([\]}])/g,'$1');
+      var fix=raw.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g,' ').replace(/,\s*([\]}])/g,'$1');
       var s=fix.indexOf('{');if(s>-1)fix=fix.substring(s);
       data=JSON.parse(fix);
     }
