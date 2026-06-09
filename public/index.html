@@ -1859,7 +1859,10 @@ function generatePackage(){
   .catch(function(e){
     resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Bitte erneut versuchen')+'</div>';
   })
-  .finally(function(){
+  .then(function(){
+    btn.disabled=false;
+    btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
+  },function(){
     btn.disabled=false;
     btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
   });
