@@ -377,7 +377,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         <button class="gen-btn" id="genBtn" onclick="generatePins()">
           <i class="ti ti-wand"></i> <span id="genBtnText">Posts generieren</span>
         </button>
-
         <div style="margin-top:10px;border:1.5px dashed var(--border);border-radius:10px;padding:12px;background:var(--s2)">
           <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:8px">✨ Content Paket</div>
           <div style="display:flex;gap:6px;margin-bottom:10px">
@@ -388,7 +387,6 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
             <i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins
           </button>
         </div>
-
       </div>
     </div>
 
@@ -1721,8 +1719,7 @@ async function generateHooks(){
           <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px">"${h.hook}"</div>
           <div style="font-size:11px;color:var(--text3);font-style:italic">${h.erklaerung}</div>
         </div>
-        <button onclick="copyHook('${h.hook.replace(/'/g,"\'")}',this)" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer;white-space:nowrap">📋</button>
-      </div>`;
+        <button onclick="copyHook('${h.hook.replace(/'/g,"\'")}',this)" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer;white-space:nowrap">📋</button>\n</div>`;
     });
     html+='</div>';
     document.getElementById('hooksResult').innerHTML=html;
@@ -1788,7 +1785,7 @@ function generatePackage(){
     .then(function(d){
       if(d.error)throw new Error(d.error.message||d.error);
       var raw=d.content.map(function(i){return i.text||'';}).join('');
-      raw=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+      raw=raw.replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]}])[\s\S]*$/,'$1').trim();
       return JSON.parse(raw);
     });
   }
@@ -1883,26 +1880,10 @@ function generatePackage(){
     btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
   });
 }
-function copyPkgReel(){
-  if(!window._pkgData)return;
-  var r=window._pkgData.reel;
-  var text='';
-  if(window._pkgData.reelMode==='quick'){
-    text='HOOK: "'+(r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
-  } else {
-    text=(r.title||'')+'\n\n'+(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"\n'+s.hintergrund+' | '+s.animation+' | '+s.schrift+(s.bild&&s.bild!=='nein'?'\nBild: '+s.bild:'');}).join('\n\n')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
-  }
-  navigator.clipboard.writeText(text).then(function(){var b=document.querySelector('#pkg-reel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Kopieren';},2000);}});
-}
 function copyPkgStory(){
   if(!window._pkgData)return;
   var s=window._pkgData.story;
   navigator.clipboard.writeText((s.caption||'')+'\n\n'+(s.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-story button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
-}
-function copyPkgCarousel(){
-  if(!window._pkgData)return;
-  var c=window._pkgData.carousel;
-  navigator.clipboard.writeText((c.caption||'')+'\n\n'+(c.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-carousel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
 }
 function copyPkgPin(i){
   if(!window._pkgData)return;
@@ -1910,160 +1891,105 @@ function copyPkgPin(i){
   if(!p)return;
   navigator.clipboard.writeText((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var btns=document.querySelectorAll('#pkg-pins button');if(btns[i]){btns[i].textContent='Kopiert!';setTimeout(function(){btns[i].textContent='Kopieren';},2000);}});
 }
-</script>
 
 
-<script>
-async function generatePackage(){
+// ===== CONTENT PAKET =====
+function setPkgReels(mode){
+  pkgReelsMode=mode;
+  document.querySelectorAll('[data-pkgreels]').forEach(b=>b.classList.toggle('active',b.dataset.pkgreels===mode));
+}
+function switchPkgTab(tab){
+  document.querySelectorAll('.pkg-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.pkg-panel').forEach(p=>p.classList.toggle('active',p.id===('pkg-'+tab)));
+}
+function generatePackage(){
   var topic=document.getElementById('topic').value.trim();
   if(!topic){document.getElementById('topic').style.borderColor='var(--red)';return;}
   document.getElementById('topic').style.borderColor='';
   var btn=document.getElementById('pkgBtn');
   btn.disabled=true;btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> Generiere...';
   var lang=document.querySelector('.lang-btn.active')&&document.querySelector('.lang-btn.active').dataset.lang||'de';
-  var audience=document.getElementById('audience')&&document.getElementById('audience').value||'';
+  var audience=(document.getElementById('audience')&&document.getElementById('audience').value)||'';
   var resultArea=document.getElementById('resultArea');
-  resultArea.innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:32px">⏳</div><p style="color:#6B6862;font-size:14px">Reel + Story + Karussell + 5 Pins werden generiert...</p></div>';
-
+  resultArea.innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:32px">⏳</div><p style="color:#6B6862;font-size:14px">Reel + Story + Karussell + 5 Pins...</p></div>';
   var de=lang==='de';
-  var sys=de?'Du bist Social Media Experte. Erstelle echten deutschen Content zum gegebenen Thema. Fulle alle JSON-Felder mit kreativem, echtem Content. Gib NUR das JSON zurueck.':'You are a social media expert. Create real English content for the given topic. Fill all JSON fields with creative real content. Return ONLY the JSON.';
+  var sys=de?'Du bist Social Media Experte. Fulle alle leeren JSON-Felder mit echtem deutschen Content zum Thema. Gib NUR das JSON zurueck, kein anderer Text.':'You are a social media expert. Fill all empty JSON fields with real English content about the topic. Return ONLY the JSON.';
   var prompt=de
-    ?'Thema: "'+topic+'", Zielgruppe: '+(audience||'Allgemein')+'. Erstelle: {"reel":{"title":"","hook":"","punkt1":"","punkt2":"","punkt3":"","cta":"","textoverlay":"","musik":"","caption":"","hashtags":[]},"story":{"hook":"","slides":[{"nr":1,"text":"","sticker":"","tipp":""},{"nr":2,"text":"","sticker":"","tipp":""},{"nr":3,"text":"","sticker":"","tipp":""}],"caption":"","hashtags":[]},"carousel":{"caption":"","hashtags":[],"slides":[{"nr":1,"title":"","subtitle":""},{"nr":2,"title":"","subtitle":""},{"nr":3,"title":"","subtitle":""},{"nr":4,"title":"","subtitle":""},{"nr":5,"title":"","subtitle":""},{"nr":6,"title":"","subtitle":""}]},"pins":[{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]}]}'
-    :'Topic: "'+topic+'", Audience: '+(audience||'General')+'. Create: {"reel":{"title":"","hook":"","punkt1":"","punkt2":"","punkt3":"","cta":"","textoverlay":"","musik":"","caption":"","hashtags":[]},"story":{"hook":"","slides":[{"nr":1,"text":"","sticker":"","tipp":""},{"nr":2,"text":"","sticker":"","tipp":""},{"nr":3,"text":"","sticker":"","tipp":""}],"caption":"","hashtags":[]},"carousel":{"caption":"","hashtags":[],"slides":[{"nr":1,"title":"","subtitle":""},{"nr":2,"title":"","subtitle":""},{"nr":3,"title":"","subtitle":""},{"nr":4,"title":"","subtitle":""},{"nr":5,"title":"","subtitle":""},{"nr":6,"title":"","subtitle":""}]},"pins":[{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]}]}';
+    ?'Thema: "'+topic+'", Zielgruppe: '+(audience||'Allgemein')+'. Fulle alle Felder mit echtem Content: {"reel":{"title":"","hook":"","punkt1":"","punkt2":"","punkt3":"","cta":"","textoverlay":"","musik":"","caption":"","hashtags":[]},"story":{"hook":"","slides":[{"nr":1,"text":"","sticker":"","tipp":""},{"nr":2,"text":"","sticker":"","tipp":""},{"nr":3,"text":"","sticker":"","tipp":""}],"caption":"","hashtags":[]},"carousel":{"caption":"","hashtags":[],"slides":[{"nr":1,"title":"","subtitle":""},{"nr":2,"title":"","subtitle":""},{"nr":3,"title":"","subtitle":""},{"nr":4,"title":"","subtitle":""},{"nr":5,"title":"","subtitle":""},{"nr":6,"title":"","subtitle":""}]},"pins":[{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]}]}'
+    :'Topic: "'+topic+'", Audience: '+(audience||'General')+'. Fill all fields with real content: {"reel":{"title":"","hook":"","punkt1":"","punkt2":"","punkt3":"","cta":"","textoverlay":"","musik":"","caption":"","hashtags":[]},"story":{"hook":"","slides":[{"nr":1,"text":"","sticker":"","tipp":""},{"nr":2,"text":"","sticker":"","tipp":""},{"nr":3,"text":"","sticker":"","tipp":""}],"caption":"","hashtags":[]},"carousel":{"caption":"","hashtags":[],"slides":[{"nr":1,"title":"","subtitle":""},{"nr":2,"title":"","subtitle":""},{"nr":3,"title":"","subtitle":""},{"nr":4,"title":"","subtitle":""},{"nr":5,"title":"","subtitle":""},{"nr":6,"title":"","subtitle":""}]},"pins":[{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]},{"title":"","description":"","tags":[]}]}';
 
   fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4000,system:sys,messages:[{role:'user',content:prompt}]})})
-  .then(function(r){return r.json();})
-  .then(function(d){
+  .then(r=>r.json())
+  .then(d=>{
     if(d.error)throw new Error(d.error.message||d.error);
-    var raw=d.content.map(function(i){return i.text||'';}).join('');
-    raw=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+    var raw=d.content.map(i=>i.text||'').join('').replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
     var data;
     try{data=JSON.parse(raw);}catch(e){
       var fix=raw.replace(/[ -	
--]/g,' ').replace(/,\s*([\]}])/g,'$1');
+-]/g,' ').replace(/,\s*([\]}])/g,'$1');
       var s=fix.indexOf('{');if(s>-1)fix=fix.substring(s);
       data=JSON.parse(fix);
     }
     var reel=data.reel||{},story=data.story||{},carousel=data.carousel||{},pins=data.pins||[];
     var pinsArr=Array.isArray(pins)?pins:[pins];
     var label=pkgReelsMode==='quick'?'Quick Reel':'Canva Reel';
-
     var h='<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden">';
     h+='<div style="padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:14px;font-weight:700">'+topic+'</div><div style="font-size:11px;color:var(--text3)">'+label+' + Story + Karussell + 5 Pins</div></div>';
     h+='<div class="pkg-tabs"><button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab(&quot;reel&quot;)">'+label+'</button><button class="pkg-tab" data-tab="story" onclick="switchPkgTab(&quot;story&quot;)">Story</button><button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab(&quot;carousel&quot;)">Karussell</button><button class="pkg-tab" data-tab="pins" onclick="switchPkgTab(&quot;pins&quot;)">5 Pins</button></div>';
-
-    // REEL
     var rh='<div class="pkg-panel active" id="pkg-reel" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
     rh+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
     rh+='<div style="background:#E7232D15;border-left:3px solid #E7232D;padding:10px;border-radius:0 8px 8px 0;margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">HOOK</div>"'+(reel.hook||'')+'"</div>';
     rh+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
-    [reel.punkt1,reel.punkt2,reel.punkt3].forEach(function(p,j){rh+='<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><b>'+(j+1)+'.</b> '+(p||'')+'</div>';});
-    rh+='</div><div style="font-size:12px;margin-bottom:4px">CTA: '+(reel.cta||'')+'</div>';
-    rh+='<div style="font-size:12px;margin-bottom:8px">'+(reel.caption||'')+'</div>';
-    var rtags=(reel.hashtags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
-    rh+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">'+rtags+'</div>';
-    rh+='<button onclick="copyPkgReel()" style="padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
-    rh+='</div></div>';
+    [reel.punkt1,reel.punkt2,reel.punkt3].forEach((p,j)=>{rh+='<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><b>'+(j+1)+'.</b> '+(p||'')+'</div>';});
+    rh+='</div><div style="font-size:12px;margin-bottom:4px">CTA: '+(reel.cta||'')+'</div><div style="font-size:12px;margin-bottom:8px">'+(reel.caption||'')+'</div>';
+    rh+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">'+(reel.hashtags||[]).map(t=>'<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>').join('')+'</div>';
+    rh+='<button onclick="copyPkgReel()" style="padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button></div></div>';
     h+=rh;
-
-    // STORY
     var sh='<div class="pkg-panel" id="pkg-story" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
     sh+='<div style="font-size:13px;font-weight:700;margin-bottom:10px">Hook: '+(story.hook||'')+'</div>';
-    (story.slides||[]).forEach(function(sl){sh+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px"><div style="font-size:10px;color:var(--text3)">Slide '+sl.nr+'</div><div style="font-size:14px;font-weight:600;margin:4px 0">'+(sl.text||'')+'</div><div style="font-size:11px;color:#F59E0B">Sticker: '+(sl.sticker||'')+'</div><div style="font-size:11px;color:var(--text3)">'+(sl.tipp||'')+'</div></div>';});
-    sh+='<div style="font-size:12px;margin-top:8px">'+(story.caption||'')+'</div>';
-    sh+='<button onclick="copyPkgStory()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
-    sh+='</div></div>';
+    (story.slides||[]).forEach(sl=>{sh+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px"><div style="font-size:10px;color:var(--text3)">Slide '+sl.nr+'</div><div style="font-size:14px;font-weight:600;margin:4px 0">'+(sl.text||'')+'</div><div style="font-size:11px;color:#F59E0B">Sticker: '+(sl.sticker||'')+'</div></div>';});
+    sh+='<div style="font-size:12px;margin-top:8px">'+(story.caption||'')+'</div><button onclick="copyPkgStory()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button></div></div>';
     h+=sh;
-
-    // CAROUSEL with canvas
     var ch='<div class="pkg-panel" id="pkg-carousel" style="padding:1rem"><div class="pins-grid">';
-    (carousel.slides||[]).forEach(function(sl,ci){
-      ch+='<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="pkgcar'+ci+'"></canvas></div>';
-      ch+='<div class="pin-body"><div class="pin-num">Slide '+(sl.nr||ci+1)+'</div><div class="pin-title">'+(sl.title||'')+'</div><div class="pin-desc">'+(sl.subtitle||'')+'</div>';
-      ch+='<div class="pin-actions"><button class="act-btn" id="pkgcardbtn'+ci+'">Download</button></div></div></div>';
-    });
-    ch+='<div style="padding:12px;font-size:12px;color:var(--text2)">'+(carousel.caption||'')+'</div>';
-    ch+='<button onclick="copyPkgCarousel()" style="margin:0 12px 12px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
-    ch+='</div></div>';
+    (carousel.slides||[]).forEach((sl,ci)=>{ch+='<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="pkgcar'+ci+'"></canvas></div><div class="pin-body"><div class="pin-num">Slide '+(sl.nr||ci+1)+'</div><div class="pin-title">'+(sl.title||'')+'</div><div class="pin-desc">'+(sl.subtitle||'')+'</div></div></div>';});
+    ch+='<div style="padding:12px;font-size:12px;color:var(--text2)">'+(carousel.caption||'')+'</div><button onclick="copyPkgCarousel()" style="margin:0 12px 12px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button></div></div>';
     h+=ch;
-
-    // PINS with canvas
     var ph='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div class="pins-grid">';
-    pinsArr.forEach(function(p,i){
-      ph+='<div class="pin-card"><div class="pin-image-area ratio-23"><canvas id="pkgpin'+i+'"></canvas></div>';
-      ph+='<div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div><div class="pin-title">'+(p.title||'')+'</div><div class="pin-desc">'+(p.description||'')+'</div>';
-      var tg=(p.tags||[]).map(function(t){return '<span class="tag">#'+t+'</span>';}).join('');
-      ph+='<div class="pin-tags">'+tg+'</div>';
-      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindlbtn'+i+'">Download</button><button class="act-btn" onclick="copyPkgPin('+0+')">Kopieren</button></div>';
-      ph+='</div></div>';
+    pinsArr.forEach((p,i)=>{
+      ph+='<div class="pin-card"><div class="pin-image-area ratio-23"><canvas id="pkgpin'+i+'"></canvas></div><div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div><div class="pin-title">'+(p.title||'')+'</div><div class="pin-desc">'+(p.description||'')+'</div>';
+      ph+='<div class="pin-tags">'+(p.tags||[]).map(t=>'<span class="tag">#'+t+'</span>').join('')+'</div>';
+      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button></div></div></div>';
     });
     ph+='</div></div>';
-    h+=ph;
-
-    h+='</div>';
+    h+=ph+'</div>';
     resultArea.innerHTML=h;
-    window._pkgData={reel:reel,story:story,carousel:carousel,pins:pinsArr,reelMode:pkgReelsMode};
-
-    // Render canvases
-    setTimeout(function(){
-      pinsArr.forEach(function(p,i){
+    window._pkgData={reel,story,carousel,pins:pinsArr,reelMode:pkgReelsMode};
+    setTimeout(()=>{
+      pinsArr.forEach((p,i)=>{
         var cv=document.getElementById('pkgpin'+i);
         if(cv)renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,null);
+        var dlb=document.getElementById('pkgpindl'+i);
+        if(dlb)dlb.onclick=()=>dlPin('pkgpin'+i);
+        var cpb=document.getElementById('pkgpincp'+i);
+        if(cpb)cpb.onclick=()=>copyPkgPin(i);
       });
-      (carousel.slides||[]).forEach(function(sl,ci){
+      (carousel.slides||[]).forEach((sl,ci)=>{
         var cv=document.getElementById('pkgcar'+ci);
         if(cv)renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,null);
       });
-      // Fix download button IDs
-      pinsArr.forEach(function(p,i){
-        var btns=document.querySelectorAll('#pkg-pins .act-btn');
-        if(btns[i*2])btns[i*2].onclick=function(){dlPin('pkgpin'+i);};
-        if(btns[i*2+1])btns[i*2+1].onclick=function(){copyPkgPin(i);};
-      });
-      (carousel.slides||[]).forEach(function(sl,ci){
-        var btns=document.querySelectorAll('#pkg-carousel .act-btn');
-        if(btns[ci])btns[ci].onclick=function(){dlPin('pkgcar'+ci);};
-      });
     },200);
   })
-  .catch(function(e){
+  .catch(e=>{
     resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Bitte erneut versuchen')+'</div>';
-    btn.disabled=false;btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
   })
-  .then(function(){
-    btn.disabled=false;btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
-  },function(){
+  .finally(()=>{
     btn.disabled=false;btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
   });
 }
+function copyPkgReel(){if(!window._pkgData)return;var r=window._pkgData.reel;var text='HOOK: "'+( r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(t=>'#'+t).join(' ');navigator.clipboard.writeText(text).then(()=>{var b=document.querySelector('#pkg-reel button');if(b){b.textContent='Kopiert!';setTimeout(()=>b.textContent='Kopieren',2000);}});}
+function copyPkgStory(){if(!window._pkgData)return;var s=window._pkgData.story;navigator.clipboard.writeText((s.caption||'')+'\n\n'+(s.hashtags||[]).map(t=>'#'+t).join(' ')).then(()=>{var b=document.querySelector('#pkg-story button');if(b){b.textContent='Kopiert!';setTimeout(()=>b.textContent='Caption kopieren',2000);}});}function copyPkgCarousel(){if(!window._pkgData)return;var c=window._pkgData.carousel;navigator.clipboard.writeText((c.caption||'')+'\n\n'+(c.hashtags||[]).map(t=>'#'+t).join(' ')).then(()=>{var b=document.querySelector('#pkg-carousel button:last-child');if(b){b.textContent='Kopiert!';setTimeout(()=>b.textContent='Caption kopieren',2000);}});}
+function copyPkgPin(i){if(!window._pkgData)return;var p=window._pkgData.pins[i];if(!p)return;navigator.clipboard.writeText((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ')).then(()=>{var b=document.getElementById('pkgpincp'+i);if(b){b.textContent='Kopiert!';setTimeout(()=>b.innerHTML='<i class="ti ti-copy"></i> Text',2000);}});}
 
-function copyPkgReel(){
-  if(!window._pkgData)return;
-  var r=window._pkgData.reel;
-  var text='';
-  if(window._pkgData.reelMode==='quick'){
-    text='HOOK: "'+(r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
-  } else {
-    text=(r.title||'')+'\n\n'+(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"\n'+s.hintergrund+' | '+s.animation+' | '+s.schrift+(s.bild&&s.bild!=='nein'?'\nBild: '+s.bild:'');}).join('\n\n')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
-  }
-  navigator.clipboard.writeText(text).then(function(){var b=document.querySelector('#pkg-reel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Kopieren';},2000);}});
-}
-function copyPkgStory(){
-  if(!window._pkgData)return;
-  var s=window._pkgData.story;
-  navigator.clipboard.writeText((s.caption||'')+'\n\n'+(s.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-story button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
-}
-function copyPkgCarousel(){
-  if(!window._pkgData)return;
-  var c=window._pkgData.carousel;
-  navigator.clipboard.writeText((c.caption||'')+'\n\n'+(c.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-carousel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
-}
-function copyPkgPin(i){
-  if(!window._pkgData)return;
-  var p=window._pkgData.pins[i];
-  if(!p)return;
-  navigator.clipboard.writeText((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var btns=document.querySelectorAll('#pkg-pins button');if(btns[i]){btns[i].textContent='Kopiert!';setTimeout(function(){btns[i].textContent='Kopieren';},2000);}});
-}
 </script>
 
 </body>
