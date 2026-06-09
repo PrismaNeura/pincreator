@@ -201,12 +201,16 @@ app.post('/api/generate', async (req, res) => {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY fehlt' });
   try {
+    // Ensure max_tokens is at least 2000
+    const body = { ...req.body };
+    if (!body.max_tokens || body.max_tokens < 2000) body.max_tokens = 2000;
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
-      body: JSON.stringify(req.body)
+      body: JSON.stringify(body)
     });
-    res.json(await r.json());
+    const data = await r.json();
+    res.json(data);
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
