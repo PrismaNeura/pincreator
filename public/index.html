@@ -1796,10 +1796,10 @@ function generatePackage(){
     var h='<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden">';
     h+='<div style="padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:14px;font-weight:700">Content Paket: '+topic+'</div><div style="font-size:11px;color:var(--text3)">'+label+' + Story + Karussell + 5 Pins</div></div>';
     h+='<div class="pkg-tabs">';
-    h+='<button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab('reel')">'+label+'</button>';
-    h+='<button class="pkg-tab" data-tab="story" onclick="switchPkgTab('story')">Story</button>';
-    h+='<button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab('carousel')">Karussell</button>';
-    h+='<button class="pkg-tab" data-tab="pins" onclick="switchPkgTab('pins')">5 Pins</button>';
+    h+='<button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab(&quot;reel&quot;)">'+label+'</button>';
+    h+='<button class="pkg-tab" data-tab="story" onclick="switchPkgTab(&quot;story&quot;)">Story</button>';
+    h+='<button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab(&quot;carousel&quot;)">Karussell</button>';
+    h+='<button class="pkg-tab" data-tab="pins" onclick="switchPkgTab(&quot;pins&quot;)">5 Pins</button>';
     h+='</div>';
     // REEL
     var rh='<div class="pkg-panel active" id="pkg-reel" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
@@ -1884,55 +1884,27 @@ function copyPkgReel(){
   var r=window._pkgData.reel;
   var text='';
   if(window._pkgData.reelMode==='quick'){
-    text='HOOK: "'+(r.hook||'')+'"
-
-1. '+(r.punkt1||'')+'
-2. '+(r.punkt2||'')+'
-3. '+(r.punkt3||'')+'
-
-CTA: '+(r.cta||'')+'
-
-'+(r.caption||'')+'
-
-'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
+    text='HOOK: "'+(r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
   } else {
-    text=(r.title||'')+'
-
-'+(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"
-'+s.hintergrund+' | '+s.animation+' | '+s.schrift+(s.bild&&s.bild!=='nein'?'
-Bild: '+s.bild:'');}).join('
-
-')+'
-
-'+(r.caption||'')+'
-
-'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
+    text=(r.title||'')+'\n\n'+(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"\n'+s.hintergrund+' | '+s.animation+' | '+s.schrift+(s.bild&&s.bild!=='nein'&&s.bild!=='no'?'\nBild: '+s.bild:'');}).join('\n\n')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
   }
   navigator.clipboard.writeText(text).then(function(){var b=document.querySelector('#pkg-reel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Kopieren';},2000);}});
 }
 function copyPkgStory(){
   if(!window._pkgData)return;
   var s=window._pkgData.story;
-  navigator.clipboard.writeText((s.caption||'')+'
-
-'+(s.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-story button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
+  navigator.clipboard.writeText((s.caption||'')+'\n\n'+(s.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-story button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
 }
 function copyPkgCarousel(){
   if(!window._pkgData)return;
   var c=window._pkgData.carousel;
-  navigator.clipboard.writeText((c.caption||'')+'
-
-'+(c.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-carousel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
+  navigator.clipboard.writeText((c.caption||'')+'\n\n'+(c.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-carousel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
 }
 function copyPkgPin(i){
   if(!window._pkgData)return;
   var p=window._pkgData.pins[i];
   if(!p)return;
-  navigator.clipboard.writeText((p.title||'')+'
-
-'+(p.description||'')+'
-
-'+(p.tags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var btns=document.querySelectorAll('#pkg-pins button');if(btns[i]){btns[i].textContent='Kopiert!';setTimeout(function(){btns[i].textContent='Kopieren';},2000);}});
+  navigator.clipboard.writeText((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var btns=document.querySelectorAll('#pkg-pins button');if(btns[i]){btns[i].textContent='Kopiert!';setTimeout(function(){btns[i].textContent='Kopieren';},2000);}});
 }
 </script>
 
