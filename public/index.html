@@ -1135,7 +1135,7 @@ ONLY JSON array:
   try{
     const controller=new AbortController();
     const timeout=setTimeout(()=>controller.abort(),30000);
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4000,messages:[{role:'user',content:prompt}]})});
     clearTimeout(timeout);
     const d=await r.json();if(d.error)throw new Error(d.error.message||d.error);
     generatedPins=(()=>{try{return JSON.parse(d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim());}catch(e){const m=d.content.map(i=>i.text||'').join('').match(/\[[\s\S]*\]/);if(m)return JSON.parse(m[0]);throw e;}})();
@@ -1779,7 +1779,7 @@ function generatePackage(){
     :'Create 5 Pinterest Pins ENGLISH. Topic: '+topic+'. ONLY JSON array: [{"title":"Title","description":"3 sentences","tags":["t1","t2","t3","t4","t5"]}]';
   var reelPrompt=pkgReelsMode==='quick'?reelP:canvaP;
   function callAPI(prompt){
-    return fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})})
+    return fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4000,messages:[{role:'user',content:prompt}]})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error)throw new Error(d.error.message||d.error);
