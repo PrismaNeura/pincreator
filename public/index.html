@@ -1963,12 +1963,15 @@ function generatePackage(){
     h+=ph+'</div>';
     resultArea.innerHTML=h;
     window._pkgData={reel,story,carousel,pins:pinsArr,reelMode:pkgReelsMode};
-    setTimeout(()=>{
+    setTimeout(async ()=>{
       // Apply first gradient if none selected
       if(!currentGradient||!currentGradient.s)currentGradient=GRADIENTS[1];
+      // Fetch one image for all pins
+      var autoImg=await fetchAutoImage(topic,'portrait').catch(()=>null);
+      var autoImgSq=await fetchAutoImage(topic,'squarish').catch(()=>null);
       pinsArr.forEach((p,i)=>{
         var cv=document.getElementById('pkgpin'+i);
-        if(cv)renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,null);
+        if(cv)renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,autoImg);
         var dlb=document.getElementById('pkgpindl'+i);
         if(dlb)dlb.onclick=()=>dlPin('pkgpin'+i);
         var cpb=document.getElementById('pkgpincp'+i);
@@ -1976,7 +1979,7 @@ function generatePackage(){
       });
       (carousel.slides||[]).forEach((sl,ci)=>{
         var cv=document.getElementById('pkgcar'+ci);
-        if(cv)renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,null);
+        if(cv)renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,autoImgSq);
       });
     },200);
   })
