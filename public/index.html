@@ -1697,7 +1697,7 @@ async function generateHooks(){
     :'You are a hook expert. Create 10 hooks for '+platText[hookPlatform]+'. Topic: '+topic+' Style: '+styleText[hookStyle]+' English only. Max 10 words. ONLY JSON: [{"hook":"Text","stil":"Type","staerke":8,"erklaerung":"Why"}]');
   
   try{
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
     const raw=d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim();
     const hooks=JSON.parse(raw);
@@ -1779,13 +1779,19 @@ function generatePackage(){
     :'Create 5 Pinterest Pins ENGLISH. Topic: '+topic+'. ONLY JSON array: [{"title":"Title","description":"3 sentences","tags":["t1","t2","t3","t4","t5"]}]';
   var reelPrompt=pkgReelsMode==='quick'?reelP:canvaP;
   function callAPI(prompt){
-    return fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1500,messages:[{role:'user',content:prompt}]})})
+    return fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]})})
     .then(function(r){return r.json();})
     .then(function(d){
       if(d.error)throw new Error(d.error.message||d.error);
       var raw=d.content.map(function(i){return i.text||'';}).join('');
       raw=raw.replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]}])[\s\S]*$/,'$1').trim();
-      return JSON.parse(raw);
+      try{return JSON.parse(raw);}catch(e){
+        var op=(raw.match(/[\[{]/g)||[]).length;
+        var cl=(raw.match(/[\]}]/g)||[]).length;
+        var fix=raw;
+        for(var x=0;x<op-cl;x++){fix+=fix.trim()[0]==='['?']':'}';}
+        return JSON.parse(fix);
+      }
     });
   }
   Promise.all([callAPI(reelPrompt),callAPI(storyP),callAPI(carP),callAPI(pinsP)])
