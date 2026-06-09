@@ -1794,9 +1794,14 @@ function generatePackage(){
       }
     });
   }
-  Promise.all([callAPI(reelPrompt),callAPI(storyP),callAPI(carP),callAPI(pinsP)])
-  .then(function(res){
-    var reel=res[0],story=res[1],carousel=res[2],pins=res[3];
+  // Sequential calls to avoid token limits
+  var _reel,_story,_carousel;
+  callAPI(reelPrompt)
+  .then(function(r){_reel=r;return callAPI(storyP);})
+  .then(function(s){_story=s;return callAPI(carP);})
+  .then(function(c){_carousel=c;return callAPI(pinsP);})
+  .then(function(pins){
+    var reel=_reel,story=_story,carousel=_carousel;
     var pinsArr=Array.isArray(pins)?pins:[pins];
     var label=pkgReelsMode==='quick'?'Quick Reel':'Canva Reel';
     var h='<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden">';
@@ -1876,11 +1881,6 @@ function generatePackage(){
   })
   .catch(function(e){
     resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Bitte erneut versuchen')+'</div>';
-  })
-  .then(function(){
-    btn.disabled=false;
-    btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
-  },function(){
     btn.disabled=false;
     btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
   });
