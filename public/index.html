@@ -1967,8 +1967,12 @@ function generatePackage(){
       // Apply first gradient if none selected
       if(!currentGradient||!currentGradient.s)currentGradient=GRADIENTS[1];
       // Fetch one image for all pins
-      var autoImg=await fetchAutoImage(topic,'portrait').catch(()=>null);
-      var autoImgSq=await fetchAutoImage(topic,'squarish').catch(()=>null);
+      // Fetch both images in parallel
+      var [autoImg,autoImgSq]=await Promise.all([
+        fetchAutoImage(topic,'portrait').catch(()=>null),
+        fetchAutoImage(topic,'squarish').catch(()=>null)
+      ]);
+      // Render pins
       pinsArr.forEach((p,i)=>{
         var cv=document.getElementById('pkgpin'+i);
         if(cv)renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,autoImg);
@@ -1977,6 +1981,7 @@ function generatePackage(){
         var cpb=document.getElementById('pkgpincp'+i);
         if(cpb)cpb.onclick=()=>copyPkgPin(i);
       });
+      // Render carousel slides - only first slide gets image
       (carousel.slides||[]).forEach((sl,ci)=>{
         var cv=document.getElementById('pkgcar'+ci);
         if(cv)renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,autoImgSq);
