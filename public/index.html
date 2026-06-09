@@ -1912,8 +1912,8 @@ function copyPkgPin(i){
 }
 </script>
 
-</body>
-</html>
+
+<script>
 async function generatePackage(){
   var topic=document.getElementById('topic').value.trim();
   if(!topic){document.getElementById('topic').style.borderColor='var(--red)';return;}
@@ -1980,7 +1980,7 @@ async function generatePackage(){
     (carousel.slides||[]).forEach(function(sl,ci){
       ch+='<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="pkgcar'+ci+'"></canvas></div>';
       ch+='<div class="pin-body"><div class="pin-num">Slide '+(sl.nr||ci+1)+'</div><div class="pin-title">'+(sl.title||'')+'</div><div class="pin-desc">'+(sl.subtitle||'')+'</div>';
-      ch+='<div class="pin-actions"><button class="act-btn" onclick="dlPin('pkgcar'+0+'')" id="pkgcard'+0+'">Download</button></div></div></div>';
+      ch+='<div class="pin-actions"><button class="act-btn" id="pkgcardbtn'+ci+'">Download</button></div></div></div>';
     });
     ch+='<div style="padding:12px;font-size:12px;color:var(--text2)">'+(carousel.caption||'')+'</div>';
     ch+='<button onclick="copyPkgCarousel()" style="margin:0 12px 12px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
@@ -1994,7 +1994,7 @@ async function generatePackage(){
       ph+='<div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div><div class="pin-title">'+(p.title||'')+'</div><div class="pin-desc">'+(p.description||'')+'</div>';
       var tg=(p.tags||[]).map(function(t){return '<span class="tag">#'+t+'</span>';}).join('');
       ph+='<div class="pin-tags">'+tg+'</div>';
-      ph+='<div class="pin-actions"><button class="act-btn" onclick="dlPin('pkgpin'+0+'')">Download</button><button class="act-btn" onclick="copyPkgPin('+0+')">Kopieren</button></div>';
+      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindlbtn'+i+'">Download</button><button class="act-btn" onclick="copyPkgPin('+0+')">Kopieren</button></div>';
       ph+='</div></div>';
     });
     ph+='</div></div>';
@@ -2044,17 +2044,7 @@ function copyPkgReel(){
   if(window._pkgData.reelMode==='quick'){
     text='HOOK: "'+(r.hook||'')+'"\n\n1. '+(r.punkt1||'')+'\n2. '+(r.punkt2||'')+'\n3. '+(r.punkt3||'')+'\n\nCTA: '+(r.cta||'')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
   } else {
-    text=(r.title||'')+'
-
-'+(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"
-'+s.hintergrund+' | '+s.animation+' | '+s.schrift+(s.bild&&s.bild!=='nein'?'
-Bild: '+s.bild:'');}).join('
-
-')+'
-
-'+(r.caption||'')+'
-
-'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
+    text=(r.title||'')+'\n\n'+(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"\n'+s.hintergrund+' | '+s.animation+' | '+s.schrift+(s.bild&&s.bild!=='nein'?'\nBild: '+s.bild:'');}).join('\n\n')+'\n\n'+(r.caption||'')+'\n\n'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
   }
   navigator.clipboard.writeText(text).then(function(){var b=document.querySelector('#pkg-reel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Kopieren';},2000);}});
 }
