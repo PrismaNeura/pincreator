@@ -1784,18 +1784,16 @@ function generatePackage(){
     .then(function(d){
       if(d.error)throw new Error(d.error.message||d.error);
       var raw=d.content.map(function(i){return i.text||'';}).join('');
-      raw=raw.replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]}])[\s\S]*$/,'$1').trim();
+      // Clean markdown
+      raw=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
       try{return JSON.parse(raw);}catch(e){
-        // Remove control characters and fix common issues
-        var fix=raw
-          .replace(/[\x00-\x1F\x7F]/g,' ')
-          .replace(/,\s*([\]\}])/g,'$1')
-          .replace(/([\[\{,])\s*,/g,'$1');
+        var fix=raw.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g,' ');
+        fix=fix.replace(/,\s*([\]}])/g,'$1');
         try{return JSON.parse(fix);}catch(e2){
-          // Try extracting just the JSON structure
-          var m=fix.match(/\{[\s\S]*\}/)||fix.match(/\[[\s\S]*\]/);
-          if(m)return JSON.parse(m[0]);
-          throw new Error('KI Fehler - bitte erneut versuchen');
+          var s=fix.indexOf('{');var sa=fix.indexOf('[');
+          if(s===-1||(sa!==-1&&sa<s))s=sa;
+          if(s>-1){try{return JSON.parse(fix.substring(s));}catch(e3){}}
+          throw new Error('JSON Fehler - bitte erneut versuchen');
         }
       }
     });
