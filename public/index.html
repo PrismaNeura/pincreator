@@ -1521,12 +1521,7 @@ async function analyzeViral(){
   btn.disabled=true;btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> Analysiere…';
   
   const platNames={pinterest:'Pinterest Pin',instagram:'Instagram Post',reels:'Instagram Reel'};
-  const prompt=`Du bist Social Media Experte. Analysiere diesen ${platNames[viralPlatform]} Text und gib einen Viral-Score.
-
-Text: "${text}"
-
-NUR JSON:
-{"score":7,"label":"Gut","farbe":"#F59E0B","staerken":["Stärke 1","Stärke 2","Stärke 3"],"schwaechen":["Schwäche 1","Schwäche 2"],"verbesserung":"Konkret verbesserte Version des Textes","hook_score":8,"seo_score":6,"emotion_score":7,"erklaerung":"2-3 Sätze warum dieser Score"}`;
+  const prompt='Du bist Social Media Experte. Analysiere diesen '+platNames[viralPlatform]+' Text. Text: "'+text+'" NUR JSON: {"score":7,"label":"Gut","farbe":"#F59E0B","staerken":["s1","s2","s3"],"schwaechen":["s1","s2"],"verbesserung":"Verbesserte Version","hook_score":8,"seo_score":6,"emotion_score":7,"erklaerung":"2-3 Saetze"}'
   
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
@@ -1535,7 +1530,8 @@ NUR JSON:
     const result=JSON.parse(raw);
     
     const scoreColor=result.score>=8?'#2D7A3A':result.score>=6?'#F59E0B':'#E7232D';
-    document.getElementById('viralResult').innerHTML=`
+    window._viralResult=result;
+        document.getElementById('viralResult').innerHTML=`
       <div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:1.25rem">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
           <div>
@@ -1563,13 +1559,21 @@ NUR JSON:
         <div style="border-top:1px solid var(--border);padding-top:10px">
           <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:6px">✨ Verbesserte Version</div>
           <div style="font-size:13px;color:var(--text);line-height:1.6;background:var(--bg);padding:10px;border-radius:8px;border-left:3px solid ${scoreColor}">${result.verbesserung}</div>
-          <button onclick="navigator.clipboard.writeText('${result.verbesserung.replace(/'/g,"\'")}').then(()=>this.textContent='✓ Kopiert!')" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
+          <button onclick="copyViralVerbesserung()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">📋 Kopieren</button>
         </div>
       </div>`;
   }catch(e){
     document.getElementById('viralResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${e.message}</div>`;
   }
   btn.disabled=false;btn.innerHTML='<i class="ti ti-flame"></i> Erneut analysieren';
+}
+
+function copyViralVerbesserung(){
+  if(!window._viralResult)return;
+  navigator.clipboard.writeText(window._viralResult.verbesserung||'').then(function(){
+    var b=document.querySelector('#viralResult button');
+    if(b){b.textContent='✓ Kopiert!';setTimeout(function(){b.textContent='📋 Kopieren';},2000);}
+  });
 }
 
 // ============ CONTENT KALENDER ============
@@ -1592,12 +1596,7 @@ async function generateCalendar(){
   btn.disabled=true;btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> Generiere…';
   
   const platText={both:'Pinterest UND Instagram',pinterest:'Pinterest',instagram:'Instagram'};
-  const prompt=`Du bist Social Media Stratege. Erstelle einen ${calPeriod}-Tage Content-Kalender für ${platText[calPlat]}.
-
-Nische: ${niche}
-
-NUR JSON-Array mit ${calPeriod} Einträgen:
-[{"tag":1,"wochentag":"Montag","thema":"Konkretes Thema","format":"Pin/Reel/Karussell/Story/Feed","hook":"Hook für diesen Post (max 8 Wörter)","ziel":"Traffic/Sales/Engagement/Awareness","tipp":"Kurzer Profi-Tipp für diesen Tag"}]`;
+  const prompt='Du bist Social Media Stratege. Erstelle einen '+calPeriod+'-Tage Content-Kalender fuer '+platText[calPlat]+'. Nische: '+niche+' NUR JSON-Array mit '+calPeriod+' Eintraegen: [{"tag":1,"wochentag":"Montag","thema":"Konkretes Thema","format":"Pin/Reel/Karussell/Story/Feed","hook":"Hook (max 8 Woerter)","ziel":"Traffic/Sales/Engagement/Awareness","tipp":"Kurzer Tipp"}]';
   
   try{
     const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
