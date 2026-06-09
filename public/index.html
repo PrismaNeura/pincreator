@@ -1975,18 +1975,29 @@ function generatePackage(){
       // Render pins
       pinsArr.forEach((p,i)=>{
         var cv=document.getElementById('pkgpin'+i);
-        if(cv)renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,autoImg);
+        if(cv){
+          var savedImgs=[...uploadedImages];
+          uploadedImages.fill(null);
+          renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,autoImg);
+          uploadedImages.splice(0,savedImgs.length,...savedImgs);
+        }
         var dlb=document.getElementById('pkgpindl'+i);
         if(dlb)dlb.onclick=()=>dlPin('pkgpin'+i);
         var cpb=document.getElementById('pkgpincp'+i);
         if(cpb)cpb.onclick=()=>copyPkgPin(i);
       });
-      // Render carousel slides - only first slide gets image
+      // Render carousel slides
       (carousel.slides||[]).forEach((sl,ci)=>{
         var cv=document.getElementById('pkgcar'+ci);
-        if(cv)renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,autoImgSq);
+        if(cv){
+          // Temporarily clear uploadedImages to force autoImg usage
+          var savedImgs=[...uploadedImages];
+          uploadedImages.fill(null);
+          renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,autoImgSq);
+          uploadedImages.splice(0,savedImgs.length,...savedImgs);
+        }
       });
-    },200);
+    },500);
   })
   .catch(e=>{
     resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Bitte erneut versuchen')+'</div>';
