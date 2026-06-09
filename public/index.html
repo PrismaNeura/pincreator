@@ -1786,11 +1786,17 @@ function generatePackage(){
       var raw=d.content.map(function(i){return i.text||'';}).join('');
       raw=raw.replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]}])[\s\S]*$/,'$1').trim();
       try{return JSON.parse(raw);}catch(e){
-        var op=(raw.match(/[\[{]/g)||[]).length;
-        var cl=(raw.match(/[\]}]/g)||[]).length;
-        var fix=raw;
-        for(var x=0;x<op-cl;x++){fix+=fix.trim()[0]==='['?']':'}';}
-        return JSON.parse(fix);
+        // Remove control characters and fix common issues
+        var fix=raw
+          .replace(/[\x00-\x1F\x7F]/g,' ')
+          .replace(/,\s*([\]\}])/g,'$1')
+          .replace(/([\[\{,])\s*,/g,'$1');
+        try{return JSON.parse(fix);}catch(e2){
+          // Try extracting just the JSON structure
+          var m=fix.match(/\{[\s\S]*\}/)||fix.match(/\[[\s\S]*\]/);
+          if(m)return JSON.parse(m[0]);
+          throw new Error('KI Fehler - bitte erneut versuchen');
+        }
       }
     });
   }
