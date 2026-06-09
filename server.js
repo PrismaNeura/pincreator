@@ -203,7 +203,7 @@ app.post('/api/generate', async (req, res) => {
   try {
     // Ensure max_tokens is at least 2000
     const body = { ...req.body };
-    if (!body.max_tokens || body.max_tokens < 2000) body.max_tokens = 2000;
+    if (!body.max_tokens || body.max_tokens < 4000) body.max_tokens = 4000;
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
