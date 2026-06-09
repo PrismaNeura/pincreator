@@ -373,6 +373,18 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
         <button class="gen-btn" id="genBtn" onclick="generatePins()">
           <i class="ti ti-wand"></i> <span id="genBtnText">Posts generieren</span>
         </button>
+
+        <div style="margin-top:10px;border:1.5px dashed var(--border);border-radius:10px;padding:12px;background:var(--s2)">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">✨ Content Paket – alles auf einmal</div>
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <button class="tog active" data-pkgreels="quick" onclick="setPkgReels('quick')" style="font-size:11px">⚡ Quick Reel</button>
+            <button class="tog" data-pkgreels="canva" onclick="setPkgReels('canva')" style="font-size:11px">🎨 Canva Reel</button>
+          </div>
+          <button class="gen-btn" id="pkgBtn" onclick="generatePackage()" style="font-size:13px;padding:11px;background:linear-gradient(135deg,#0D9488,#7C3AED)">
+            <i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins
+          </button>
+        </div>
+
       </div>
     </div>
 
