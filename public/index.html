@@ -1267,204 +1267,26 @@ ${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`;
 
 function copyReels(i){const s=generatedPins[i];navigator.clipboard.writeText(`${s.title}\n\nHOOK: ${s.hook}\n\nINHALT:\n${s.content}\n\nCTA: ${s.cta}\n\nCAPTION:\n${s.caption}\n\n${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`).then(()=>{const b=document.getElementById(`rab${i}`);b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Kopieren';},2500);});}
 function copyAllReels(){const text=generatedPins.map((s,i)=>`── Script ${i+1}: ${s.title} ──\nHOOK: ${s.hook}\n\n${s.content}\n\nCTA: ${s.cta}\n\nCAPTION: ${s.caption}\n\n${(s.hashtags||[]).map(t=>'#'+t).join(' ')}`).join('\n\n');navigator.clipboard.writeText(text).then(()=>{const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';b.style.background='var(--green-bg)';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle kopieren';b.style.background='';b.style.color='';},2500);});}
-function dlPin(i){const c=document.getElementById('cv'+i);const dataUrl=c.toDataURL('image/png');const filename=currentPlatform+'-post-'+(i+1)+'.png';const isIOS=/ipad|iphone|ipod/i.test(navigator.userAgent);if(isIOS){const win=window.open('','_blank');win.document.write('<html><head><title>'+filename+'</title><meta name="viewport" content="width=device-width"><style>body{margin:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:90vh;object-fit:contain}p{color:#fff;font-family:sans-serif;font-size:14px;text-align:center;padding:10px}</style></head><body><img src="'+dataUrl+'"><p>Bild gedrückt halten → Foto sichern</p>
-<script>
-let pkgReelsMode='quick';
-function setPkgReels(mode){
-  pkgReelsMode=mode;
-  document.querySelectorAll('[data-pkgreels]').forEach(function(b){b.classList.toggle('active',b.dataset.pkgreels===mode);});
-}
-function switchPkgTab(tab){
-  document.querySelectorAll('.pkg-tab').forEach(function(t){t.classList.toggle('active',t.dataset.tab===tab);});
-  document.querySelectorAll('.pkg-panel').forEach(function(p){p.classList.toggle('active',p.id===('pkg-'+tab));});
-}
-function generatePackage(){
-  var topic=document.getElementById('topic').value.trim();
-  if(!topic){document.getElementById('topic').style.borderColor='var(--red)';return;}
-  document.getElementById('topic').style.borderColor='';
-  var btn=document.getElementById('pkgBtn');
-  btn.disabled=true;
-  btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> KI generiert...';
-  var lang=document.querySelector('.lang-btn.active')&&document.querySelector('.lang-btn.active').dataset.lang||'de';
-  var audience=document.getElementById('audience')&&document.getElementById('audience').value||'';
-  var goal=document.getElementById('goal')&&document.getElementById('goal').value||'traffic';
-  var goalMap={traffic:lang==='de'?'Mehr Traffic':'More Traffic',sales:lang==='de'?'Produkt verkaufen':'Sell Product',leads:'Leads',brand:'Markenbekanntheit',viral:'Viral',saves:'Saves'};
-  var goalText=goalMap[goal]||goal;
-  var resultArea=document.getElementById('resultArea');
-  resultArea.innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:32px">⏳</div><p style="color:#6B6862;font-size:14px">KI erstellt Reel + Story + Karussell + 5 Pins...</p></div>';
-  var de=lang==='de';
-  var reelP=de
-    ?'Erstelle 1 Quick Reel Script auf DEUTSCH. Thema: '+topic+'. Ziel: '+goalText+'. NUR JSON Objekt (kein Array): {"title":"Titel","hook":"Hook 8 Woerter","punkt1":"Punkt 1","punkt2":"Punkt 2","punkt3":"Punkt 3","cta":"CTA","textoverlay":"Overlay","musik":"Musik","caption":"Caption","hashtags":["t1","t2","t3","t4","t5"]}'
-    :'Create 1 Quick Reel Script ENGLISH. Topic: '+topic+'. Goal: '+goalText+'. ONLY JSON object (no array): {"title":"Title","hook":"Hook 8 words","punkt1":"Point 1","punkt2":"Point 2","punkt3":"Point 3","cta":"CTA","textoverlay":"Overlay","musik":"Music","caption":"Caption","hashtags":["t1","t2","t3","t4","t5"]}';
-  var canvaP=de
-    ?'Erstelle 1 Canva Reel Script DEUTSCH. Thema: '+topic+'. NUR JSON Objekt: {"title":"Titel","szenen":[{"nr":1,"typ":"Hook","text":"6 Woerter","hintergrund":"#HexFarbe","schrift":"Canva Font","schriftfarbe":"#Hex","animation":"Fade","bild":"nein"},{"nr":2,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Punkt","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Musik","caption":"Caption","hashtags":["t1","t2","t3","t4","t5"]}'
-    :'Create 1 Canva Reel Script ENGLISH. Topic: '+topic+'. ONLY JSON object: {"title":"Title","szenen":[{"nr":1,"typ":"Hook","text":"6 words","hintergrund":"#hex","schrift":"Font","schriftfarbe":"#hex","animation":"Fade","bild":"no"},{"nr":2,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":3,"typ":"Point","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."},{"nr":4,"typ":"CTA","text":"...","hintergrund":"...","schrift":"...","schriftfarbe":"...","animation":"...","bild":"..."}],"musik":"Music","caption":"Caption","hashtags":["t1","t2","t3","t4","t5"]}';
-  var storyP=de
-    ?'Erstelle 1 Instagram Story DEUTSCH. Thema: '+topic+'. NUR JSON: {"hook":"Hook","slides":[{"nr":1,"text":"Text","sticker":"Sticker","tipp":"Tipp"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"caption":"Caption","hashtags":["t1","t2","t3","t4","t5"]}'
-    :'Create 1 Instagram Story ENGLISH. Topic: '+topic+'. ONLY JSON: {"hook":"Hook","slides":[{"nr":1,"text":"Text","sticker":"Sticker","tipp":"Tip"},{"nr":2,"text":"...","sticker":"...","tipp":"..."},{"nr":3,"text":"...","sticker":"...","tipp":"..."}],"caption":"Caption","hashtags":["t1","t2","t3","t4","t5"]}';
-  var carP=de
-    ?'Erstelle 1 Instagram Karussell DEUTSCH. Thema: '+topic+'. NUR JSON: {"caption":"Caption","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Titel","subtitle":"Sub"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA","subtitle":"..."}]}'
-    :'Create 1 Instagram Carousel ENGLISH. Topic: '+topic+'. ONLY JSON: {"caption":"Caption","hashtags":["t1","t2","t3","t4","t5"],"slides":[{"nr":1,"title":"Title","subtitle":"Sub"},{"nr":2,"title":"...","subtitle":"..."},{"nr":3,"title":"...","subtitle":"..."},{"nr":4,"title":"...","subtitle":"..."},{"nr":5,"title":"...","subtitle":"..."},{"nr":6,"title":"CTA","subtitle":"..."}]}';
-  var pinsP=de
-    ?'Erstelle 5 Pinterest Pins DEUTSCH. Thema: '+topic+'. NUR JSON Array: [{"title":"Titel","description":"3 Saetze","tags":["t1","t2","t3","t4","t5"]}]'
-    :'Create 5 Pinterest Pins ENGLISH. Topic: '+topic+'. ONLY JSON array: [{"title":"Title","description":"3 sentences","tags":["t1","t2","t3","t4","t5"]}]';
-  var reelPrompt=pkgReelsMode==='quick'?reelP:canvaP;
-  function callAPI(prompt){
-    return fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1500,messages:[{role:'user',content:prompt}]})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.error)throw new Error(d.error.message||d.error);
-      var raw=d.content.map(function(i){return i.text||'';}).join('');
-      raw=raw.replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]}])[\s\S]*$/,'$1').trim();
-      return JSON.parse(raw);
-    });
+function dlPin(i){
+  const c=document.getElementById('cv'+i);
+  const dataUrl=c.toDataURL('image/png');
+  const filename=currentPlatform+'-post-'+(i+1)+'.png';
+  const isIOS=/ipad|iphone|ipod/i.test(navigator.userAgent);
+  if(isIOS){
+    const win=window.open('','_blank');
+    const css='body{margin:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh}img{max-width:100%;max-height:90vh;object-fit:contain}p{color:#fff;font-family:sans-serif;font-size:14px;text-align:center;padding:10px}';
+    const html='<html><head><title>'+filename+'</title><meta name="viewport" content="width=device-width"><style>'+css+'<\/style><\/head><body><img src="'+dataUrl+'"><p>Bild gedrückt halten → Foto sichern<\/p><\/body><\/html>';
+    win.document.write(html);
+    win.document.close();
+    return;
   }
-  Promise.all([callAPI(reelPrompt),callAPI(storyP),callAPI(carP),callAPI(pinsP)])
-  .then(function(res){
-    var reel=res[0],story=res[1],carousel=res[2],pins=res[3];
-    var pinsArr=Array.isArray(pins)?pins:[pins];
-    var label=pkgReelsMode==='quick'?'Quick Reel':'Canva Reel';
-    var h='<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden">';
-    h+='<div style="padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:14px;font-weight:700">Content Paket: '+topic+'</div><div style="font-size:11px;color:var(--text3)">'+label+' + Story + Karussell + 5 Pins</div></div>';
-    h+='<div class="pkg-tabs">';
-    h+='<button class="pkg-tab active" data-tab="reel" onclick="switchPkgTab('reel')">'+label+'</button>';
-    h+='<button class="pkg-tab" data-tab="story" onclick="switchPkgTab('story')">Story</button>';
-    h+='<button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab('carousel')">Karussell</button>';
-    h+='<button class="pkg-tab" data-tab="pins" onclick="switchPkgTab('pins')">5 Pins</button>';
-    h+='</div>';
-    // REEL
-    var rh='<div class="pkg-panel active" id="pkg-reel" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-    if(pkgReelsMode==='quick'){
-      rh+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
-      rh+='<div style="background:#E7232D15;border-left:3px solid #E7232D;padding:10px;border-radius:0 8px 8px 0;margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">HOOK</div>"'+(reel.hook||'')+'"</div>';
-      rh+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
-      [reel.punkt1,reel.punkt2,reel.punkt3].forEach(function(p,j){rh+='<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><b>'+(j+1)+'.</b> '+(p||'')+'</div>';});
-      rh+='</div><div style="font-size:12px;margin-bottom:6px">CTA: '+(reel.cta||'')+'</div>';
-    } else {
-      rh+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
-      (reel.szenen||[]).forEach(function(sz){
-        var col={Hook:'#E7232D',Punkt:'#0D9488',Point:'#0D9488',CTA:'#534AB7'}[sz.typ]||'#6B6862';
-        rh+='<div style="border:0.5px solid '+col+'33;border-radius:8px;padding:10px;margin-bottom:8px">';
-        rh+='<span style="background:'+col+';color:#fff;font-size:10px;padding:2px 8px;border-radius:20px">'+sz.typ+'</span>';
-        rh+='<div style="font-size:13px;font-weight:700;margin:6px 0">"'+(sz.text||'')+'"</div>';
-        rh+='<div style="font-size:11px;color:var(--text3)">'+(sz.hintergrund||'')+' | '+(sz.animation||'')+' | '+(sz.schrift||'')+'</div>';
-        if(sz.bild&&sz.bild.toLowerCase()!=='nein'&&sz.bild.toLowerCase()!=='no')rh+='<div style="font-size:11px;color:#0D9488">Bild: '+sz.bild+'</div>';
-        rh+='</div>';
-      });
-    }
-    rh+='<div style="font-size:12px;margin-top:8px;margin-bottom:8px">'+(reel.caption||'')+'</div>';
-    rh+='<button onclick="window._pkgData&&copyPkgReel()" style="padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
-    rh+='</div></div>';
-    h+=rh;
-    // STORY
-    var sh='<div class="pkg-panel" id="pkg-story" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-    sh+='<div style="font-size:13px;font-weight:700;margin-bottom:10px">Hook: '+(story.hook||'')+'</div>';
-    (story.slides||[]).forEach(function(sl){
-      sh+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">';
-      sh+='<div style="font-size:10px;color:var(--text3)">Slide '+sl.nr+'</div>';
-      sh+='<div style="font-size:14px;font-weight:600;margin:4px 0">'+(sl.text||'')+'</div>';
-      sh+='<div style="font-size:11px;color:#F59E0B">Sticker: '+(sl.sticker||'')+'</div>';
-      sh+='<div style="font-size:11px;color:var(--text3)">'+(sl.tipp||'')+'</div></div>';
-    });
-    sh+='<div style="font-size:12px;margin-top:8px">'+(story.caption||'')+'</div>';
-    sh+='<button onclick="window._pkgData&&copyPkgStory()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
-    sh+='</div></div>';
-    h+=sh;
-    // CAROUSEL
-    var ch='<div class="pkg-panel" id="pkg-carousel" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-    (carousel.slides||[]).forEach(function(sl){
-      ch+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px">';
-      ch+='<div style="font-size:16px;font-weight:800;color:var(--text3)">'+sl.nr+'</div>';
-      ch+='<div><div style="font-size:13px;font-weight:600">'+(sl.title||'')+'</div><div style="font-size:12px;color:var(--text3)">'+(sl.subtitle||'')+'</div></div></div>';
-    });
-    ch+='<div style="font-size:12px;margin-top:8px">'+(carousel.caption||'')+'</div>';
-    ch+='<button onclick="window._pkgData&&copyPkgCarousel()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
-    ch+='</div></div>';
-    h+=ch;
-    // PINS
-    var ph='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div style="display:grid;gap:10px">';
-    pinsArr.forEach(function(p,i){
-      ph+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-      ph+='<div style="font-size:10px;color:var(--text3);margin-bottom:5px">Pin '+(i+1)+'</div>';
-      ph+='<div style="font-size:14px;font-weight:700;margin-bottom:5px">'+(p.title||'')+'</div>';
-      ph+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+(p.description||'')+'</div>';
-      var tg=(p.tags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
-      ph+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">'+tg+'</div>';
-      ph+='<button onclick="window._pkgData&&copyPkgPin('+i+')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
-      ph+='</div>';
-    });
-    ph+='</div></div>';
-    h+=ph;
-    h+='</div>';
-    resultArea.innerHTML=h;
-    window._pkgData={reel:reel,story:story,carousel:carousel,pins:pinsArr,reelMode:pkgReelsMode};
-  })
-  .catch(function(e){
-    resultArea.innerHTML='<div style="color:var(--red);padding:12px;background:rgba(231,35,45,0.08);border-radius:8px;font-size:13px">Fehler: '+(e.message||'Bitte erneut versuchen')+'</div>';
-  })
-  .finally(function(){
-    btn.disabled=false;
-    btn.innerHTML='<i class="ti ti-package"></i> Reel + Story + Karussell + 5 Pins';
-  });
+  const a=document.createElement('a');
+  a.download=filename;
+  a.href=dataUrl;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
-function copyPkgReel(){
-  if(!window._pkgData)return;
-  var r=window._pkgData.reel;
-  var text='';
-  if(window._pkgData.reelMode==='quick'){
-    text='HOOK: "'+(r.hook||'')+'"
-
-1. '+(r.punkt1||'')+'
-2. '+(r.punkt2||'')+'
-3. '+(r.punkt3||'')+'
-
-CTA: '+(r.cta||'')+'
-
-'+(r.caption||'')+'
-
-'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
-  } else {
-    text=(r.title||'')+'
-
-'+(r.szenen||[]).map(function(s){return '['+s.typ+'] "'+s.text+'"
-'+s.hintergrund+' | '+s.animation+' | '+s.schrift+(s.bild&&s.bild!=='nein'?'
-Bild: '+s.bild:'');}).join('
-
-')+'
-
-'+(r.caption||'')+'
-
-'+(r.hashtags||[]).map(function(t){return '#'+t;}).join(' ');
-  }
-  navigator.clipboard.writeText(text).then(function(){var b=document.querySelector('#pkg-reel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Kopieren';},2000);}});
-}
-function copyPkgStory(){
-  if(!window._pkgData)return;
-  var s=window._pkgData.story;
-  navigator.clipboard.writeText((s.caption||'')+'
-
-'+(s.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-story button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
-}
-function copyPkgCarousel(){
-  if(!window._pkgData)return;
-  var c=window._pkgData.carousel;
-  navigator.clipboard.writeText((c.caption||'')+'
-
-'+(c.hashtags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var b=document.querySelector('#pkg-carousel button');if(b){b.textContent='Kopiert!';setTimeout(function(){b.textContent='Caption kopieren';},2000);}});
-}
-function copyPkgPin(i){
-  if(!window._pkgData)return;
-  var p=window._pkgData.pins[i];
-  if(!p)return;
-  navigator.clipboard.writeText((p.title||'')+'
-
-'+(p.description||'')+'
-
-'+(p.tags||[]).map(function(t){return '#'+t;}).join(' ')).then(function(){var btns=document.querySelectorAll('#pkg-pins button');if(btns[i]){btns[i].textContent='Kopiert!';setTimeout(function(){btns[i].textContent='Kopieren';},2000);}});
-}
-</script>
-
-</body></html>');win.document.close();return;}const a=document.createElement('a');a.download=filename;a.href=dataUrl;document.body.appendChild(a);a.click();document.body.removeChild(a);}
 function dlAll(){generatedPins.forEach((_,i)=>{setTimeout(()=>dlPin(i),i*200);});}
 </script>
 
