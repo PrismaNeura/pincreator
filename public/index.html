@@ -1801,13 +1801,13 @@ function generatePackage(){
     });
   }
   // Sequential calls to avoid token limits
-  var _reel,_story,_carousel;
-  callAPI(reelPrompt)
-  .then(function(r){_reel=r;return callAPI(storyP);})
-  .then(function(s){_story=s;return callAPI(carP);})
-  .then(function(c){_carousel=c;return callAPI(pinsP);})
-  .then(function(pins){
-    var reel=_reel,story=_story,carousel=_carousel;
+  var combinedPrompt=de
+    ?'Erstelle Content-Paket auf DEUTSCH fuer Thema: '+topic+'. Antworte NUR mit diesem JSON ohne Erklaerungen: {"reel":{"title":"T","hook":"H max 8 Woerter","punkt1":"P1","punkt2":"P2","punkt3":"P3","cta":"C","textoverlay":"O","musik":"M","caption":"Cap 2 Saetze","hashtags":["t1","t2","t3"]},"story":{"hook":"H","slides":[{"nr":1,"text":"T","sticker":"S","tipp":"Ti"},{"nr":2,"text":"T","sticker":"S","tipp":"Ti"},{"nr":3,"text":"T","sticker":"S","tipp":"Ti"}],"caption":"Cap","hashtags":["t1","t2","t3"]},"carousel":{"caption":"Cap","hashtags":["t1","t2","t3"],"slides":[{"nr":1,"title":"T","subtitle":"S"},{"nr":2,"title":"T","subtitle":"S"},{"nr":3,"title":"T","subtitle":"S"},{"nr":4,"title":"T","subtitle":"S"},{"nr":5,"title":"T","subtitle":"S"},{"nr":6,"title":"CTA","subtitle":"S"}]},"pins":[{"title":"T","description":"2 Saetze.","tags":["t1","t2","t3"]},{"title":"T","description":"2 Saetze.","tags":["t1","t2","t3"]},{"title":"T","description":"2 Saetze.","tags":["t1","t2","t3"]},{"title":"T","description":"2 Saetze.","tags":["t1","t2","t3"]},{"title":"T","description":"2 Saetze.","tags":["t1","t2","t3"]}]}'
+    :'Create content package in ENGLISH for topic: '+topic+'. Reply ONLY with this JSON: {"reel":{"title":"T","hook":"H max 8 words","punkt1":"P1","punkt2":"P2","punkt3":"P3","cta":"C","textoverlay":"O","musik":"M","caption":"Cap 2 sentences","hashtags":["t1","t2","t3"]},"story":{"hook":"H","slides":[{"nr":1,"text":"T","sticker":"S","tipp":"Ti"},{"nr":2,"text":"T","sticker":"S","tipp":"Ti"},{"nr":3,"text":"T","sticker":"S","tipp":"Ti"}],"caption":"Cap","hashtags":["t1","t2","t3"]},"carousel":{"caption":"Cap","hashtags":["t1","t2","t3"],"slides":[{"nr":1,"title":"T","subtitle":"S"},{"nr":2,"title":"T","subtitle":"S"},{"nr":3,"title":"T","subtitle":"S"},{"nr":4,"title":"T","subtitle":"S"},{"nr":5,"title":"T","subtitle":"S"},{"nr":6,"title":"CTA","subtitle":"S"}]},"pins":[{"title":"T","description":"2 sentences.","tags":["t1","t2","t3"]},{"title":"T","description":"2 sentences.","tags":["t1","t2","t3"]},{"title":"T","description":"2 sentences.","tags":["t1","t2","t3"]},{"title":"T","description":"2 sentences.","tags":["t1","t2","t3"]},{"title":"T","description":"2 sentences.","tags":["t1","t2","t3"]}]}';
+
+  callAPI(combinedPrompt)
+  .then(function(data){
+    var reel=data.reel||{},story=data.story||{},carousel=data.carousel||{},pins=data.pins||[];
     var pinsArr=Array.isArray(pins)?pins:[pins];
     var label=pkgReelsMode==='quick'?'Quick Reel':'Canva Reel';
     var h='<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden">';
@@ -1818,56 +1818,32 @@ function generatePackage(){
     h+='<button class="pkg-tab" data-tab="carousel" onclick="switchPkgTab(&quot;carousel&quot;)">Karussell</button>';
     h+='<button class="pkg-tab" data-tab="pins" onclick="switchPkgTab(&quot;pins&quot;)">5 Pins</button>';
     h+='</div>';
-    // REEL
     var rh='<div class="pkg-panel active" id="pkg-reel" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-    if(pkgReelsMode==='quick'){
-      rh+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
-      rh+='<div style="background:#E7232D15;border-left:3px solid #E7232D;padding:10px;border-radius:0 8px 8px 0;margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">HOOK</div>"'+(reel.hook||'')+'"</div>';
-      rh+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
-      [reel.punkt1,reel.punkt2,reel.punkt3].forEach(function(p,j){rh+='<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><b>'+(j+1)+'.</b> '+(p||'')+'</div>';});
-      rh+='</div><div style="font-size:12px;margin-bottom:6px">CTA: '+(reel.cta||'')+'</div>';
-    } else {
-      rh+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
-      (reel.szenen||[]).forEach(function(sz){
-        var col={Hook:'#E7232D',Punkt:'#0D9488',Point:'#0D9488',CTA:'#534AB7'}[sz.typ]||'#6B6862';
-        rh+='<div style="border:0.5px solid '+col+'33;border-radius:8px;padding:10px;margin-bottom:8px">';
-        rh+='<span style="background:'+col+';color:#fff;font-size:10px;padding:2px 8px;border-radius:20px">'+sz.typ+'</span>';
-        rh+='<div style="font-size:13px;font-weight:700;margin:6px 0">"'+(sz.text||'')+'"</div>';
-        rh+='<div style="font-size:11px;color:var(--text3)">'+(sz.hintergrund||'')+' | '+(sz.animation||'')+' | '+(sz.schrift||'')+'</div>';
-        if(sz.bild&&sz.bild.toLowerCase()!=='nein'&&sz.bild.toLowerCase()!=='no')rh+='<div style="font-size:11px;color:#0D9488">Bild: '+sz.bild+'</div>';
-        rh+='</div>';
-      });
-    }
-    rh+='<div style="font-size:12px;margin-top:8px;margin-bottom:8px">'+(reel.caption||'')+'</div>';
-    rh+='<button onclick="window._pkgData&&copyPkgReel()" style="padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
+    rh+='<div style="font-size:14px;font-weight:700;margin-bottom:10px">'+(reel.title||'')+'</div>';
+    rh+='<div style="background:#E7232D15;border-left:3px solid #E7232D;padding:10px;border-radius:0 8px 8px 0;margin-bottom:8px"><div style="font-size:10px;font-weight:600;color:#E7232D;margin-bottom:3px">HOOK</div>"'+(reel.hook||'')+'"</div>';
+    rh+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">';
+    [reel.punkt1,reel.punkt2,reel.punkt3].forEach(function(p,j){rh+='<div style="background:var(--s2);border-radius:8px;padding:8px;font-size:12px"><b>'+(j+1)+'.</b> '+(p||'')+'</div>';});
+    rh+='</div>';
+    rh+='<div style="font-size:12px;margin-bottom:6px">CTA: '+(reel.cta||'')+'</div>';
+    rh+='<div style="font-size:12px;margin-bottom:8px">'+(reel.caption||'')+'</div>';
+    var rTagsHtml=(reel.hashtags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
+    rh+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">'+rTagsHtml+'</div>';
+    rh+='<button onclick="copyPkgReel()" style="padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
     rh+='</div></div>';
     h+=rh;
-    // STORY
     var sh='<div class="pkg-panel" id="pkg-story" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
     sh+='<div style="font-size:13px;font-weight:700;margin-bottom:10px">Hook: '+(story.hook||'')+'</div>';
-    (story.slides||[]).forEach(function(sl){
-      sh+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">';
-      sh+='<div style="font-size:10px;color:var(--text3)">Slide '+sl.nr+'</div>';
-      sh+='<div style="font-size:14px;font-weight:600;margin:4px 0">'+(sl.text||'')+'</div>';
-      sh+='<div style="font-size:11px;color:#F59E0B">Sticker: '+(sl.sticker||'')+'</div>';
-      sh+='<div style="font-size:11px;color:var(--text3)">'+(sl.tipp||'')+'</div></div>';
-    });
+    (story.slides||[]).forEach(function(sl){sh+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px"><div style="font-size:10px;color:var(--text3)">Slide '+sl.nr+'</div><div style="font-size:14px;font-weight:600;margin:4px 0">'+(sl.text||'')+'</div><div style="font-size:11px;color:#F59E0B">Sticker: '+(sl.sticker||'')+'</div></div>';});
     sh+='<div style="font-size:12px;margin-top:8px">'+(story.caption||'')+'</div>';
-    sh+='<button onclick="window._pkgData&&copyPkgStory()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
+    sh+='<button onclick="copyPkgStory()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
     sh+='</div></div>';
     h+=sh;
-    // CAROUSEL
     var ch='<div class="pkg-panel" id="pkg-carousel" style="padding:1rem"><div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-    (carousel.slides||[]).forEach(function(sl){
-      ch+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px">';
-      ch+='<div style="font-size:16px;font-weight:800;color:var(--text3)">'+sl.nr+'</div>';
-      ch+='<div><div style="font-size:13px;font-weight:600">'+(sl.title||'')+'</div><div style="font-size:12px;color:var(--text3)">'+(sl.subtitle||'')+'</div></div></div>';
-    });
+    (carousel.slides||[]).forEach(function(sl){ch+='<div style="border:0.5px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px;display:grid;grid-template-columns:28px 1fr;gap:8px"><div style="font-size:16px;font-weight:800;color:var(--text3)">'+sl.nr+'</div><div><div style="font-size:13px;font-weight:600">'+(sl.title||'')+'</div><div style="font-size:12px;color:var(--text3)">'+(sl.subtitle||'')+'</div></div></div>';});
     ch+='<div style="font-size:12px;margin-top:8px">'+(carousel.caption||'')+'</div>';
-    ch+='<button onclick="window._pkgData&&copyPkgCarousel()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
+    ch+='<button onclick="copyPkgCarousel()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button>';
     ch+='</div></div>';
     h+=ch;
-    // PINS
     var ph='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div style="display:grid;gap:10px">';
     pinsArr.forEach(function(p,i){
       ph+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
@@ -1876,7 +1852,7 @@ function generatePackage(){
       ph+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+(p.description||'')+'</div>';
       var tg=(p.tags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
       ph+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">'+tg+'</div>';
-      ph+='<button onclick="window._pkgData&&copyPkgPin('+i+')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
+      ph+='<button onclick="copyPkgPin('+i+')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
       ph+='</div>';
     });
     ph+='</div></div>';
