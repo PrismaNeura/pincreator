@@ -1967,18 +1967,19 @@ function generatePackage(){
       // Apply first gradient if none selected
       if(!currentGradient||!currentGradient.s)currentGradient=GRADIENTS[1];
       // Fetch one image for all pins
-      // Fetch both images in parallel
-      var [autoImg,autoImgSq]=await Promise.all([
-        fetchAutoImage(topic,'portrait').catch(()=>null),
-        fetchAutoImage(topic,'squarish').catch(()=>null)
-      ]);
-      // Render pins
+      // Fetch 5 portrait images + 1 square for carousel in parallel
+      var imgPromises=pinsArr.map(()=>fetchAutoImage(topic,'portrait').catch(()=>null));
+      imgPromises.push(fetchAutoImage(topic,'squarish').catch(()=>null));
+      var allImgs=await Promise.all(imgPromises);
+      var pinImgs=allImgs.slice(0,pinsArr.length);
+      var autoImgSq=allImgs[allImgs.length-1];
+      // Render pins with individual images
       pinsArr.forEach((p,i)=>{
         var cv=document.getElementById('pkgpin'+i);
         if(cv){
           var savedImgs=[...uploadedImages];
           uploadedImages.fill(null);
-          renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,autoImg);
+          renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,pinImgs[i]);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
         var dlb=document.getElementById('pkgpindl'+i);
