@@ -1964,6 +1964,8 @@ function generatePackage(){
     resultArea.innerHTML=h;
     window._pkgData={reel,story,carousel,pins:pinsArr,reelMode:pkgReelsMode};
     setTimeout(()=>{
+      // Apply first gradient if none selected
+      if(!currentGradient||!currentGradient.s)currentGradient=GRADIENTS[1];
       pinsArr.forEach((p,i)=>{
         var cv=document.getElementById('pkgpin'+i);
         if(cv)renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,null);
