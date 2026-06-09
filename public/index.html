@@ -1922,12 +1922,24 @@ function generatePackage(){
   .then(r=>r.json())
   .then(d=>{
     if(d.error)throw new Error(d.error.message||d.error);
-    var raw=d.content.map(i=>i.text||'').join('').replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+    var raw=d.content.map(i=>i.text||'').join('');
+    // Strip markdown
+    raw=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+    // Find JSON start
+    var jsonStart=raw.indexOf('{');
+    var jsonStartArr=raw.indexOf('[');
+    if(jsonStart===-1||(jsonStartArr!==-1&&jsonStartArr<jsonStart))jsonStart=jsonStartArr;
+    if(jsonStart>0)raw=raw.substring(jsonStart);
+    // Find JSON end - find last } or ]
+    var jsonEnd=Math.max(raw.lastIndexOf('}'),raw.lastIndexOf(']'));
+    if(jsonEnd>0&&jsonEnd<raw.length-1)raw=raw.substring(0,jsonEnd+1);
     var data;
     try{data=JSON.parse(raw);}catch(e){
-      var fix=raw.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/g,' ').replace(/,\s*([\]}])/g,'$1');
-      var s=fix.indexOf('{');if(s>-1)fix=fix.substring(s);
-      data=JSON.parse(fix);
+      // Fix common issues
+      var fix=raw.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F]/g,' ').replace(/,\s*([\]}])/g,'$1');
+      try{data=JSON.parse(fix);}catch(e2){
+        throw new Error('KI hat kein gueltiges JSON zurueckgegeben. Bitte erneut versuchen.');
+      }
     }
     var reel=data.reel||{},story=data.story||{},carousel=data.carousel||{},pins=data.pins||[];
     var pinsArr=Array.isArray(pins)?pins:[pins];
