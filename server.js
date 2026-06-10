@@ -5,8 +5,16 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(express.json());
-app.get('/', (req, res) => res.sendFile('landingpage.html', { root: 'public' }));
-app.get('/app', (req, res) => res.sendFile('index.html', { root: 'public' }));
+app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.sendFile('landingpage.html', { root: 'public' });
+});
+app.get('/app', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.sendFile('index.html', { root: 'public' });
+});
 app.use(express.static('public'));
 
 const SUPABASE_URL = 'https://hinhbgfvgffjrdguetgv.supabase.co';
@@ -233,8 +241,16 @@ app.get('/api/image', async (req, res) => {
   } catch { res.json({ url: null }); }
 });
 
-app.get('/', (req, res) => res.sendFile('landingpage.html', { root: 'public' }));
-app.get('/app', (req, res) => res.sendFile('index.html', { root: 'public' }));
+app.get('/', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.sendFile('landingpage.html', { root: 'public' });
+});
+app.get('/app', (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.sendFile('index.html', { root: 'public' });
+});
 app.get('/setup', (req, res) => res.sendFile('index.html', { root: 'public' }));
 
 // Image proxy to avoid CORS issues with canvas
