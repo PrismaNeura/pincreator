@@ -786,10 +786,10 @@ function renderPin(canvas,pin,W,H,autoImg=null){
   const tax=pinLayout==='left'?pad:W/2;
   const maxW=W-pad*2;
   const titleLines=wrapPx(ctx,pin.imageTitle||pin.title,maxW);
-  titleLines.slice(0,2).forEach((l,i)=>{
+  titleLines.slice(0,3).forEach((l,i)=>{
     ctx.fillText(l,tax,ty+(titleFS*1.2)*i+titleFS);
   });
-  ty+=titleFS*1.2*Math.min(titleLines.length,2)+titleFS*0.3;
+  ty+=titleFS*1.2*Math.min(titleLines.length,3)+titleFS*0.3;
 
   // Subtitle
   if(pin.imageSubtitle){
@@ -1847,7 +1847,7 @@ function generatePackage(){
       ch+='<div class="pin-body"><div class="pin-num">Slide '+(sl.nr||ci+1)+'</div>';
       ch+='<div class="pin-title">'+(sl.title||'')+'</div>';
       ch+='<div class="pin-desc">'+(sl.subtitle||'')+'</div>';
-      ch+='<div class="pin-actions"><button class="act-btn" id="pkgcardl'+ci+'"><i class="ti ti-download"></i> Bild</button></div>';
+      ch+='<div class="pin-actions"><button class="act-btn" onclick="dlPin(\'pkgcar'+ci+'\')"><i class="ti ti-download"></i> Bild</button></div>';
       ch+='</div></div>';
     });
     ch+='</div>';
