@@ -1856,16 +1856,16 @@ function generatePackage(){
     ch+='</div>';
     h+=ch;
     // PINS
-    var ph='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div style="display:grid;gap:10px">';
+    var ph='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div class="pins-grid">';
     pinsArr.forEach(function(p,i){
-      ph+='<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem">';
-      ph+='<div style="font-size:10px;color:var(--text3);margin-bottom:5px">Pin '+(i+1)+'</div>';
-      ph+='<div style="font-size:14px;font-weight:700;margin-bottom:5px">'+(p.title||'')+'</div>';
-      ph+='<div style="font-size:12px;color:var(--text2);margin-bottom:8px">'+(p.description||'')+'</div>';
-      var tg=(p.tags||[]).map(function(t){return '<span style="font-size:11px;padding:2px 8px;background:var(--s2);border-radius:20px">#'+t+'</span>';}).join('');
-      ph+='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">'+tg+'</div>';
-      ph+='<button onclick="window._pkgData&&copyPkgPin('+i+')" style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Kopieren</button>';
-      ph+='</div>';
+      ph+='<div class="pin-card"><div class="pin-image-area ratio-23"><canvas id="pkgpin'+i+'"></canvas></div>';
+      ph+='<div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div>';
+      ph+='<div class="pin-title">'+(p.title||'')+'</div>';
+      ph+='<div class="pin-desc">'+(p.description||'')+'</div>';
+      var tg=(p.tags||[]).map(function(t){return '<span class="tag">#'+t+'</span>';}).join('');
+      ph+='<div class="pin-tags">'+tg+'</div>';
+      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button></div>';
+      ph+='</div></div>';
     });
     ph+='</div></div>';
     h+=ph;
