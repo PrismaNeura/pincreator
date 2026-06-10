@@ -1918,8 +1918,8 @@ function generatePackage(){
   resultArea.innerHTML='<div style="text-align:center;padding:3rem"><div style="font-size:32px">⏳</div><p style="color:#6B6862;font-size:14px">Reel + Story + Karussell + 5 Pins...</p></div>';
   var de=lang==='de';
   var sys=de
-    ?'Du bist ein professioneller Social Media Manager. Erstelle echten, kreativen deutschen Content. Antworte IMMER nur mit purem JSON.'
-    :'You are a professional social media manager. Create real, creative English content. ALWAYS reply with pure JSON only.';
+    ?'Du bist ein professioneller Social Media Manager. Erstelle echten, kreativen deutschen Content. WICHTIG: Pin-Titel max 40 Zeichen, Pin-Beschreibung max 60 Zeichen. Antworte IMMER nur mit purem JSON.'
+    :'You are a professional social media manager. Create real, creative English content. IMPORTANT: Pin title max 40 chars, pin description max 60 chars. ALWAYS reply with pure JSON only.';
   var prompt=de
     ?'Erstelle kompletten Social Media Content fuer das Thema "'+topic+'" fuer die Zielgruppe "'+( audience||'Allgemein')+'". Antworte nur mit diesem JSON (alle Felder mit echtem Content fuellen):\n{"reel":{"title":"REEL_TITEL","hook":"HOOK_TEXT","punkt1":"PUNKT_1","punkt2":"PUNKT_2","punkt3":"PUNKT_3","cta":"CTA_TEXT","textoverlay":"OVERLAY","musik":"Musikstil","caption":"CAPTION #hashtag","hashtags":["tag1","tag2","tag3"]},"story":{"hook":"STORY_HOOK","slides":[{"nr":1,"text":"SLIDE_1","sticker":"Umfrage","tipp":"Tipp"},{"nr":2,"text":"SLIDE_2","sticker":"Frage","tipp":"Tipp"},{"nr":3,"text":"SLIDE_3","sticker":"Countdown","tipp":"Tipp"}],"caption":"CAPTION","hashtags":["tag1","tag2","tag3"]},"carousel":{"caption":"CAPTION","hashtags":["tag1","tag2","tag3"],"slides":[{"nr":1,"title":"TITEL","subtitle":"UNTERTITEL"},{"nr":2,"title":"TITEL","subtitle":"UNTERTITEL"},{"nr":3,"title":"TITEL","subtitle":"UNTERTITEL"},{"nr":4,"title":"TITEL","subtitle":"UNTERTITEL"},{"nr":5,"title":"TITEL","subtitle":"UNTERTITEL"},{"nr":6,"title":"Jetzt starten","subtitle":"Link in Bio"}]},"pins":[{"title":"PIN_1","description":"BESCHREIBUNG_1","tags":["tag1","tag2","tag3"]},{"title":"PIN_2","description":"BESCHREIBUNG_2","tags":["tag1","tag2","tag3"]},{"title":"PIN_3","description":"BESCHREIBUNG_3","tags":["tag1","tag2","tag3"]},{"title":"PIN_4","description":"BESCHREIBUNG_4","tags":["tag1","tag2","tag3"]},{"title":"PIN_5","description":"BESCHREIBUNG_5","tags":["tag1","tag2","tag3"]}]}'
     :'Create complete social media content for topic "'+topic+'" for audience "'+(audience||'General')+'". Reply only with this JSON (fill all fields with real content):\n{"reel":{"title":"TITLE","hook":"HOOK","punkt1":"POINT_1","punkt2":"POINT_2","punkt3":"POINT_3","cta":"CTA","textoverlay":"OVERLAY","musik":"Music style","caption":"CAPTION #hashtag","hashtags":["tag1","tag2","tag3"]},"story":{"hook":"STORY_HOOK","slides":[{"nr":1,"text":"SLIDE_1","sticker":"Poll","tipp":"Tip"},{"nr":2,"text":"SLIDE_2","sticker":"Question","tipp":"Tip"},{"nr":3,"text":"SLIDE_3","sticker":"Countdown","tipp":"Tip"}],"caption":"CAPTION","hashtags":["tag1","tag2","tag3"]},"carousel":{"caption":"CAPTION","hashtags":["tag1","tag2","tag3"],"slides":[{"nr":1,"title":"TITLE","subtitle":"SUBTITLE"},{"nr":2,"title":"TITLE","subtitle":"SUBTITLE"},{"nr":3,"title":"TITLE","subtitle":"SUBTITLE"},{"nr":4,"title":"TITLE","subtitle":"SUBTITLE"},{"nr":5,"title":"TITLE","subtitle":"SUBTITLE"},{"nr":6,"title":"Get started","subtitle":"Link in bio"}]},"pins":[{"title":"PIN_1","description":"DESC_1","tags":["tag1","tag2","tag3"]},{"title":"PIN_2","description":"DESC_2","tags":["tag1","tag2","tag3"]},{"title":"PIN_3","description":"DESC_3","tags":["tag1","tag2","tag3"]},{"title":"PIN_4","description":"DESC_4","tags":["tag1","tag2","tag3"]},{"title":"PIN_5","description":"DESC_5","tags":["tag1","tag2","tag3"]}]}';
@@ -1997,7 +1997,9 @@ function generatePackage(){
         if(cv){
           var savedImgs=[...uploadedImages];
           uploadedImages.fill(null);
-          renderPin(cv,{imageTitle:p.title||'',imageSubtitle:p.description||'',cta:'',tags:p.tags||[]},800,1200,pinImgs[i]);
+          var shortTitle=(p.title||'').substring(0,40);
+          var shortDesc=(p.description||'').substring(0,60);
+          renderPin(cv,{imageTitle:shortTitle,imageSubtitle:shortDesc,cta:'Mehr erfahren',tags:p.tags||[]},800,1200,pinImgs[i]);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
         var dlb=document.getElementById('pkgpindl'+i);
@@ -2009,12 +2011,14 @@ function generatePackage(){
       (carousel.slides||[]).forEach((sl,ci)=>{
         var cv=document.getElementById('pkgcar'+ci);
         if(cv){
-          // Temporarily clear uploadedImages to force autoImg usage
           var savedImgs=[...uploadedImages];
           uploadedImages.fill(null);
           renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,autoImgSq);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
+        // Wire download button
+        var dlb=document.getElementById('pkgcardl'+ci);
+        if(dlb)dlb.onclick=(function(idx){return function(){dlPin('pkgcar'+idx);};})(ci);
       });
     },500);
   })
