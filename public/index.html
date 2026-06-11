@@ -1847,7 +1847,7 @@ function generatePackage(){
       ch+='<div class="pin-body"><div class="pin-num">Slide '+(sl.nr||ci+1)+'</div>';
       ch+='<div class="pin-title">'+(sl.title||'')+'</div>';
       ch+='<div class="pin-desc">'+(sl.subtitle||'')+'</div>';
-      ch+='<div class="pin-actions"><button class="act-btn" onclick="dlPin(\'pkgcar'+ci+'\')"><i class="ti ti-download"></i> Bild</button></div>';
+      ch+='<div class="pin-actions"><button class="act-btn" id="pkgcardlbtn'+ci+'" style="cursor:pointer"><i class="ti ti-download"></i> Bild</button></div>';
       ch+='</div></div>';
     });
     ch+='</div>';
