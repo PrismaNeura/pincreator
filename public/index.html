@@ -2017,7 +2017,7 @@ function generatePackage(){
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
         // Wire download button
-        var dlb=document.getElementById('pkgcardl'+ci);
+        var dlb=document.getElementById('pkgcardlbtn'+ci);
         if(dlb)dlb.onclick=(function(idx){return function(){dlPin('pkgcar'+idx);};})(ci);
       });
     },500);
