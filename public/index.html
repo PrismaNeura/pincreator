@@ -1843,12 +1843,15 @@ function generatePackage(){
     // CAROUSEL
     var ch='<div class="pkg-panel" id="pkg-carousel" style="padding:1rem"><div class="pins-grid">';
     (carousel.slides||[]).forEach(function(sl,ci){
-      ch+='<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="pkgcar'+ci+'"></canvas></div>';
-      ch+='<div class="pin-body"><div class="pin-num">Slide '+(sl.nr||ci+1)+'</div>';
+      ch+='<div class="pin-card">';
+      ch+='<div class="pin-image-area ratio-11"><canvas id="pkgcar'+ci+'"></canvas></div>';
+      ch+='<div class="pin-body">';
+      ch+='<div class="pin-num">Slide '+(sl.nr||ci+1)+'</div>';
       ch+='<div class="pin-title">'+(sl.title||'')+'</div>';
       ch+='<div class="pin-desc">'+(sl.subtitle||'')+'</div>';
-      ch+='<div class="pin-actions"><button class="act-btn" onclick="dlPkgCar('+ci+')"><i class="ti ti-download"></i> Bild</button></div>';
-      ch+='</div></div>';
+      ch+='</div>';
+      ch+='<button onclick="dlPkgCar('+ci+')" style="width:100%;padding:8px;background:var(--s2);border:0.5px solid var(--border);border-top:none;color:var(--text2);font-family:inherit;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px"><i class="ti ti-download"></i> Bild herunterladen</button>';
+      ch+='</div>';
     });
     ch+='</div>';
     ch+='<div style="padding:12px;font-size:12px;color:var(--text2)">'+(carousel.caption||'')+'</div>';
