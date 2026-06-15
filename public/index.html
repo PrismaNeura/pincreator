@@ -166,7 +166,15 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
     <input type="password" class="auth-input" id="loginPassword" placeholder="Passwort">
     <button class="auth-btn" id="loginBtn" onclick="doLogin()"><i class="ti ti-login"></i> Anmelden</button>
     <div class="auth-err" id="loginErr"></div>
-    <p class="auth-hint">Noch kein Zugang? <a href="https://gumroad.com/l/oktubc" target="_blank">Hier Abonnement kaufen →</a></p>
+    <div style="margin:16px 0;display:flex;align-items:center;gap:8px;color:var(--text3);font-size:12px"><div style="flex:1;height:1px;background:var(--border)"></div>oder<div style="flex:1;height:1px;background:var(--border)"></div></div>
+    <div id="trialBox">
+      <p style="font-size:13px;color:var(--text2);margin:0 0 8px;text-align:center">3 Tage kostenlos testen · 20 Posts inklusive</p>
+      <input type="email" class="auth-input" id="trialEmail" placeholder="Deine E-Mail-Adresse">
+      <button class="auth-btn" id="trialBtn" onclick="doTrial()" style="background:transparent;border:1px solid var(--accent);color:var(--accent)"><i class="ti ti-gift"></i> Gratis starten</button>
+      <div class="auth-err" id="trialErr"></div>
+      <div class="auth-ok" id="trialOk" style="display:none"></div>
+    </div>
+    <p class="auth-hint">Nach dem Test: <a href="https://gumroad.com/l/oktubc" target="_blank">Ab 9€/Monat →</a></p>
   </div>
 </div>
 
@@ -514,10 +522,16 @@ async function doSetup(){
 function showApp(data){
   userEmail=data.email;pinsUsed=data.pinsUsed||0;pinsLimit=data.pinsLimit||500;isAdmin=data.isAdmin||false;
   userFeatures=data.features||['pinterest'];
+  window._isTrial=data.isTrial||false;
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('setupScreen').style.display='none';
   document.getElementById('appScreen').style.display='flex';
-  document.getElementById('planBadge').textContent=data.planName||'Starter';
+  document.getElementById('planBadge').textContent=data.isTrial?'Gratis-Test 🎁':(data.planName||'Starter');
+  if(data.isTrial){
+    const banner=document.getElementById('limitBanner');
+    banner.style.display='flex';banner.className='limit-banner';
+    banner.innerHTML='<span><i class="ti ti-gift"></i> Gratis-Test aktiv · 20 Posts · 3 Tage</span><a href="https://gumroad.com/l/oktubc" target="_blank" class="upgrade-btn">Jetzt upgraden →</a>';
+  }
   updatePlatformTabs();updateCounter();
 }
 
@@ -572,6 +586,29 @@ function updateCounter(){
 
 function logout(){sessionStorage.clear();location.reload();}
 function showLoginErr(msg){const e=document.getElementById('loginErr');e.textContent=msg;e.style.display='block';}
+
+async function doTrial(){
+  const email=document.getElementById('trialEmail').value.trim();
+  const errEl=document.getElementById('trialErr');
+  const okEl=document.getElementById('trialOk');
+  errEl.style.display='none'; okEl.style.display='none';
+  if(!email||!email.includes('@')){errEl.textContent='Bitte gültige E-Mail eingeben.';errEl.style.display='block';return;}
+  document.getElementById('trialBtn').disabled=true;
+  document.getElementById('trialBtn').textContent='Wird gestartet…';
+  try{
+    const r=await fetch('/api/free-trial',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    const d=await r.json();
+    if(d.success){
+      const trialData={email:d.email,plan:'trial',planName:'Gratis-Test',pinsUsed:0,pinsLimit:20,features:['pinterest','instagram','stories','carousel','reels'],isTrial:true,trialExpires:new Date(Date.now()+3*24*60*60*1000).toISOString()};
+      sessionStorage.setItem('pc_data',JSON.stringify(trialData));
+      okEl.textContent='✅ Gestartet! Wir haben dir eine E-Mail geschickt.';okEl.style.display='block';
+      setTimeout(()=>showApp(trialData),1500);
+    } else {
+      errEl.textContent=d.error||'Fehler. Bitte versuche es erneut.';errEl.style.display='block';
+      document.getElementById('trialBtn').disabled=false;document.getElementById('trialBtn').innerHTML='<i class="ti ti-gift"></i> Gratis starten';
+    }
+  }catch(e){errEl.textContent='Verbindungsfehler.';errEl.style.display='block';document.getElementById('trialBtn').disabled=false;document.getElementById('trialBtn').innerHTML='<i class="ti ti-gift"></i> Gratis starten';}
+}
 function hideLoginErr(){document.getElementById('loginErr').style.display='none';}
 function showSetupErr(msg){const e=document.getElementById('setupErr');e.textContent=msg;e.style.display='block';}
 document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
@@ -1144,7 +1181,7 @@ ONLY JSON array:
     if(!Array.isArray(generatedPins))generatedPins=[generatedPins];
 
     if(!isAdmin){
-      const cr=await fetch('/api/count-pins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,count:generatedPins.length})});
+      const cr=await fetch(window._isTrial?'/api/count-trial':'/api/count-pins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,count:generatedPins.length})});
       const cd=await cr.json();
       if(cd.success){pinsUsed=cd.pinsUsed;updateCounter();const data=JSON.parse(sessionStorage.getItem('pc_data')||'{}');data.pinsUsed=pinsUsed;sessionStorage.setItem('pc_data',JSON.stringify(data));}
     }
@@ -1208,7 +1245,7 @@ ONLY JSON:
       }
 
       if(!isAdmin){
-        const countRes=await fetch('/api/count-pins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,count:1})});
+        const countRes=await fetch(window._isTrial?'/api/count-trial':'/api/count-pins',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:userEmail,count:1})});
         const countData=await countRes.json();
         if(countData.success){pinsUsed=countData.pinsUsed;updateCounter();}
       }
