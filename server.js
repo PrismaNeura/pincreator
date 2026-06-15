@@ -268,6 +268,59 @@ app.get('/api/image-proxy', async (req, res) => {
   } catch (e) { res.status(500).send('Error'); }
 });
 
+
+// FREE TRIAL
+app.post('/api/free-trial', async (req, res) => {
+  const { email } = req.body;
+  if (!email || !email.includes('@')) return res.status(400).json({ success: false, error: 'Ungültige E-Mail-Adresse' });
+  const mail = email.toLowerCase().trim();
+  try {
+    // Check if email already used
+    const existing = await supabaseFetch(`/free_trials?email=eq.${encodeURIComponent(mail)}&select=id`, 'GET', null, true);
+    if (existing && existing.length) return res.json({ success: false, error: 'Diese E-Mail wurde bereits für einen Gratis-Test verwendet.' });
+    // Also check if already a paying user
+    const user = await supabaseFetch(`/users?email=eq.${encodeURIComponent(mail)}&select=id`, 'GET', null, true);
+    if (user && user.length) return res.json({ success: false, error: 'Mit dieser E-Mail existiert bereits ein Account. Bitte einloggen.' });
+    // Save trial
+    const expiresAt = new Date(); expiresAt.setDate(expiresAt.getDate() + 3);
+    await supabaseFetch('/free_trials', 'POST', { email: mail, created_at: new Date().toISOString(), expires_at: expiresAt.toISOString(), pins_used: 0 }, true);
+    // Send welcome email
+    await sendEmail(mail, 'Dein 3-Tage Gratis-Test bei BoostYourPins!',
+      `Hallo!\n\nDein kostenloser 3-Tage-Test ist jetzt aktiv! 🎉\n\nDu hast 20 Posts zur Verfügung.\n\nJetzt loslegen: https://boostyourpins.de/app\n\nNach 3 Tagen kannst du für 9€/Monat weitermachen.\n\nViel Spaß!\nDas BoostYourPins Team`);
+    res.json({ success: true, email: mail, trialDays: 3, pinsLimit: 20 });
+  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+// CHECK TRIAL
+app.post('/api/check-trial', async (req, res) => {
+  const { email } = req.body;
+  if (!email) return res.json({ valid: false });
+  const mail = email.toLowerCase().trim();
+  try {
+    const trials = await supabaseFetch(`/free_trials?email=eq.${encodeURIComponent(mail)}&select=id,expires_at,pins_used`, 'GET', null, true);
+    if (!trials || !trials.length) return res.json({ valid: false });
+    const trial = trials[0];
+    if (new Date(trial.expires_at) < new Date()) return res.json({ valid: false, expired: true });
+    const pinsUsed = trial.pins_used || 0;
+    if (pinsUsed >= 20) return res.json({ valid: false, limitReached: true });
+    res.json({ valid: true, pinsUsed, pinsLimit: 20, expiresAt: trial.expires_at });
+  } catch (e) { res.json({ valid: false }); }
+});
+
+// COUNT TRIAL PINS
+app.post('/api/count-trial', async (req, res) => {
+  const { email, count } = req.body;
+  if (!email) return res.json({ success: false });
+  const mail = email.toLowerCase().trim();
+  try {
+    const trials = await supabaseFetch(`/free_trials?email=eq.${encodeURIComponent(mail)}&select=id,pins_used`, 'GET', null, true);
+    if (!trials || !trials.length) return res.json({ success: false });
+    const newUsed = (trials[0].pins_used || 0) + (count || 1);
+    await supabaseFetch(`/free_trials?id=eq.${trials[0].id}`, 'PATCH', { pins_used: newUsed }, true);
+    res.json({ success: true, pinsUsed: newUsed, pinsLimit: 20 });
+  } catch (e) { res.json({ success: false }); }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`PinCreator läuft auf Port ${PORT}`));
 
