@@ -299,6 +299,22 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
           </div>
         </div>
 
+        <div class="section-label">Text & Schrift</div>
+        <div class="options-row">
+          <div class="fs">
+            <div class="lbl">Schriftfarbe</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button class="tog active" data-textcolor="auto" onclick="setTextColorMode('auto')">Automatisch</button>
+              <button class="tog" data-textcolor="custom" onclick="setTextColorMode('custom')">Eigene Farbe</button>
+              <input type="color" id="customTextColor" value="#1A1917" style="width:38px;height:32px;padding:2px;cursor:pointer;display:none;border:0.5px solid var(--border);border-radius:6px">
+            </div>
+          </div>
+          <div class="fs">
+            <div class="lbl">Button-Text</div>
+            <input type="text" id="ctaText" placeholder="Mehr erfahren →" maxlength="30">
+          </div>
+        </div>
+
         <div class="section-label">Dekoration</div>
         <div class="options-row">
           <div class="fs">
@@ -469,6 +485,14 @@ let currentGradient=GRADIENTS[0];
 let uploadedImages=[null,null,null],generatedPins=[];
 const multiLayout='single'; // Always single image per pin
 let lang='de',pinFont='sans',pinLayout='centered',pinPattern='none',pinBorder='none';
+let textColorMode='auto',customTextColor='#1A1917';
+function setTextColorMode(mode){
+  textColorMode=mode;
+  document.querySelectorAll('[data-textcolor]').forEach(b=>b.classList.toggle('active',b.dataset.textcolor===mode));
+  document.getElementById('customTextColor').style.display=mode==='custom'?'inline-block':'none';
+}
+document.getElementById('customTextColor').addEventListener('input',e=>{customTextColor=e.target.value;});
+function getCtaText(){return document.getElementById('ctaText').value.trim()||'Mehr erfahren →';}
 let userEmail='',pinsUsed=0,pinsLimit=500,isAdmin=false,userFeatures=['pinterest'];
 let currentPlatform='pinterest';
 
@@ -738,7 +762,7 @@ function renderPin(canvas,pin,W,H,autoImg=null){
   const stops=currentGradient.s;
   const isOverlay=pinLayout==='overlay';
   const dark=lum(stops[0])<128;
-  const tc=pin.textColorOverride||(isOverlay?'#FFFFFF':dark?'#F5F0E8':'#1A1917');
+  const tc=textColorMode==='custom'?customTextColor:(isOverlay?'#FFFFFF':dark?'#F5F0E8':'#1A1917');
   const sc=isOverlay?'rgba(255,255,255,.75)':dark?'#C4B49A':'#6B6862';
   const ac=dark?'#C9A96E':'#2C2C2A';
   const isSquare=W===H;
@@ -869,7 +893,7 @@ function renderPin(canvas,pin,W,H,autoImg=null){
   ctx.fillStyle=dark?'#1A1917':'#FFFFFF';
   ctx.font=`bold ${ctaFS}px Arial,sans-serif`;
   ctx.textAlign='center';
-  ctx.fillText(pin.cta||'Mehr erfahren →',W/2,btnY+btnH*0.62);
+  ctx.fillText(pin.ctaOverride||getCtaText()||pin.cta||'Mehr erfahren →',W/2,btnY+btnH*0.62);
 }
 
 
@@ -880,7 +904,7 @@ function renderCarouselSlide(canvas,slide,W,H,bgImg){
   const sc2=W/800;
   const stops=currentGradient.s;
   const dark=lum(stops[0])<128;
-  const tc=slide.textColorOverride||(dark?'#F5F0E8':'#1A1917');
+  const tc=textColorMode==='custom'?customTextColor:(dark?'#F5F0E8':'#1A1917');
   const sc=dark?'#B4A48A':'#6B6862';
   const ac=dark?'#C9A96E':'#2C2C2A';
   const gr=ctx.createLinearGradient(0,0,W,H);
@@ -904,7 +928,7 @@ function renderCarouselSlide(canvas,slide,W,H,bgImg){
     const tl=wrap(slide.title,20);tl.slice(0,2).forEach((l,i)=>ctx.fillText(l,W/2,H*0.48+i*80*sc2));
     if(slide.subtitle){ctx.fillStyle=sc;ctx.font=`${38*sc2}px Arial,sans-serif`;const sl=wrap(slide.subtitle,30);sl.slice(0,2).forEach((l,i)=>ctx.fillText(l,W/2,H*0.62+i*52*sc2));}
     const ctaBg=dark?'#C9A96E':'#1A1917';ctx.fillStyle=ctaBg;rr(ctx,W*0.1,H*0.76,W*0.8,H*0.1,20*sc2);ctx.fill();
-    ctx.fillStyle=dark?'#1A1917':'#FFFFFF';ctx.font=`bold ${36*sc2}px Arial,sans-serif`;ctx.textAlign='center';ctx.fillText('Jetzt starten →',W/2,H*0.83);
+    ctx.fillStyle=dark?'#1A1917':'#FFFFFF';ctx.font=`bold ${36*sc2}px Arial,sans-serif`;ctx.textAlign='center';ctx.fillText(slide.ctaOverride||getCtaText()||'Jetzt starten →',W/2,H*0.83);
   } else {
     ctx.font=`${110*sc2}px serif`;ctx.textAlign='left';ctx.fillText(slide.emoji||'✦',W*0.1,H*0.22);
     ctx.strokeStyle=ac+'66';ctx.lineWidth=4*sc2;ctx.beginPath();ctx.moveTo(W*0.1,H*0.28);ctx.lineTo(W*0.9,H*0.28);ctx.stroke();
@@ -1298,22 +1322,23 @@ let _editingMode='pin'; // 'pin' | 'carousel' | 'pkgpin' | 'pkgcarousel'
 function openPinEditor(i,mode){
   _editingPinIndex=i;
   _editingMode=mode||'pin';
-  let titleVal='',subtitleVal='',colorVal='';
+  let titleVal='',subtitleVal='',colorVal='',ctaVal='';
   if(_editingMode==='carousel'){
     const obj=generatedPins[i];
-    titleVal=obj.title||'';subtitleVal=obj.subtitle||obj.description||'';colorVal=obj.textColorOverride||'';
+    titleVal=obj.title||'';subtitleVal=obj.subtitle||obj.description||'';colorVal=obj.textColorOverride||'';ctaVal=obj.ctaOverride||'';
   } else if(_editingMode==='pin'){
     const obj=generatedPins[i];
-    titleVal=obj.imageTitle||obj.title||'';subtitleVal=obj.imageSubtitle||'';colorVal=obj.textColorOverride||'';
+    titleVal=obj.imageTitle||obj.title||'';subtitleVal=obj.imageSubtitle||'';colorVal=obj.textColorOverride||'';ctaVal=obj.ctaOverride||obj.cta||'';
   } else if(_editingMode==='pkgpin'){
     const obj=window._pkgPins[i];
-    titleVal=obj.title||'';subtitleVal=obj.description||'';colorVal=obj.textColorOverride||'';
+    titleVal=obj.title||'';subtitleVal=obj.description||'';colorVal=obj.textColorOverride||'';ctaVal=obj.ctaOverride||'';
   } else if(_editingMode==='pkgcarousel'){
     const obj=window._pkgCarousel.slides[i];
-    titleVal=obj.title||'';subtitleVal=obj.subtitle||'';colorVal=obj.textColorOverride||'';
+    titleVal=obj.title||'';subtitleVal=obj.subtitle||'';colorVal=obj.textColorOverride||'';ctaVal=obj.ctaOverride||'';
   }
   document.getElementById('editTitle').value=titleVal;
   document.getElementById('editSubtitle').value=subtitleVal;
+  document.getElementById('editCta').value=ctaVal;
   const stops=currentGradient.s;const dark=lum(stops[0])<128;
   const defaultColor=dark?'#F5F0E8':'#1A1917';
   document.getElementById('editColor').value=colorVal||defaultColor;
@@ -1330,21 +1355,26 @@ async function savePinEdit(){
   const newTitle=document.getElementById('editTitle').value;
   const newSubtitle=document.getElementById('editSubtitle').value;
   const newColor=document.getElementById('editColor').value;
+  const newCta=document.getElementById('editCta').value.trim();
 
   if(_editingMode==='pin'){
     const p=generatedPins[i];
     p.imageTitle=newTitle;p.title=newTitle;
     p.imageSubtitle=newSubtitle;
     p.textColorOverride=newColor;
+    p.ctaOverride=newCta;
     document.getElementById(`pt${i}`).textContent=p.title;
     const dims={pinterest:{w:800,h:1200},instagram:{w:800,h:800},stories:{w:600,h:1066},carousel:{w:800,h:800}};
     const dim=dims[currentPlatform]||{w:400,h:600};
+    const savedImgs=[...uploadedImages];
     const autoImg=uploadedImages[0]||await fetchAutoImage(p.imageQuery||topic,'portrait').catch(()=>null);
     renderPin(document.getElementById(`cv${i}`),p,dim.w,dim.h,autoImg);
+    uploadedImages.splice(0,uploadedImages.length,...savedImgs);
   } else if(_editingMode==='carousel'){
     const p=generatedPins[i];
     p.title=newTitle;p.subtitle=newSubtitle;p.description=newSubtitle;
     p.textColorOverride=newColor;
+    p.ctaOverride=newCta;
     document.getElementById(`pt${i}`).textContent=p.title;
     document.getElementById(`pd${i}`).textContent=p.subtitle||'';
     const autoImg=uploadedImages[0]?null:await fetchAutoImage(topic,'squarish').catch(()=>null);
@@ -1354,30 +1384,34 @@ async function savePinEdit(){
     p.title=newTitle;
     p.description=newSubtitle;
     p.textColorOverride=newColor;
-    const el=document.getElementById(`pkgpintitle${i}`);if(el)el.textContent=p.title;
+    p.ctaOverride=newCta;
+    const elT=document.getElementById(`pkgpintitle${i}`);if(elT)elT.textContent=p.title;
+    const elD=document.getElementById(`pkgpindesc${i}`);if(elD)elD.textContent=p.description;
     const canvas=document.getElementById(`pkgpin${i}`);
     if(canvas){
       const savedImgs=[...uploadedImages];uploadedImages.fill(null);
       const autoImg=await fetchAutoImage(topic,'portrait').catch(()=>null);
-      renderPin(canvas,{imageTitle:newTitle.substring(0,40),imageSubtitle:newSubtitle.substring(0,60),cta:'Mehr erfahren',tags:p.tags||[],textColorOverride:newColor},800,1200,autoImg);
-      uploadedImages.splice(0,savedImgs.length,...savedImgs);
+      renderPin(canvas,{imageTitle:newTitle.substring(0,40),imageSubtitle:newSubtitle.substring(0,60),cta:newCta,tags:p.tags||[],textColorOverride:newColor},800,1200,autoImg);
+      uploadedImages.splice(0,uploadedImages.length,...savedImgs);
     }
   } else if(_editingMode==='pkgcarousel'){
     const sl=window._pkgCarousel.slides[i];
     sl.title=newTitle;sl.subtitle=newSubtitle;
     sl.textColorOverride=newColor;
+    sl.ctaOverride=newCta;
     const elT=document.getElementById(`pkgcartitle${i}`);if(elT)elT.textContent=newTitle;
     const elD=document.getElementById(`pkgcardesc${i}`);if(elD)elD.textContent=newSubtitle;
     const canvas=document.getElementById(`pkgcar${i}`);
     if(canvas){
       const savedImgs=[...uploadedImages];uploadedImages.fill(null);
       const autoImg=await fetchAutoImage(topic,'squarish').catch(()=>null);
-      renderPin(canvas,{imageTitle:newTitle,imageSubtitle:newSubtitle,cta:'',tags:[],textColorOverride:newColor},800,800,autoImg);
-      uploadedImages.splice(0,savedImgs.length,...savedImgs);
+      renderPin(canvas,{imageTitle:newTitle,imageSubtitle:newSubtitle,cta:newCta,tags:[],textColorOverride:newColor},800,800,autoImg);
+      uploadedImages.splice(0,uploadedImages.length,...savedImgs);
     }
   }
   closePinEditor();
 }
+
 function copyAll(){const text=generatedPins.map((p,i)=>`── Post ${i+1} ──\n${p.title}\n\n${p.description}\n\n${(p.tags||[]).map(t=>'#'+t).join(' ')}`).join('\n\n');navigator.clipboard.writeText(text).then(()=>{const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';b.style.background='var(--green-bg)';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle Texte';b.style.background='';b.style.color='';},2500);});}
 function copyQuickReel(i){
   const s=generatedPins[i];
@@ -1658,13 +1692,36 @@ async function analyzeViral(){
   btn.disabled=true;btn.innerHTML='<i class="ti ti-refresh ti-spin"></i> Analysiere…';
   
   const platNames={pinterest:'Pinterest Pin',instagram:'Instagram Post',reels:'Instagram Reel'};
-  const prompt='Du bist Social Media Experte. Analysiere diesen '+platNames[viralPlatform]+' Text. Text: "'+text+'" NUR JSON: {"score":7,"label":"Gut","farbe":"#F59E0B","staerken":["s1","s2","s3"],"schwaechen":["s1","s2"],"verbesserung":"Verbesserte Version","hook_score":8,"seo_score":6,"emotion_score":7,"erklaerung":"2-3 Saetze"}'
+  const prompt='Du bist Social Media Experte. Analysiere diesen '+platNames[viralPlatform]+' Text. Text: "'+text+'" NUR JSON ohne Markdown, ohne Erklaerung: {"score":7,"label":"Gut","farbe":"#F59E0B","staerken":["s1","s2","s3"],"schwaechen":["s1","s2"],"verbesserung":"Verbesserte Version","hook_score":8,"seo_score":6,"emotion_score":7,"erklaerung":"2-3 Saetze"}'
   
   try{
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const controller=new AbortController();
+    const timeoutId=setTimeout(()=>controller.abort(),30000);
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1000,messages:[{role:'user',content:prompt}]}),signal:controller.signal});
+    clearTimeout(timeoutId);
     const d=await r.json();
-    const raw=d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim();
-    const result=JSON.parse(raw);
+    if(d.error)throw new Error(d.error.message||'API Fehler');
+    let raw=d.content.map(i=>i.text||'').join('');
+    raw=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+    const jsonStart=raw.indexOf('{');
+    const jsonEnd=raw.lastIndexOf('}');
+    if(jsonStart>=0&&jsonEnd>jsonStart)raw=raw.substring(jsonStart,jsonEnd+1);
+    let result;
+    try{result=JSON.parse(raw);}
+    catch(e){
+      const fix=raw.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F]/g,' ').replace(/,\s*([\]}])/g,'$1');
+      result=JSON.parse(fix);
+    }
+    // Ensure required fields exist with fallbacks
+    result.score=result.score||5;
+    result.label=result.label||'Durchschnitt';
+    result.staerken=result.staerken||[];
+    result.schwaechen=result.schwaechen||[];
+    result.verbesserung=result.verbesserung||text;
+    result.hook_score=result.hook_score||5;
+    result.seo_score=result.seo_score||5;
+    result.emotion_score=result.emotion_score||5;
+    result.erklaerung=result.erklaerung||'';
     
     const scoreColor=result.score>=8?'#2D7A3A':result.score>=6?'#F59E0B':'#E7232D';
     window._viralResult=result;
@@ -1700,7 +1757,8 @@ async function analyzeViral(){
         </div>
       </div>`;
   }catch(e){
-    document.getElementById('viralResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${e.message}</div>`;
+    const msg=e.name==='AbortError'?'Zeitüberschreitung. Bitte erneut versuchen.':(e.message||'Unbekannter Fehler');
+    document.getElementById('viralResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${msg}</div>`;
   }
   btn.disabled=false;btn.innerHTML='<i class="ti ti-flame"></i> Erneut analysieren';
 }
@@ -1974,7 +2032,7 @@ function generatePackage(){
       ch+='<div class="pin-num">Slide '+(sl.nr||ci+1)+'</div>';
       ch+='<div class="pin-title" id="pkgcartitle'+ci+'">'+(sl.title||'')+'</div>';
       ch+='<div class="pin-desc" id="pkgcardesc'+ci+'">'+(sl.subtitle||'')+'</div>';
-      ch+='<div class="pin-actions"><button class="act-btn" onclick="openPinEditor('+ci+',\'pkgcarousel\')"><i class="ti ti-edit"></i> Bearbeiten</button></div>';
+      
       ch+='</div>';
       ch+='<button onclick="dlPkgCar('+ci+')" style="width:100%;padding:8px;background:var(--s2);border:0.5px solid var(--border);border-top:none;color:var(--text2);font-family:inherit;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px"><i class="ti ti-download"></i> Bild herunterladen</button>';
       ch+='</div>';
@@ -1993,7 +2051,7 @@ function generatePackage(){
       ph+='<div class="pin-desc">'+(p.description||'')+'</div>';
       var tg=(p.tags||[]).map(function(t){return '<span class="tag">#'+t+'</span>';}).join('');
       ph+='<div class="pin-tags">'+tg+'</div>';
-      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="openPinEditor('+i+',\'pkgpin\')"><i class="ti ti-edit"></i> Bearbeiten</button></div>';
+      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button></div>';
       ph+='</div></div>';
     });
     ph+='</div></div>';
@@ -2101,7 +2159,7 @@ function generatePackage(){
     h+=ch;
     var ph='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div class="pins-grid">';
     pinsArr.forEach((p,i)=>{
-      ph+='<div class="pin-card"><div class="pin-image-area ratio-23"><canvas id="pkgpin'+i+'"></canvas></div><div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div><div class="pin-title" id="pkgpintitle'+i+'">'+(p.title||'')+'</div><div class="pin-desc">'+(p.description||'')+'</div>';
+      ph+='<div class="pin-card"><div class="pin-image-area ratio-23"><canvas id="pkgpin'+i+'"></canvas></div><div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div><div class="pin-title" id="pkgpintitle'+i+'">'+(p.title||'')+'</div><div class="pin-desc" id="pkgpindesc'+i+'">'+(p.description||'')+'</div>';
       ph+='<div class="pin-tags">'+(p.tags||[]).map(t=>'<span class="tag">#'+t+'</span>').join('')+'</div>';
       ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="openPinEditor('+i+',\'pkgpin\')"><i class="ti ti-edit"></i> Bearbeiten</button></div></div></div>';
     });
@@ -2130,7 +2188,7 @@ function generatePackage(){
           uploadedImages.fill(null);
           var shortTitle=(p.title||'').substring(0,40);
           var shortDesc=(p.description||'').substring(0,60);
-          renderPin(cv,{imageTitle:shortTitle,imageSubtitle:shortDesc,cta:'Mehr erfahren',tags:p.tags||[],textColorOverride:p.textColorOverride},800,1200,pinImgs[i]);
+          renderPin(cv,{imageTitle:shortTitle,imageSubtitle:shortDesc,tags:p.tags||[]},800,1200,pinImgs[i]);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
         var dlb=document.getElementById('pkgpindl'+i);
@@ -2144,7 +2202,7 @@ function generatePackage(){
         if(cv){
           var savedImgs=[...uploadedImages];
           uploadedImages.fill(null);
-          renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[],textColorOverride:sl.textColorOverride},800,800,autoImgSq);
+          renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,autoImgSq);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
         // Wire download button
@@ -2174,6 +2232,8 @@ function copyPkgPin(i){if(!window._pkgData)return;var p=window._pkgData.pins[i];
     <input type="text" id="editTitle" style="margin-bottom:10px">
     <label class="lbl">Untertitel</label>
     <input type="text" id="editSubtitle" style="margin-bottom:10px">
+    <label class="lbl">Button-/Link-Text</label>
+    <input type="text" id="editCta" placeholder="Mehr erfahren →" maxlength="30" style="margin-bottom:10px">
     <label class="lbl">Textfarbe</label>
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px">
       <input type="color" id="editColor" style="width:44px;height:36px;padding:2px;cursor:pointer">
