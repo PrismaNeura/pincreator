@@ -738,7 +738,7 @@ function renderPin(canvas,pin,W,H,autoImg=null){
   const stops=currentGradient.s;
   const isOverlay=pinLayout==='overlay';
   const dark=lum(stops[0])<128;
-  const tc=isOverlay?'#FFFFFF':dark?'#F5F0E8':'#1A1917';
+  const tc=pin.textColorOverride||(isOverlay?'#FFFFFF':dark?'#F5F0E8':'#1A1917');
   const sc=isOverlay?'rgba(255,255,255,.75)':dark?'#C4B49A':'#6B6862';
   const ac=dark?'#C9A96E':'#2C2C2A';
   const isSquare=W===H;
@@ -880,7 +880,7 @@ function renderCarouselSlide(canvas,slide,W,H,bgImg){
   const sc2=W/800;
   const stops=currentGradient.s;
   const dark=lum(stops[0])<128;
-  const tc=dark?'#F5F0E8':'#1A1917';
+  const tc=slide.textColorOverride||(dark?'#F5F0E8':'#1A1917');
   const sc=dark?'#B4A48A':'#6B6862';
   const ac=dark?'#C9A96E':'#2C2C2A';
   const gr=ctx.createLinearGradient(0,0,W,H);
@@ -1253,7 +1253,7 @@ ONLY JSON:
       let html=`<div class="pins-header"><h2>Karussell: ${carousel.topic}</h2><div style="display:flex;gap:8px"><button class="copy-all-btn" onclick="copyCaption()"><i class="ti ti-copy"></i> Caption kopieren</button><button class="dl-all-btn" onclick="dlAll()"><i class="ti ti-download"></i> Alle Slides</button></div></div>`;
       html+=`<div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:1rem;"><div class="lbl" style="margin-bottom:6px">Caption + Hashtags</div><div style="font-size:13px;color:var(--text2);line-height:1.65;white-space:pre-line;margin-bottom:8px">${carousel.caption}</div><div class="pin-tags">${carousel.hashtags.map(t=>`<span class="tag">#${t}</span>`).join('')}</div></div>`;
       html+=`<div class="pins-grid">`;
-      carousel.slides.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">Slide ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div></div></div>`);
+      carousel.slides.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">Slide ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div><div class="pin-actions"><button class="act-btn" onclick="openPinEditor(${i},'carousel')"><i class="ti ti-edit"></i> Bearbeiten</button><button class="act-btn" onclick="dlPin(${i})"><i class="ti ti-download"></i> Bild</button></div></div></div>`);
       html+=`</div>`;
       document.getElementById('resultArea').innerHTML=html;
 
@@ -1274,7 +1274,7 @@ ONLY JSON:
     const dims={pinterest:{w:800,h:1200},instagram:{w:800,h:800},stories:{w:600,h:1066},carousel:{w:800,h:800}};
       const dim=dims[currentPlatform]||{w:400,h:600};
       let html=`<div class="pins-header"><h2>${generatedPins.length} ${cfg.label}${generatedPins.length>1?'s':''}</h2><div style="display:flex;gap:8px"><button class="copy-all-btn" onclick="copyAll()"><i class="ti ti-copy"></i> Alle Texte</button><button class="dl-all-btn" onclick="dlAll()"><i class="ti ti-download"></i> Alle Bilder</button></div></div><div class="pins-grid">`;
-      generatedPins.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area ${cfg.ratioClass}"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">${cfg.label} ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div><div class="pin-tags" id="pg${i}"></div><div class="seo-row" id="ps${i}"></div><div class="pin-actions"><button class="act-btn" id="ab${i}" onclick="copyPin(${i})"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="dlPin(${i})"><i class="ti ti-download"></i> Bild</button></div></div></div>`);
+      generatedPins.forEach((_,i)=>html+=`<div class="pin-card"><div class="pin-image-area ${cfg.ratioClass}"><canvas id="cv${i}"></canvas></div><div class="pin-body"><div class="pin-num">${cfg.label} ${i+1}</div><div class="pin-title" id="pt${i}"></div><div class="pin-desc" id="pd${i}"></div><div class="pin-tags" id="pg${i}"></div><div class="seo-row" id="ps${i}"></div><div class="pin-actions"><button class="act-btn" id="ab${i}" onclick="copyPin(${i})"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="openPinEditor(${i},'pin')"><i class="ti ti-edit"></i> Bearbeiten</button><button class="act-btn" onclick="dlPin(${i})"><i class="ti ti-download"></i> Bild</button></div></div></div>`);
       html+='</div>';document.getElementById('resultArea').innerHTML=html;
       for(let i=0;i<generatedPins.length;i++){
         const p=generatedPins[i];
@@ -1292,6 +1292,92 @@ ONLY JSON:
 }
 
 function copyPin(i){const p=generatedPins[i];navigator.clipboard.writeText(`📌 ${p.title}\n\n${p.description}\n\n${(p.tags||[]).map(t=>'#'+t).join(' ')}\n\nSEO: ${p.seoKeywords}`).then(()=>{const b=document.getElementById(`ab${i}`);b.classList.add('ok');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<i class="ti ti-copy"></i> Text';},2500);});}
+
+let _editingPinIndex=null;
+let _editingMode='pin'; // 'pin' | 'carousel' | 'pkgpin' | 'pkgcarousel'
+function openPinEditor(i,mode){
+  _editingPinIndex=i;
+  _editingMode=mode||'pin';
+  let titleVal='',subtitleVal='',colorVal='';
+  if(_editingMode==='carousel'){
+    const obj=generatedPins[i];
+    titleVal=obj.title||'';subtitleVal=obj.subtitle||obj.description||'';colorVal=obj.textColorOverride||'';
+  } else if(_editingMode==='pin'){
+    const obj=generatedPins[i];
+    titleVal=obj.imageTitle||obj.title||'';subtitleVal=obj.imageSubtitle||'';colorVal=obj.textColorOverride||'';
+  } else if(_editingMode==='pkgpin'){
+    const obj=window._pkgPins[i];
+    titleVal=obj.title||'';subtitleVal=obj.description||'';colorVal=obj.textColorOverride||'';
+  } else if(_editingMode==='pkgcarousel'){
+    const obj=window._pkgCarousel.slides[i];
+    titleVal=obj.title||'';subtitleVal=obj.subtitle||'';colorVal=obj.textColorOverride||'';
+  }
+  document.getElementById('editTitle').value=titleVal;
+  document.getElementById('editSubtitle').value=subtitleVal;
+  const stops=currentGradient.s;const dark=lum(stops[0])<128;
+  const defaultColor=dark?'#F5F0E8':'#1A1917';
+  document.getElementById('editColor').value=colorVal||defaultColor;
+  document.getElementById('pinEditorModal').style.display='flex';
+}
+function closePinEditor(){document.getElementById('pinEditorModal').style.display='none';_editingPinIndex=null;}
+function resetPinColor(){
+  const stops=currentGradient.s;const dark=lum(stops[0])<128;
+  document.getElementById('editColor').value=dark?'#F5F0E8':'#1A1917';
+}
+async function savePinEdit(){
+  if(_editingPinIndex===null)return;
+  const i=_editingPinIndex;
+  const newTitle=document.getElementById('editTitle').value;
+  const newSubtitle=document.getElementById('editSubtitle').value;
+  const newColor=document.getElementById('editColor').value;
+
+  if(_editingMode==='pin'){
+    const p=generatedPins[i];
+    p.imageTitle=newTitle;p.title=newTitle;
+    p.imageSubtitle=newSubtitle;
+    p.textColorOverride=newColor;
+    document.getElementById(`pt${i}`).textContent=p.title;
+    const dims={pinterest:{w:800,h:1200},instagram:{w:800,h:800},stories:{w:600,h:1066},carousel:{w:800,h:800}};
+    const dim=dims[currentPlatform]||{w:400,h:600};
+    const autoImg=uploadedImages[0]||await fetchAutoImage(p.imageQuery||topic,'portrait').catch(()=>null);
+    renderPin(document.getElementById(`cv${i}`),p,dim.w,dim.h,autoImg);
+  } else if(_editingMode==='carousel'){
+    const p=generatedPins[i];
+    p.title=newTitle;p.subtitle=newSubtitle;p.description=newSubtitle;
+    p.textColorOverride=newColor;
+    document.getElementById(`pt${i}`).textContent=p.title;
+    document.getElementById(`pd${i}`).textContent=p.subtitle||'';
+    const autoImg=uploadedImages[0]?null:await fetchAutoImage(topic,'squarish').catch(()=>null);
+    renderCarouselSlide(document.getElementById(`cv${i}`),p,400,400,autoImg&&p.slideNum===1?autoImg:null);
+  } else if(_editingMode==='pkgpin'){
+    const p=window._pkgPins[i];
+    p.title=newTitle;
+    p.description=newSubtitle;
+    p.textColorOverride=newColor;
+    const el=document.getElementById(`pkgpintitle${i}`);if(el)el.textContent=p.title;
+    const canvas=document.getElementById(`pkgpin${i}`);
+    if(canvas){
+      const savedImgs=[...uploadedImages];uploadedImages.fill(null);
+      const autoImg=await fetchAutoImage(topic,'portrait').catch(()=>null);
+      renderPin(canvas,{imageTitle:newTitle.substring(0,40),imageSubtitle:newSubtitle.substring(0,60),cta:'Mehr erfahren',tags:p.tags||[],textColorOverride:newColor},800,1200,autoImg);
+      uploadedImages.splice(0,savedImgs.length,...savedImgs);
+    }
+  } else if(_editingMode==='pkgcarousel'){
+    const sl=window._pkgCarousel.slides[i];
+    sl.title=newTitle;sl.subtitle=newSubtitle;
+    sl.textColorOverride=newColor;
+    const elT=document.getElementById(`pkgcartitle${i}`);if(elT)elT.textContent=newTitle;
+    const elD=document.getElementById(`pkgcardesc${i}`);if(elD)elD.textContent=newSubtitle;
+    const canvas=document.getElementById(`pkgcar${i}`);
+    if(canvas){
+      const savedImgs=[...uploadedImages];uploadedImages.fill(null);
+      const autoImg=await fetchAutoImage(topic,'squarish').catch(()=>null);
+      renderPin(canvas,{imageTitle:newTitle,imageSubtitle:newSubtitle,cta:'',tags:[],textColorOverride:newColor},800,800,autoImg);
+      uploadedImages.splice(0,savedImgs.length,...savedImgs);
+    }
+  }
+  closePinEditor();
+}
 function copyAll(){const text=generatedPins.map((p,i)=>`── Post ${i+1} ──\n${p.title}\n\n${p.description}\n\n${(p.tags||[]).map(t=>'#'+t).join(' ')}`).join('\n\n');navigator.clipboard.writeText(text).then(()=>{const b=document.querySelector('.copy-all-btn');b.innerHTML='<i class="ti ti-check"></i> Kopiert!';b.style.background='var(--green-bg)';b.style.color='var(--green)';setTimeout(()=>{b.innerHTML='<i class="ti ti-copy"></i> Alle Texte';b.style.background='';b.style.color='';},2500);});}
 function copyQuickReel(i){
   const s=generatedPins[i];
@@ -1830,6 +1916,8 @@ function generatePackage(){
   .then(function(res){
     var reel=res[0],story=res[1],carousel=res[2],pins=res[3];
     var pinsArr=Array.isArray(pins)?pins:[pins];
+    window._pkgPins=pinsArr;
+    window._pkgCarousel=carousel;
     var label=pkgReelsMode==='quick'?'Quick Reel':'Canva Reel';
     var h='<div style="background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden">';
     h+='<div style="padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:14px;font-weight:700">Content Paket: '+topic+'</div><div style="font-size:11px;color:var(--text3)">'+label+' + Story + Karussell + 5 Pins</div></div>';
@@ -1884,8 +1972,9 @@ function generatePackage(){
       ch+='<div class="pin-image-area ratio-11"><canvas id="pkgcar'+ci+'"></canvas></div>';
       ch+='<div class="pin-body">';
       ch+='<div class="pin-num">Slide '+(sl.nr||ci+1)+'</div>';
-      ch+='<div class="pin-title">'+(sl.title||'')+'</div>';
-      ch+='<div class="pin-desc">'+(sl.subtitle||'')+'</div>';
+      ch+='<div class="pin-title" id="pkgcartitle'+ci+'">'+(sl.title||'')+'</div>';
+      ch+='<div class="pin-desc" id="pkgcardesc'+ci+'">'+(sl.subtitle||'')+'</div>';
+      ch+='<div class="pin-actions"><button class="act-btn" onclick="openPinEditor('+ci+',\'pkgcarousel\')"><i class="ti ti-edit"></i> Bearbeiten</button></div>';
       ch+='</div>';
       ch+='<button onclick="dlPkgCar('+ci+')" style="width:100%;padding:8px;background:var(--s2);border:0.5px solid var(--border);border-top:none;color:var(--text2);font-family:inherit;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px"><i class="ti ti-download"></i> Bild herunterladen</button>';
       ch+='</div>';
@@ -1900,11 +1989,11 @@ function generatePackage(){
     pinsArr.forEach(function(p,i){
       ph+='<div class="pin-card"><div class="pin-image-area ratio-23"><canvas id="pkgpin'+i+'"></canvas></div>';
       ph+='<div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div>';
-      ph+='<div class="pin-title">'+(p.title||'')+'</div>';
+      ph+='<div class="pin-title" id="pkgpintitle'+i+'">'+(p.title||'')+'</div>';
       ph+='<div class="pin-desc">'+(p.description||'')+'</div>';
       var tg=(p.tags||[]).map(function(t){return '<span class="tag">#'+t+'</span>';}).join('');
       ph+='<div class="pin-tags">'+tg+'</div>';
-      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button></div>';
+      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="openPinEditor('+i+',\'pkgpin\')"><i class="ti ti-edit"></i> Bearbeiten</button></div>';
       ph+='</div></div>';
     });
     ph+='</div></div>';
@@ -2007,19 +2096,21 @@ function generatePackage(){
     sh+='<div style="font-size:12px;margin-top:8px">'+(story.caption||'')+'</div><button onclick="copyPkgStory()" style="margin-top:8px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button></div></div>';
     h+=sh;
     var ch='<div class="pkg-panel" id="pkg-carousel" style="padding:1rem"><div class="pins-grid">';
-    (carousel.slides||[]).forEach((sl,ci)=>{ch+='<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="pkgcar'+ci+'"></canvas></div><div class="pin-body"><div class="pin-num">Slide '+(sl.nr||ci+1)+'</div><div class="pin-title">'+(sl.title||'')+'</div><div class="pin-desc">'+(sl.subtitle||'')+'</div></div><button onclick="dlPkgCar('+ci+')" style="width:100%;padding:8px;background:var(--s2);border:0.5px solid var(--border);border-top:none;color:var(--text2);font-family:inherit;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px"><i class="ti ti-download"></i> Bild herunterladen</button></div>';});
+    (carousel.slides||[]).forEach((sl,ci)=>{ch+='<div class="pin-card"><div class="pin-image-area ratio-11"><canvas id="pkgcar'+ci+'"></canvas></div><div class="pin-body"><div class="pin-num">Slide '+(sl.nr||ci+1)+'</div><div class="pin-title" id="pkgcartitle'+ci+'">'+(sl.title||'')+'</div><div class="pin-desc" id="pkgcardesc'+ci+'">'+(sl.subtitle||'')+'</div><div class="pin-actions"><button class="act-btn" onclick="openPinEditor('+ci+',\'pkgcarousel\')"><i class="ti ti-edit"></i> Bearbeiten</button></div></div><button onclick="dlPkgCar('+ci+')" style="width:100%;padding:8px;background:var(--s2);border:0.5px solid var(--border);border-top:none;color:var(--text2);font-family:inherit;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px"><i class="ti ti-download"></i> Bild herunterladen</button></div>';});
     ch+='<div style="padding:12px;font-size:12px;color:var(--text2)">'+(carousel.caption||'')+'</div><button onclick="copyPkgCarousel()" style="margin:0 12px 12px;padding:6px 14px;background:transparent;border:1px solid var(--border);border-radius:20px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer">Caption kopieren</button></div></div>';
     h+=ch;
     var ph='<div class="pkg-panel" id="pkg-pins" style="padding:1rem"><div class="pins-grid">';
     pinsArr.forEach((p,i)=>{
-      ph+='<div class="pin-card"><div class="pin-image-area ratio-23"><canvas id="pkgpin'+i+'"></canvas></div><div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div><div class="pin-title">'+(p.title||'')+'</div><div class="pin-desc">'+(p.description||'')+'</div>';
+      ph+='<div class="pin-card"><div class="pin-image-area ratio-23"><canvas id="pkgpin'+i+'"></canvas></div><div class="pin-body"><div class="pin-num">Pin '+(i+1)+'</div><div class="pin-title" id="pkgpintitle'+i+'">'+(p.title||'')+'</div><div class="pin-desc">'+(p.description||'')+'</div>';
       ph+='<div class="pin-tags">'+(p.tags||[]).map(t=>'<span class="tag">#'+t+'</span>').join('')+'</div>';
-      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button></div></div></div>';
+      ph+='<div class="pin-actions"><button class="act-btn" id="pkgpindl'+i+'"><i class="ti ti-download"></i> Bild</button><button class="act-btn" id="pkgpincp'+i+'"><i class="ti ti-copy"></i> Text</button><button class="act-btn" onclick="openPinEditor('+i+',\'pkgpin\')"><i class="ti ti-edit"></i> Bearbeiten</button></div></div></div>';
     });
     ph+='</div></div>';
     h+=ph+'</div>';
     resultArea.innerHTML=h;
     window._pkgData={reel,story,carousel,pins:pinsArr,reelMode:pkgReelsMode};
+    window._pkgPins=pinsArr;
+    window._pkgCarousel=carousel;
     setTimeout(async ()=>{
       // Apply first gradient if none selected
       if(!currentGradient||!currentGradient.s)currentGradient=GRADIENTS[1];
@@ -2039,7 +2130,7 @@ function generatePackage(){
           uploadedImages.fill(null);
           var shortTitle=(p.title||'').substring(0,40);
           var shortDesc=(p.description||'').substring(0,60);
-          renderPin(cv,{imageTitle:shortTitle,imageSubtitle:shortDesc,cta:'Mehr erfahren',tags:p.tags||[]},800,1200,pinImgs[i]);
+          renderPin(cv,{imageTitle:shortTitle,imageSubtitle:shortDesc,cta:'Mehr erfahren',tags:p.tags||[],textColorOverride:p.textColorOverride},800,1200,pinImgs[i]);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
         var dlb=document.getElementById('pkgpindl'+i);
@@ -2053,7 +2144,7 @@ function generatePackage(){
         if(cv){
           var savedImgs=[...uploadedImages];
           uploadedImages.fill(null);
-          renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,autoImgSq);
+          renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[],textColorOverride:sl.textColorOverride},800,800,autoImgSq);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
         // Wire download button
@@ -2075,6 +2166,25 @@ function copyPkgStory(){if(!window._pkgData)return;var s=window._pkgData.story;n
 function copyPkgPin(i){if(!window._pkgData)return;var p=window._pkgData.pins[i];if(!p)return;navigator.clipboard.writeText((p.title||'')+'\n\n'+(p.description||'')+'\n\n'+(p.tags||[]).map(t=>'#'+t).join(' ')).then(()=>{var b=document.getElementById('pkgpincp'+i);if(b){b.textContent='Kopiert!';setTimeout(()=>b.innerHTML='<i class="ti ti-copy"></i> Text',2000);}});}
 
 </script>
+
+<div id="pinEditorModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1.5rem;width:90%;max-width:400px;max-height:85vh;overflow-y:auto">
+    <h3 style="margin:0 0 14px;font-size:16px">Pin bearbeiten</h3>
+    <label class="lbl">Titel</label>
+    <input type="text" id="editTitle" style="margin-bottom:10px">
+    <label class="lbl">Untertitel</label>
+    <input type="text" id="editSubtitle" style="margin-bottom:10px">
+    <label class="lbl">Textfarbe</label>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px">
+      <input type="color" id="editColor" style="width:44px;height:36px;padding:2px;cursor:pointer">
+      <button class="act-btn" onclick="resetPinColor()" style="flex:1">Standardfarbe</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="act-btn" onclick="closePinEditor()" style="flex:1">Abbrechen</button>
+      <button class="auth-btn" onclick="savePinEdit()" style="flex:1;margin:0"><i class="ti ti-check"></i> Übernehmen</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
