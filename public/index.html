@@ -483,6 +483,7 @@ const GRADIENTS=[
 
 let currentGradient=GRADIENTS[0];
 let uploadedImages=[null,null,null],generatedPins=[];
+let _renderedImages={}; // cache of images used per canvas id, so editor doesn't fetch a new random image
 const multiLayout='single'; // Always single image per pin
 let lang='de',pinFont='sans',pinLayout='centered',pinPattern='none',pinBorder='none';
 let textColorMode='auto',customTextColor='#1A1917';
@@ -1289,7 +1290,9 @@ ONLY JSON:
         const slide=carousel.slides[i];
         document.getElementById(`pt${i}`).textContent=slide.title;
         document.getElementById(`pd${i}`).textContent=slide.subtitle||'';
-        renderCarouselSlide(document.getElementById(`cv${i}`),slide,400,400,autoImg&&slide.slideNum===1?autoImg:null);
+        const imgForSlide=autoImg&&slide.slideNum===1?autoImg:null;
+        _renderedImages[`cv${i}`]=imgForSlide;
+        renderCarouselSlide(document.getElementById(`cv${i}`),slide,400,400,imgForSlide);
       }
       btn.disabled=false;btn.innerHTML=`<i class="ti ti-refresh"></i> Neues Karussell`;
       return;
@@ -1308,6 +1311,7 @@ ONLY JSON:
         document.getElementById(`ps${i}`).innerHTML=`<i class="ti ti-tag" style="font-size:10px;margin-right:2px"></i>${p.seoKeywords}`;
         const autoImg=uploadedImages[0]||await fetchAutoImage(p.imageQuery||topic,cfg.orientation);
         const canvas=document.getElementById(`cv${i}`);
+        _renderedImages[`cv${i}`]=autoImg;
         renderPin(canvas,p,dim.w,dim.h,autoImg);
       }
     }
@@ -1366,10 +1370,8 @@ async function savePinEdit(){
     document.getElementById(`pt${i}`).textContent=p.title;
     const dims={pinterest:{w:800,h:1200},instagram:{w:800,h:800},stories:{w:600,h:1066},carousel:{w:800,h:800}};
     const dim=dims[currentPlatform]||{w:400,h:600};
-    const savedImgs=[...uploadedImages];
-    const autoImg=uploadedImages[0]||await fetchAutoImage(p.imageQuery||topic,'portrait').catch(()=>null);
-    renderPin(document.getElementById(`cv${i}`),p,dim.w,dim.h,autoImg);
-    uploadedImages.splice(0,uploadedImages.length,...savedImgs);
+    const cachedImg=_renderedImages[`cv${i}`]!==undefined?_renderedImages[`cv${i}`]:(uploadedImages[0]||null);
+    renderPin(document.getElementById(`cv${i}`),p,dim.w,dim.h,cachedImg);
   } else if(_editingMode==='carousel'){
     const p=generatedPins[i];
     p.title=newTitle;p.subtitle=newSubtitle;p.description=newSubtitle;
@@ -1377,8 +1379,8 @@ async function savePinEdit(){
     p.ctaOverride=newCta;
     document.getElementById(`pt${i}`).textContent=p.title;
     document.getElementById(`pd${i}`).textContent=p.subtitle||'';
-    const autoImg=uploadedImages[0]?null:await fetchAutoImage(topic,'squarish').catch(()=>null);
-    renderCarouselSlide(document.getElementById(`cv${i}`),p,400,400,autoImg&&p.slideNum===1?autoImg:null);
+    const cachedImg=_renderedImages[`cv${i}`]!==undefined?_renderedImages[`cv${i}`]:null;
+    renderCarouselSlide(document.getElementById(`cv${i}`),p,400,400,cachedImg);
   } else if(_editingMode==='pkgpin'){
     const p=window._pkgPins[i];
     p.title=newTitle;
@@ -1389,10 +1391,8 @@ async function savePinEdit(){
     const elD=document.getElementById(`pkgpindesc${i}`);if(elD)elD.textContent=p.description;
     const canvas=document.getElementById(`pkgpin${i}`);
     if(canvas){
-      const savedImgs=[...uploadedImages];uploadedImages.fill(null);
-      const autoImg=await fetchAutoImage(topic,'portrait').catch(()=>null);
-      renderPin(canvas,{imageTitle:newTitle.substring(0,40),imageSubtitle:newSubtitle.substring(0,60),cta:newCta,tags:p.tags||[],textColorOverride:newColor},800,1200,autoImg);
-      uploadedImages.splice(0,uploadedImages.length,...savedImgs);
+      const cachedImg=_renderedImages[`pkgpin${i}`]!==undefined?_renderedImages[`pkgpin${i}`]:null;
+      renderPin(canvas,{imageTitle:newTitle.substring(0,40),imageSubtitle:newSubtitle.substring(0,60),cta:newCta,tags:p.tags||[],textColorOverride:newColor},800,1200,cachedImg);
     }
   } else if(_editingMode==='pkgcarousel'){
     const sl=window._pkgCarousel.slides[i];
@@ -1403,10 +1403,8 @@ async function savePinEdit(){
     const elD=document.getElementById(`pkgcardesc${i}`);if(elD)elD.textContent=newSubtitle;
     const canvas=document.getElementById(`pkgcar${i}`);
     if(canvas){
-      const savedImgs=[...uploadedImages];uploadedImages.fill(null);
-      const autoImg=await fetchAutoImage(topic,'squarish').catch(()=>null);
-      renderPin(canvas,{imageTitle:newTitle,imageSubtitle:newSubtitle,cta:newCta,tags:[],textColorOverride:newColor},800,800,autoImg);
-      uploadedImages.splice(0,uploadedImages.length,...savedImgs);
+      const cachedImg=_renderedImages[`pkgcar${i}`]!==undefined?_renderedImages[`pkgcar${i}`]:null;
+      renderPin(canvas,{imageTitle:newTitle,imageSubtitle:newSubtitle,cta:newCta,tags:[],textColorOverride:newColor},800,800,cachedImg);
     }
   }
   closePinEditor();
@@ -2188,6 +2186,7 @@ function generatePackage(){
           uploadedImages.fill(null);
           var shortTitle=(p.title||'').substring(0,40);
           var shortDesc=(p.description||'').substring(0,60);
+          _renderedImages['pkgpin'+i]=pinImgs[i];
           renderPin(cv,{imageTitle:shortTitle,imageSubtitle:shortDesc,tags:p.tags||[]},800,1200,pinImgs[i]);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
@@ -2202,6 +2201,7 @@ function generatePackage(){
         if(cv){
           var savedImgs=[...uploadedImages];
           uploadedImages.fill(null);
+          _renderedImages['pkgcar'+ci]=autoImgSq;
           renderPin(cv,{imageTitle:sl.title||'',imageSubtitle:sl.subtitle||'',cta:'',tags:[]},800,800,autoImgSq);
           uploadedImages.splice(0,savedImgs.length,...savedImgs);
         }
