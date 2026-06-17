@@ -1251,7 +1251,10 @@ Create 6 slides that tell a story together:
 ONLY JSON:
 {"topic":"carousel topic","caption":"Instagram caption 3-5 sentences with emojis","hashtags":["tag1","tag2","tag3","tag4","tag5","tag6","tag7","tag8","tag9","tag10","tag11","tag12","tag13","tag14","tag15","tag16","tag17","tag18","tag19","tag20"],"slides":[{"slideNum":1,"type":"hook","title":"Short hook","subtitle":"","emoji":"emoji"},{"slideNum":2,"type":"point","title":"Short title","subtitle":"1-2 sentences","emoji":"emoji"},{"slideNum":3,"type":"point","title":"Short title","subtitle":"1-2 sentences","emoji":"emoji"},{"slideNum":4,"type":"point","title":"Short title","subtitle":"1-2 sentences","emoji":"emoji"},{"slideNum":5,"type":"point","title":"Short title","subtitle":"1-2 sentences","emoji":"emoji"},{"slideNum":6,"type":"cta","title":"Call to action","subtitle":"1 sentence","emoji":"emoji"}]}`;
 
-      const cr=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:2000,messages:[{role:'user',content:carouselPrompt}]})});
+      const carController=new AbortController();
+      const carTimeoutId=setTimeout(()=>carController.abort(),30000);
+      const cr=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:carouselPrompt}]}),signal:carController.signal});
+      clearTimeout(carTimeoutId);
       const cd=await cr.json();if(cd.error)throw new Error(cd.error.message||cd.error);
       let carousel;
       try{
@@ -1788,10 +1791,23 @@ async function generateCalendar(){
   const prompt='Du bist Social Media Stratege. Erstelle einen '+calPeriod+'-Tage Content-Kalender fuer '+platText[calPlat]+'. Nische: '+niche+' NUR JSON-Array mit '+calPeriod+' Eintraegen: [{"tag":1,"wochentag":"Montag","thema":"Konkretes Thema","format":"Pin/Reel/Karussell/Story/Feed","hook":"Hook (max 8 Woerter)","ziel":"Traffic/Sales/Engagement/Awareness","tipp":"Kurzer Tipp"}]';
   
   try{
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:3000,messages:[{role:'user',content:prompt}]})});
+    const controller=new AbortController();
+    const timeoutId=setTimeout(()=>controller.abort(),30000);
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:4000,messages:[{role:'user',content:prompt}]}),signal:controller.signal});
+    clearTimeout(timeoutId);
     const d=await r.json();
-    const raw=d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim();
-    const days=JSON.parse(raw);
+    if(d.error)throw new Error(d.error.message||'API Fehler');
+    let raw=d.content.map(i=>i.text||'').join('');
+    raw=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+    const jsonStart=raw.indexOf('[');
+    const jsonEnd=raw.lastIndexOf(']');
+    if(jsonStart>=0&&jsonEnd>jsonStart)raw=raw.substring(jsonStart,jsonEnd+1);
+    let days;
+    try{days=JSON.parse(raw);}
+    catch(e){
+      const fix=raw.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F]/g,' ').replace(/,\s*([\]}])/g,'$1');
+      days=JSON.parse(fix);
+    }
     
     const formatColors={Pin:'#E7232D',Reel:'#7C3AED',Karussell:'#0D9488',Story:'#F59E0B',Feed:'#2D7A3A'};
     const zielColors={Traffic:'#0D9488',Sales:'#E7232D',Engagement:'#7C3AED',Awareness:'#F59E0B'};
@@ -1827,7 +1843,8 @@ async function generateCalendar(){
     window._calendarData=days;
     document.getElementById('calendarResult').innerHTML=html;
   }catch(e){
-    document.getElementById('calendarResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${e.message}</div>`;
+    const msg=e.name==='AbortError'?'Zeitüberschreitung. Bitte erneut versuchen.':(e.message||'Unbekannter Fehler');
+    document.getElementById('calendarResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${msg}</div>`;
   }
   btn.disabled=false;btn.innerHTML='<i class="ti ti-calendar"></i> Neu generieren';
 }
@@ -1874,10 +1891,23 @@ async function generateHooks(){
     :'You are a hook expert. Create 10 hooks for '+platText[hookPlatform]+'. Topic: '+topic+' Style: '+styleText[hookStyle]+' English only. Max 10 words. ONLY JSON: [{"hook":"Text","stil":"Type","staerke":8,"erklaerung":"Why"}]');
   
   try{
-    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    const controller=new AbortController();
+    const timeoutId=setTimeout(()=>controller.abort(),30000);
+    const r=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,messages:[{role:'user',content:prompt}]}),signal:controller.signal});
+    clearTimeout(timeoutId);
     const d=await r.json();
-    const raw=d.content.map(i=>i.text||'').join('').replace(/^[\s\S]*?([[{])/,'$1').replace(/([\]\}])[\s\S]*$/,'$1').trim();
-    const hooks=JSON.parse(raw);
+    if(d.error)throw new Error(d.error.message||'API Fehler');
+    let raw=d.content.map(i=>i.text||'').join('');
+    raw=raw.replace(/^```json\s*/,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+    const jsonStart=raw.indexOf('[');
+    const jsonEnd=raw.lastIndexOf(']');
+    if(jsonStart>=0&&jsonEnd>jsonStart)raw=raw.substring(jsonStart,jsonEnd+1);
+    let hooks;
+    try{hooks=JSON.parse(raw);}
+    catch(e){
+      const fix=raw.replace(/[\x00-\x09\x0B\x0C\x0E-\x1F]/g,' ').replace(/,\s*([\]}])/g,'$1');
+      hooks=JSON.parse(fix);
+    }
     
     const stilColors={Frage:'#0D9488',Aussage:'#E7232D',Zahl:'#7C3AED',POV:'#F59E0B',Schmerz:'#DC2626',Neugier:'#2D7A3A'};
     
@@ -1899,7 +1929,8 @@ async function generateHooks(){
     html+='</div>';
     document.getElementById('hooksResult').innerHTML=html;
   }catch(e){
-    document.getElementById('hooksResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${e.message}</div>`;
+    const msg=e.name==='AbortError'?'Zeitüberschreitung. Bitte erneut versuchen.':(e.message||'Unbekannter Fehler');
+    document.getElementById('hooksResult').innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px;background:rgba(231,35,45,0.08);border-radius:8px">Fehler: ${msg}</div>`;
   }
   btn.disabled=false;btn.innerHTML='<i class="ti ti-bolt"></i> Neu generieren';
 }
