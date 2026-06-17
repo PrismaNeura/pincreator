@@ -414,6 +414,66 @@ input:focus,textarea:focus,select:focus{border-color:var(--border2);}
       </div>
     </div>
 
+    <div id="viralSection" style="display:none">
+      <div class="form-card">
+        <div class="section-label">Plattform</div>
+        <div class="tog-group" style="margin-bottom:16px">
+          <button class="tog active" data-viralplat="pinterest">Pinterest Pin</button>
+          <button class="tog" data-viralplat="instagram">Instagram Post</button>
+          <button class="tog" data-viralplat="reels">Instagram Reel</button>
+        </div>
+        <label class="lbl">Dein Text (Titel, Beschreibung oder Hook)</label>
+        <textarea id="viralInput" rows="4" placeholder="Füge hier deinen Pin-Titel, deine Beschreibung oder deinen Hook ein…" style="width:100%;resize:vertical;font-family:inherit;font-size:14px;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);margin-bottom:14px"></textarea>
+        <button class="gen-btn" id="viralBtn" onclick="analyzeViral()"><i class="ti ti-flame"></i> Viral-Score analysieren</button>
+      </div>
+      <div id="viralResult"></div>
+    </div>
+
+    <div id="calendarSection" style="display:none">
+      <div class="form-card">
+        <div class="section-label">Zeitraum</div>
+        <div class="tog-group" style="margin-bottom:16px">
+          <button class="tog" data-calperiod="7">7 Tage</button>
+          <button class="tog active" data-calperiod="14">14 Tage</button>
+          <button class="tog" data-calperiod="30">30 Tage</button>
+        </div>
+        <div class="section-label">Plattform</div>
+        <div class="tog-group" style="margin-bottom:16px">
+          <button class="tog active" data-calplat="both">Pinterest + Instagram</button>
+          <button class="tog" data-calplat="pinterest">Nur Pinterest</button>
+          <button class="tog" data-calplat="instagram">Nur Instagram</button>
+        </div>
+        <label class="lbl">Nische / Thema *</label>
+        <input type="text" id="calNiche" placeholder="z.B. Yoga, Passives Einkommen, Keto…" style="margin-bottom:14px">
+        <button class="gen-btn" id="calBtn" onclick="generateCalendar()"><i class="ti ti-calendar"></i> Kalender generieren</button>
+      </div>
+      <div id="calendarResult"></div>
+    </div>
+
+    <div id="hooksSection" style="display:none">
+      <div class="form-card">
+        <div class="section-label">Plattform</div>
+        <div class="tog-group" style="margin-bottom:16px">
+          <button class="tog active" data-hookplat="pinterest">Pinterest</button>
+          <button class="tog" data-hookplat="instagram">Instagram</button>
+          <button class="tog" data-hookplat="reels">Reels</button>
+        </div>
+        <div class="section-label">Stil</div>
+        <div class="tog-group" style="margin-bottom:16px;flex-wrap:wrap">
+          <button class="tog active" data-hookstyle="all">Alle Stile</button>
+          <button class="tog" data-hookstyle="question">Frage</button>
+          <button class="tog" data-hookstyle="statement">Aussage</button>
+          <button class="tog" data-hookstyle="number">Zahl/Liste</button>
+          <button class="tog" data-hookstyle="pov">POV</button>
+          <button class="tog" data-hookstyle="pain">Schmerz</button>
+        </div>
+        <label class="lbl">Thema *</label>
+        <input type="text" id="hooksInput" placeholder="z.B. Online Geld verdienen, Pinterest Marketing…" style="margin-bottom:14px">
+        <button class="gen-btn" id="hooksBtn" onclick="generateHooks()"><i class="ti ti-bolt"></i> 10 Hooks generieren</button>
+      </div>
+      <div id="hooksResult"></div>
+    </div>
+
     <div id="resultArea">
       <div class="placeholder">
         <i class="ti ti-wand" style="font-size:40px;opacity:.3"></i>
@@ -584,6 +644,17 @@ function setPlatform(p){
   currentPlatform=p;
   document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
   if(tab)tab.classList.add('active');
+
+  const toolPlatforms=['viral','calendar','hooks'];const isTool=toolPlatforms.includes(p);
+  const vs=document.getElementById('viralSection');const cs=document.getElementById('calendarSection');const hs=document.getElementById('hooksSection');
+  if(vs)vs.style.display=p==='viral'?'block':'none';if(cs)cs.style.display=p==='calendar'?'block':'none';if(hs)hs.style.display=p==='hooks'?'block':'none';
+
+  const mainFormCard=document.querySelector('main > .form-card');
+  if(mainFormCard)mainFormCard.style.display=isTool?'none':'block';
+  document.getElementById('resultArea').style.display=isTool?'none':'block';
+
+  if(isTool)return; // Tool-Tabs haben ihre eigenen Formulare, kein Zugriff auf PLATFORM_CONFIG nötig
+
   document.getElementById('genBtnText').textContent=PLATFORM_CONFIG[p].btnText;
   const designOpts=document.getElementById('designOptions');
   designOpts.style.display=p==='reels'?'none':'block';
@@ -594,9 +665,6 @@ function setPlatform(p){
   else{countSel.style.display='block';carInfo.style.display='none';}
   document.getElementById('resultArea').innerHTML=`<div class="placeholder"><i class="ti ti-wand" style="font-size:40px;opacity:.3"></i><span>${PLATFORM_CONFIG[p].label} generieren – Formular ausfüllen und klicken</span></div>`;
   const rms=document.getElementById('reelsModeSection');if(rms)rms.style.display=p==='reels'?'block':'none';
-  const toolPlatforms=['viral','calendar','hooks'];const isTool=toolPlatforms.includes(p);
-  const vs=document.getElementById('viralSection');const cs=document.getElementById('calendarSection');const hs=document.getElementById('hooksSection');
-  if(vs)vs.style.display=p==='viral'?'block':'none';if(cs)cs.style.display=p==='calendar'?'block':'none';if(hs)hs.style.display=p==='hooks'?'block':'none';
 }
 
 function updateCounter(){
